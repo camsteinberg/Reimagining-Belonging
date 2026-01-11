@@ -1,0 +1,142 @@
+ 
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+     font-family: "EB Garamond", serif;
+    color: #333333;
+}
+
+body {
+    background-color: #e5dccf;
+}
+
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  background-color: black;  
+  opacity: 1;
+  transition: opacity .3s ease;
+}
+
+.bg.is-fading {
+  opacity: 0;
+}
+
+ 
+
+.startButton {
+    background-color: #000000;
+  border: none;
+  color: white;
+  width: 120px;
+  height: 120px;
+ 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 19px;
+    
+  border-radius: 50%;
+  position: absolute;
+  top: 65%;
+  
+}
+
+.slide {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.slide1 {
+    display: flex;
+    min-height: 100vh;
+    background-color: #e5dccf;
+    justify-content: center;
+    width: auto;
+}
+.slide2 {
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    width: auto;
+}
+
+.slide3 {
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    width: auto;
+}
+
+.slide4 {
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    width: auto;
+}
+
+.slide5 {
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    width: auto;
+}
+
+.slide2TextContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 70%;
+    font-size: 22px;
+
+}
+
+.slide3TextContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 60%;
+    font-size: 22px;
+
+}
+
+.slide4TextContainer, .slide5TextContainer, .slide6TextContainer {
+    display: flex;
+    flex-direction: column;
+    
+    position: absolute;
+    top: 12%;
+    left: 100px;
+    font-size: 22px;
+
+}
+
+.brownText {
+    color: #9f4f2e;
+}
+
+.introHeader {
+    position: absolute;
+    top: 47%;
+    font-size: 50px;
+    font-weight: 550;
+   
+}
+
+.introSub {
+    position: absolute;
+    top: 57%;
+    font-size: 20px;
+  
+}
+

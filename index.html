@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="./style.css">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="bg" aria-hidden="true" > </div>
+    <section class="slide slide1">
+        <header class="introHeader">Reimaging Belonging</header>
+        <div class="introSub">Subtitle</div>
+        <button class="startButton" onclick="intro()">Click to Start</button>
+    </section>
+    
+    <section class="slide slide2" data-bg="./images/slide2.png">
+        <div class="slide2TextContainer">
+            <div>Homes are temporary,</div>
+            <div>cities are transient, </div>
+            <div>relationships feel liquid.</div>
+        </div>
+        
+    </section>
+    <section class="slide slide3" data-bg="./images/slide3.png">
+        <div class="slide3TextContainer">
+             <div>Belonging feels distant</div>
+            <div class="brownText">until we touch, make, </div>
+            <div class="brownText">and build again.</div>
+        </div>
+        
+    </section>
+  
+    <section class="slide slide4" data-bg="./images/slide4.png">
+        <div class="slide4TextContainer">
+             <div>Text</div>
+            <div >Text </div>
+            <div  >Text</div>
+        </div>
+    </section>
+
+    <section class="slide slide5" data-bg="./images/slide5.png">
+        <div class="slide5TextContainer">
+             <div>Text</div>
+            <div >Text </div>
+            <div  >Text</div>
+        </div>
+    </section>
+
+    <section class="slide slide6" data-bg="./images/slide6.png">
+        <div class="slide6TextContainer">
+             <div>Text</div>
+            <div >Text </div>
+            <div  >Text</div>
+        </div>
+    </section>
+
+    <section class="slide slide7" data-bg="./images/slide7.png">
+      
+    </section>
+    
+    <script type="module" src="/main.js"></script>
+    <script>
+        function intro() {
+            window.scrollTo({
+            top: window.innerHeight,  
+            left: 0,   
+            behavior: 'smooth'  
+            });
+        }
+    </script>
+</body>
+</html>
