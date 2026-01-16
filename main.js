@@ -3,10 +3,17 @@ window.addEventListener("DOMContentLoaded", () => {
   const slides = Array.from(document.querySelectorAll(".slide[data-bg]"));
   const allSlides = Array.from(document.querySelectorAll(".slide"));
   const startButton = document.querySelector("#startButton");
+  const slide1 = document.querySelector(".slide1");
   const slide2 = document.querySelector(".slide2");
+  const slide12 = document.querySelector(".slide12");
   const phoneOverlay = document.querySelector(".phoneOverlay");
   const phone = document.querySelector('.slide2Phone');
   const phoneSlides = Array.from(
+    document.querySelectorAll(
+      ".slide2, .slide3, .slide4, .slide5, .slide6, .slide7"
+    )
+  );
+  const overlaySlides = Array.from(
     document.querySelectorAll(
       ".slide2, .slide3, .slide4, .slide5, .slide6, .slide7, .slide8, .slide9, .slide10, .slide11"
     )
@@ -14,6 +21,15 @@ window.addEventListener("DOMContentLoaded", () => {
   const darkCircleSlides = Array.from(
     document.querySelectorAll(".slide8, .slide9, .slide10, .slide11")
   );
+  const textSlides = Array.from(
+    document.querySelectorAll(
+      ".slide2, .slide3, .slide4, .slide5, .slide6, .slide7, .slide8, .slide9, .slide10, .slide11"
+    )
+  );
+  const bottomTextSelector =
+    ".slide6BottomText, .slide8BottomText, .slide9BottomText, .slide11BottomText";
+  const topTextSelector =
+    ".slide2TextContainer, .slide3TextContainer, .slide4TextContainer, .slide5TextContainer, .slide6TextContainer, .slide7TextContainer, .slide8TextContainer, .slide9TextContainer, .slide10TextContainer, .slide11TextContainer";
 
   if (!bg || slides.length === 0) return;
  
@@ -59,11 +75,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
   slides.forEach((s) => observer.observe(s));
 
+  let isSlide1Visible = false;
+
   if (allSlides.length > 0) {
     const fadeObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           entry.target.classList.toggle("is-visible", entry.isIntersecting);
+          if (slide1 && entry.target === slide1) {
+            isSlide1Visible = entry.isIntersecting;
+          }
         });
       },
       { threshold: [0.3] }
@@ -72,54 +93,90 @@ window.addEventListener("DOMContentLoaded", () => {
     allSlides.forEach((s) => fadeObserver.observe(s));
   }
 
-  if (phoneOverlay && phoneSlides.length > 0) {
-    const visiblePhoneSlides = new Set();
-    const phoneObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            visiblePhoneSlides.add(entry.target);
-          } else {
-            visiblePhoneSlides.delete(entry.target);
-          }
-        });
+  if (textSlides.length > 0) {
+    const textTriggers = textSlides
+      .map((slide) => {
+        const topTrigger = slide.querySelector(topTextSelector);
+        const bottomTrigger = slide.querySelector(bottomTextSelector);
+        return { slide, topTrigger, bottomTrigger };
+      })
+      .filter(({ topTrigger, bottomTrigger }) => !!topTrigger || !!bottomTrigger);
 
-        if (visiblePhoneSlides.size > 0) {
-          phoneOverlay.classList.add("is-visible");
-          phone.classList.remove('hidden');
-        } else {
-          phoneOverlay.classList.remove("is-visible");
-          phone.classList.add('hidden');
-        }
-      },
-      { threshold: [.7] }
-    );
+    let textRafId = null;
 
-    phoneSlides.forEach((s) => phoneObserver.observe(s));
+    const updateTextVisibility = () => {
+      textRafId = null;
+      const minY = window.innerHeight * 0.2;
+      const maxY = window.innerHeight * 0.8;
+
+      textTriggers.forEach(({ slide, topTrigger, bottomTrigger }) => {
+        const topRect = topTrigger ? topTrigger.getBoundingClientRect() : null;
+        const bottomRect = bottomTrigger ? bottomTrigger.getBoundingClientRect() : null;
+        const topCenterY = topRect ? topRect.top + topRect.height * 0.5 : null;
+        const bottomCenterY = bottomRect ? bottomRect.top + bottomRect.height * 0.5 : null;
+        const effectiveTopY = topCenterY ?? bottomCenterY;
+        const effectiveBottomY = bottomCenterY ?? topCenterY;
+
+        const isTopOk = effectiveTopY === null ? true : effectiveTopY >= minY;
+        const isBottomOk = effectiveBottomY === null ? true : effectiveBottomY <= maxY;
+        const isVisible = isTopOk && isBottomOk;
+        slide.classList.toggle("text-visible", isVisible);
+      });
+    };
+
+    const scheduleTextVisibility = () => {
+      if (textRafId !== null) return;
+      textRafId = requestAnimationFrame(updateTextVisibility);
+    };
+
+    window.addEventListener("scroll", scheduleTextVisibility, { passive: true });
+    window.addEventListener("resize", scheduleTextVisibility);
+    updateTextVisibility();
   }
 
-  if (phoneOverlay && darkCircleSlides.length > 0) {
-    const visibleDarkSlides = new Set();
-    const darkCircleObserver = new IntersectionObserver(
+  if (phoneOverlay && overlaySlides.length > 0) {
+    const overlayRatios = new Map(overlaySlides.map((slide) => [slide, 0]));
+    const darkSet = new Set(darkCircleSlides);
+    const thresholds = [0, 0.2, 0.4, 0.6, 0.8, 1];
+    let slide12Ratio = 0;
+
+    const overlayObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            visibleDarkSlides.add(entry.target);
-            phone.classList.add('hidden');
-          } else {
-            visibleDarkSlides.delete(entry.target);
-            phone.classList.remove('hidden');
+          if (slide12 && entry.target === slide12) {
+            slide12Ratio = entry.isIntersecting ? entry.intersectionRatio : 0;
+            return;
+          }
+          overlayRatios.set(entry.target, entry.isIntersecting ? entry.intersectionRatio : 0);
+        });
+
+        let activeSlide = null;
+        let maxRatio = 0;
+
+        overlayRatios.forEach((ratio, slide) => {
+          if (ratio > maxRatio) {
+            maxRatio = ratio;
+            activeSlide = slide;
           }
         });
 
-        phoneOverlay.classList.toggle(
-          "is-dark-circle",
-          visibleDarkSlides.size > 0
-        );
+        const isOverlayVisible = maxRatio > 0 && !isSlide1Visible && slide12Ratio === 0;
+        const isDark = isOverlayVisible && activeSlide && darkSet.has(activeSlide);
+
+        phoneOverlay.classList.toggle("is-visible", isOverlayVisible);
+        document.body.classList.toggle("phone-circle-visible", isOverlayVisible);
+        phoneOverlay.classList.toggle("is-dark-circle", isDark);
+        if (phone) {
+          // Keep the phone hidden when the overlay fades out to avoid a flash.
+          phone.classList.toggle("hidden", isDark || !isOverlayVisible);
+        }
       },
-      { threshold: [0.5] }
+      { threshold: thresholds }
     );
 
-    darkCircleSlides.forEach((s) => darkCircleObserver.observe(s));
+    overlaySlides.forEach((s) => overlayObserver.observe(s));
+    if (slide12) {
+      overlayObserver.observe(slide12);
+    }
   }
 });

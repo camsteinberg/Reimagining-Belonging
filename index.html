@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.18.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.18.0/mapbox-gl.js"></script>
+
 </head>
 <body>
     <div class="bg" aria-hidden="true" > </div>
@@ -126,6 +129,44 @@
             <div style="color: #e5dccf;">home loses its sense of stability.</div>
         </div>
     </section>
+    <section class="slide slide12">
+        <div id="map"></div>
+    </section>
+    <section class="slide slide13">
+        <div>13</div>
+    </section>
+    <section class="slide slide14">
+        <div>14</div>
+    </section>
+    <section class="slide slide15">
+        <div>15</div>
+    </section>
+    <section class="slide slide16">
+        <div>16</div>
+    </section>
+
+    <section class="slide slide17">
+        <div>
+            As mobility becomes an ongoing condition of life,<br>
+“where you live” isn’t enough.<br>
+<br>
+We spoke with seven Gen Z participants, and invited them to draw home.<br>
+What we heard was clear: <br>
+when material stability is missing, meaning takes on the extra weight.<br>
+<br>
+Hover to see what they said.
+
+        </div>
+
+    </section>
+
+    <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYWlkYW5taWxsZXIxMDAiLCJhIjoiY21rZ215MXR5MDl3ZzNmcHBrNjF4OTRtbiJ9.dB524Fvwi53kzAZzo6CqTQ';
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+         
+    });
+    </script>
 
     <script type="module" src="/main.js"></script>
     <script>

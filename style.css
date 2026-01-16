@@ -8,6 +8,21 @@
     color: #333333;
 }
 
+.slide12{
+  display: block;          
+  position: relative;
+  width: 100%;
+  min-height: 100vh;    
+  background-color: #e5dccf; 
+}
+
+/* Give the map real dimensions */
+.slide12 #map{
+  
+  width: 80%;
+  height: 100vh;
+}
+
 body {
     background-color: #333333;
 }
@@ -82,10 +97,8 @@ body {
 }
 
 .svgContainer svg {
-  width: 90vh;
-  height: 90vh;
-  max-width: 90vw;
-  max-height: 90vh;
+  width: 110vh;
+  height: 110vh;
 }
 
 .svgContainer circle {
@@ -133,20 +146,23 @@ body {
 }
 
 .slide2Phone {
-    background-image: url(./images/section01-scroll-1.png);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    height: 100vh;
-    width: auto;
-    max-width: 100vw;
-    aspect-ratio: 9 / 19.5;
+  background-image: url(./images/section01-scroll-1.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  position: absolute;
+  top: 50%;
+  left: 51%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+
+  height: 300vh;
+  width: auto;
+  max-width: 100vw;
+  aspect-ratio: 1;
 }
+
 
 .slide3 {
     display: flex;
@@ -181,7 +197,9 @@ body {
 }
 
 .hidden {
-  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .slide7 {
@@ -192,7 +210,7 @@ body {
     background-color: transparent;
 }
 
-.slide8, .slide9, .slide10, .slide11 {
+.slide8, .slide9, .slide10, .slide11, .slide13, .slide14, .slide15, .slide16, .slide17{
   min-height: 100vh;
   width: auto;
   background-color: #e5dccf;
@@ -237,8 +255,53 @@ display: flex;
     z-index: 20;
 }
 
+.slide2TextContainer,
+.slide3TextContainer,
+.slide4TextContainer,
+.slide5TextContainer,
+.slide6TextContainer,
+.slide6BottomText,
+.slide7TextContainer,
+.slide8TextContainer,
+.slide8BottomText,
+.slide9TextContainer,
+.slide9BottomText,
+.slide10TextContainer,
+.slide11TextContainer,
+.slide11BottomText {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .6s ease, visibility 0s linear .6s;
+}
+
+body.phone-circle-visible .slide.text-visible .slide2TextContainer,
+body.phone-circle-visible .slide.text-visible .slide3TextContainer,
+body.phone-circle-visible .slide.text-visible .slide4TextContainer,
+body.phone-circle-visible .slide.text-visible .slide5TextContainer,
+body.phone-circle-visible .slide.text-visible .slide6TextContainer,
+body.phone-circle-visible .slide.text-visible .slide6BottomText,
+body.phone-circle-visible .slide.text-visible .slide7TextContainer,
+body.phone-circle-visible .slide.text-visible .slide8TextContainer,
+body.phone-circle-visible .slide.text-visible .slide8BottomText,
+body.phone-circle-visible .slide.text-visible .slide9TextContainer,
+body.phone-circle-visible .slide.text-visible .slide9BottomText,
+body.phone-circle-visible .slide.text-visible .slide10TextContainer,
+body.phone-circle-visible .slide.text-visible .slide11TextContainer,
+body.phone-circle-visible .slide.text-visible .slide11BottomText {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .6s ease, visibility 0s linear 0s;
+}
+
 .brownText {
     color: #9f4f2e;
+}
+
+body:not(.phone-circle-visible) .slide6 .brownText,
+body:not(.phone-circle-visible) .slide7 .brownText {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .6s ease, visibility 0s linear 0s;
 }
 
 .introHeader {
