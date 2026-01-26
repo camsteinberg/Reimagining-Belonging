@@ -23,13 +23,13 @@ window.addEventListener("DOMContentLoaded", () => {
   );
   const textSlides = Array.from(
     document.querySelectorAll(
-      ".slide2, .slide3, .slide4, .slide5, .slide6, .slide7, .slide8, .slide9, .slide10, .slide11"
+      ".slide2, .slide3, .slide4, .slide5, .slide6, .slide7, .slide8, .slide9, .slide10, .slide11, .slide15, .slide16, .slide17, .slide18"
     )
   );
   const bottomTextSelector =
     ".slide6BottomText, .slide8BottomText, .slide9BottomText, .slide11BottomText";
   const topTextSelector =
-    ".slide2TextContainer, .slide3TextContainer, .slide4TextContainer, .slide5TextContainer, .slide6TextContainer, .slide7TextContainer, .slide8TextContainer, .slide9TextContainer, .slide10TextContainer, .slide11TextContainer";
+    ".slide2TextContainer, .slide3TextContainer, .slide4TextContainer, .slide5TextContainer, .slide6TextContainer, .slide7TextContainer, .slide8TextContainer, .slide9TextContainer, .slide10TextContainer, .slide11TextContainer, .slide15TextContainer, .slide16TextContainer, .slide17TextContainer, .slide18TextContainer";
 
   if (!bg || slides.length === 0) return;
  
@@ -57,7 +57,28 @@ window.addEventListener("DOMContentLoaded", () => {
     bg.classList.remove("is-fading");
   }
 
-  setBgInstant(slides[0].dataset.bg);
+  function pickMostVisibleSlide() {
+    let bestSlide = slides[0];
+    let bestRatio = -1;
+    const viewportHeight = window.innerHeight;
+
+    slides.forEach((slide) => {
+      const rect = slide.getBoundingClientRect();
+      const visibleTop = Math.max(rect.top, 0);
+      const visibleBottom = Math.min(rect.bottom, viewportHeight);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+      const ratio = rect.height > 0 ? visibleHeight / rect.height : 0;
+
+      if (ratio > bestRatio) {
+        bestRatio = ratio;
+        bestSlide = slide;
+      }
+    });
+
+    return bestSlide;
+  }
+
+  setBgInstant(pickMostVisibleSlide().dataset.bg);
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -70,10 +91,13 @@ window.addEventListener("DOMContentLoaded", () => {
       const url = visible.target.dataset.bg;
       changeBg(url);
     },
-    { threshold: [0.6] } //Change this to change active slide dection 
+    { threshold: [0.5] } //Change this to change active slide dection 
   );
 
   slides.forEach((s) => observer.observe(s));
+  window.addEventListener("load", () => {
+    setBgInstant(pickMostVisibleSlide().dataset.bg);
+  });
 
   let isSlide1Visible = false;
 
@@ -106,10 +130,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const updateTextVisibility = () => {
       textRafId = null;
-      const minY = window.innerHeight * 0.2;
-      const maxY = window.innerHeight * 0.8;
+      const defaultMinY = window.innerHeight * 0.2;
+      const defaultMaxY = window.innerHeight * 0.8;
+      const tightMinY = window.innerHeight * 0.35;
+      const tightMaxY = window.innerHeight * 0.65;
 
       textTriggers.forEach(({ slide, topTrigger, bottomTrigger }) => {
+        const useTightRange = slide.classList.contains("tight-text");
+        const minY = useTightRange ? tightMinY : defaultMinY;
+        const maxY = useTightRange ? tightMaxY : defaultMaxY;
         const topRect = topTrigger ? topTrigger.getBoundingClientRect() : null;
         const bottomRect = bottomTrigger ? bottomTrigger.getBoundingClientRect() : null;
         const topCenterY = topRect ? topRect.top + topRect.height * 0.5 : null;

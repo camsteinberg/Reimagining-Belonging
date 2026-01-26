@@ -11,6 +11,10 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.18.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.18.0/mapbox-gl.js"></script>
+<!-- deck.gl (bundle includes layers + core) -->
+  <script src="https://unpkg.com/deck.gl@8.9.33/dist.min.js"></script>
+  <!-- MapboxOverlay helper -->
+  <script src="https://unpkg.com/@deck.gl/mapbox@8.9.33/dist.min.js"></script>
 
 </head>
 <body>
@@ -29,20 +33,20 @@
         <button class="startButton" onclick="intro()">Click to Start</button>
     </section>
     
-    <section class="slide slide2" data-bg="./images/section01-bg-1.png">
+    <section class="slide slide2 tight-text" data-bg="./images/section01-bg-1.png">
         <div class="slide2TextContainer">
             <div>Gen Z grows up scrolling.</div>
         </div>
     </section>
 
-    <section class="slide slide3" data-bg="./images/section01-bg-2.png">
+    <section class="slide slide3 tight-text" data-bg="./images/section01-bg-2.png">
         <div class="slide3TextContainer">
             <div>The world</div>
                 <div>arrives</div>
                 <div>on our phones.</div>
         </div>
     </section>
-    <section class="slide slide4" data-bg="./images/section01-bg-3.png">
+    <section class="slide slide4 tight-text" data-bg="./images/section01-bg-3.png">
         <div class="slide4TextContainer">
             <div>News</div>
             <div>Connections</div>
@@ -55,7 +59,7 @@
             <div>is constantly refreshed</div>
         </div>
     </section>
-    <section class="slide slide5" data-bg="./images/section01-bg-4.png">
+    <section class="slide slide5 tight-text" data-bg="./images/section01-bg-4.png">
         <div class="slide5TextContainer">
             <div>As we scroll,</div>
             <div>it becomes easy</div>
@@ -64,7 +68,7 @@
             <div>are changing.</div>
         </div>
     </section>
-    <section class="slide slide6" data-bg="./images/section01-bg-5.png">
+    <section class="slide slide6 tight-text" data-bg="./images/section01-bg-5.png">
         <div class="slide6TextContainer">
             <div>And</div>
             <div>We rarely stop</div>
@@ -77,7 +81,7 @@
         </div>
     </section>
 
-    <section class="slide slide7" data-bg="./images/section01-bg-6.png">
+    <section class="slide slide7 tight-text" data-bg="./images/section01-bg-6.png">
          <div class="slide7TextContainer">
             <div>Is this place</div>
             <div>still</div>
@@ -129,43 +133,504 @@
             <div style="color: #e5dccf;">home loses its sense of stability.</div>
         </div>
     </section>
-    <section class="slide slide12">
-        <div id="map"></div>
+    <section class="slide mapSlides">
+        <div class="initMapText1">
+            <div>For many Gen Z, mobility starts with a first departure.</div>
+        </div>
+        <div class="initMapText2">
+            <div>Leaving a hometown for school, work, or an opportunity.</div>
+            <div style="color: #9f4f2e; font-size: 15px;" id="brownText">
+                <em><br/>“I lived and worked in the US, went to college there,<br/> graduated and worked in industry for a bit.” <br/>
+– Lexi, Gen Z</em>
+
+            </div>
+        </div>
+        <div class="initMapText3">
+            <div>From there, “home” starts to stretch, shaped by repeated moves across cities, borders, and cultures.</div>
+        </div>
+        <div class="initMapText3Quote">
+            <div style="z-index: 10000000;"><em>
+                “Then I moved to Australia for a <br/>
+                little under a year for work. After <br/>
+                Australia, I got my Fulbright <br/>
+                fellowship, made my way over to <br/>
+                Asia, and have been living here<br/>
+                 ever since.” - Lexi
+                </em>
+            </div>
+        </div>
+        <div class="mapWrap">
+             <div id="initialMap"></div>
+        </div>
+       
     </section>
-    <section class="slide slide13">
-        <div>13</div>
-    </section>
-    <section class="slide slide14">
-        <div>14</div>
-    </section>
+
     <section class="slide slide15">
-        <div>15</div>
+        <div class="slide15TextContainer">
+            <div style="color: #333333; font-size: 20px;">
+            Shaped by education, work, and uneven access to opportunity, leaving home is not unusual for many Gen Z.
+            <br/><em>Hover over a state to see Gen Z outbound and inbound migration flows.</em>
+            </div>
+        </div>
+        <div class="mapWrap">
+            <div id="map"></div>
+            <div id="tooltip" class="tooltip"></div>
+            <div id="legend" class="legend">
+                <div class="legend-title">Gen Z Migration</div>
+                <div class="legend-item">
+                <div class="legend-line outbound"></div>
+                <span>Outbound</span>
+                </div>
+                <div class="legend-item">
+                <div class="legend-line inbound"></div>
+                <span>Inbound</span>
+                </div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; color: #999; font-size: 11px;">
+                Line width & opacity<br/>scale with volume
+                </div>
+            </div>
+        </div>
+      
     </section>
     <section class="slide slide16">
-        <div>16</div>
+        <div class="slide16TextContainer">
+            <div style="color: #333333; font-size: 20px;">
+            A few corridors carry a lot of movement. 
+            <br/>For many, moving is tied to what becomes available, as much as to personal preference. 
+            </div>
+        </div>
+        <div class="mapWrap">
+            <div id="map2"></div>
+            <div id="tooltip2" class="tooltip"></div>
+            <div id="legend2" class="legend">
+                <div class="legend-title">Gen Z Migration</div>
+                <div class="legend-item">
+                <div class="legend-line outbound"></div>
+                <span>Outbound</span>
+                </div>
+                <div class="legend-item">
+                <div class="legend-line inbound"></div>
+                <span>Inbound</span>
+                </div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; color: #999; font-size: 11px;">
+                Line width & opacity<br/>scale with volume
+                </div>
+            </div>
+        </div>
     </section>
+    
 
     <section class="slide slide17">
-        <div>
-            As mobility becomes an ongoing condition of life,<br>
-“where you live” isn’t enough.<br>
-<br>
-We spoke with seven Gen Z participants, and invited them to draw home.<br>
-What we heard was clear: <br>
-when material stability is missing, meaning takes on the extra weight.<br>
-<br>
-Hover to see what they said.
+  <div class="slide17TextContainer">
+    <div>
+      As mobility becomes an ongoing condition of life,<br />
+      “where you live” isn’t enough.<br /><br />
+      We spoke with seven Gen Z participants, and invited them to draw home.<br />
+      What we heard was clear:<br />
+      when material stability is missing, meaning takes on the extra weight.<br /><br />
+      <em>Hover to see what they said.</em>
+    </div>
+  </div>
 
+  <div class="hoverGroup">
+    <div class="svgContainer2">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="Gradient2" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="50%" stop-color="#333333" />
+            <stop offset="100%" stop-color="transparent" />
+          </linearGradient>
+        </defs>
+
+        <circle cx="50" cy="50" r="40" fill="url(#Gradient2)" />
+      </svg>
+    </div>
+
+    <div class="belongingLabel">Belonging is...</div>
+
+    <img class="slide17Reveal left" src="./images/belongingLeft.png" alt="Belonging quote left" style="width: 30vw;"/>
+    <img class="slide17Reveal right" src="./images/belongingRight.png" alt="Belonging quote right" style="width: 30vw;"/>
+  </div>
+</section>
+
+
+    <section class="slide slide18" data-bg="./images/whiteBackground.png">
+        <div class="slide18TextContainer" style="z-index: 40;">
+            <div>
+                Under uncontrollable housing conditions,<br/>
+ people begin to link belonging to more controllable, more portable anchors of meaning.<br/>
+
+<br/><em>Hover to explore.</em> 
+
+            </div>
         </div>
-
+        <div class="slide18Media" aria-hidden="true">
+            <img class="img-green" src="./images/greenImg.png" alt="Place image" />
+            <img class="img-yellow" src="./images/yellowImg.png" alt="Object image" />
+            <img class="img-red" src="./images/redImg.png" alt="Person image" />
+            <img class="img-blue" src="./images/blueImg.png" alt="Language image" />
+        </div>
+        <div class="greenSVGContainer">
+            <svg height="100" width="100" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+            <circle class="circleFill" cx="80" cy="80" r="70" fill="#234635ff" />
+            <circle class="circleHit" cx="80" cy="80" r="70" fill="#234635ff" />
+            </svg>
+            <div class="circleLabel">Place</div>
+        </div>
+        <div class="yellowSVGContainer">
+            <svg height="100" width="100" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+            <circle class="circleFill" cx="80" cy="80" r="70" fill="#c4a448ff" />
+            <circle class="circleHit" cx="80" cy="80" r="70" fill="#c4a448ff" />
+            </svg>
+            <div class="circleLabel">Object</div>
+        </div>
+        <div class="redSVGContainer">
+            <svg height="100" width="100" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+            <circle class="circleFill" cx="80" cy="80" r="70" fill="#9f4f2eff" />
+            <circle class="circleHit" cx="80" cy="80" r="70" fill="#9f4f2eff" />
+            </svg>
+            <div class="circleLabel">Person</div>
+        </div>
+        <div class="blueSVGContainer">
+            <svg height="100" width="100" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+            <circle class="circleFill" cx="80" cy="80" r="70" fill="#2f5496ff" />
+            <circle class="circleHit" cx="80" cy="80" r="70" fill="#2f5496ff" />
+            </svg>
+            <div class="circleLabel">Language</div>
+        </div>
+         
+         
+        
     </section>
 
     <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoiYWlkYW5taWxsZXIxMDAiLCJhIjoiY21rZ215MXR5MDl3ZzNmcHBrNjF4OTRtbiJ9.dB524Fvwi53kzAZzo6CqTQ';
-    const map = new mapboxgl.Map({
-        container: 'map', // container ID
-         
+    const FLOWS_URL = "genz_flows_geo_topN.json";
+const STATES_GEOJSON_URL = "cb_2023_us_state_20m.geojson";
+
+function formatTop(list, dir) {
+  if (!list || list.length === 0) return `<div class="muted">No data</div>`;
+  return list.slice(0, 3).map(d => {
+    const other = dir === "out" ? d.to_abbr : d.from_abbr;
+    return `${dir === "out" ? "ƒ+'" : "ƒ+?"} <strong>${other}</strong> <span class="muted">${Number(d.population).toLocaleString()}</span>`;
+  }).join("<br/>");
+}
+
+function buildFlowIndex(flows) {
+  const out = new Map();
+  const inn = new Map();
+
+  for (const f of flows) {
+    if (!out.has(f.from_abbr)) out.set(f.from_abbr, []);
+    if (!inn.has(f.to_abbr)) inn.set(f.to_abbr, []);
+    out.get(f.from_abbr).push(f);
+    inn.get(f.to_abbr).push(f);
+  }
+
+  for (const [, arr] of out) arr.sort((a, b) => b.population - a.population);
+  for (const [, arr] of inn) arr.sort((a, b) => b.population - a.population);
+
+  return { out, inn };
+}
+
+function initMap(containerId, tooltipId) {
+  const tooltip = document.getElementById(tooltipId);
+
+  function showTooltip(x, y, html) {
+    tooltip.innerHTML = html;
+    tooltip.style.display = "block";
+
+    // Get tooltip and map container dimensions
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const mapContainer = document.getElementById(containerId);
+    const mapWidth = mapContainer.offsetWidth;
+    const mapHeight = mapContainer.offsetHeight;
+    const mapTop = mapContainer.offsetTop;
+
+    const tooltipWidth = tooltipRect.width || 280;  // Default max-width
+    const tooltipHeight = tooltipRect.height || 100;
+    const padding = 15;  // Safe distance from edges
+
+    let posX = x + 50;
+    let posY = y + 50;
+
+    // Check if exceeds right boundary
+    if (posX + tooltipWidth + padding > mapWidth) {
+      posX = x - tooltipWidth - 30;
+    }
+
+    // Check if exceeds bottom boundary
+    if (posY + tooltipHeight + padding > mapHeight + mapTop) {
+      posY = y - tooltipHeight - 30;
+    }
+
+    // Ensure doesn't exceed left and top boundaries
+    posX = Math.max(padding, posX);
+    posY = Math.max(mapTop + padding, posY);
+
+    tooltip.style.left = posX + "px";
+    tooltip.style.top = posY + "px";
+  }
+
+  function hideTooltip() { 
+    tooltip.style.display = "none"; 
+  }
+
+  // ---------- MAP ----------
+  const map = new mapboxgl.Map({
+    container: containerId,
+    style: "mapbox://styles/mapbox/light-v11",
+    projection: 'mercator',
+    center: [-98, 38.5],
+    zoom: 3.5,
+    pitch: 0,
+    bearing: 0
+  });
+  // ---------- LOAD + LAYERS ----------
+  map.on("load", () => {
+    Promise.all([
+      fetch(FLOWS_URL).then(r => r.json()),
+      fetch(STATES_GEOJSON_URL).then(r => r.json())
+    ]).then(([flows, statesGeo]) => {
+      const maxPopulation = Math.max(...flows.map(f => f.population));
+      const minPopulation = Math.min(...flows.map(f => f.population));
+
+      const idx = buildFlowIndex(flows);
+      let currentHoveredState = null;
+
+      const overlay = new deck.MapboxOverlay({
+        interleaved: false,
+        layers: []
+      });
+
+      map.addControl(overlay);
+
+      const getAbsoluteRatio = (population) => {
+        return (population - minPopulation) / (maxPopulation - minPopulation);
+      };
+
+      const createColoredLayer = (data, id, isOutbound, isOutboundFlow) => {
+        return new deck.ArcLayer({
+          id,
+          data,
+          pickable: false,
+          getSourcePosition: d => [d.from_lon, d.from_lat],
+          getTargetPosition: d => [d.to_lon, d.to_lat],
+          getSourceColor: d => {
+            const ratio = getAbsoluteRatio(d.population);
+            const alpha = Math.floor(isOutboundFlow ? 180 + ratio * 75 : 10 + ratio * 80);
+            return isOutbound ? [255, 100, 80, alpha] : [80, 150, 255, alpha];
+          },
+          getTargetColor: d => {
+            const ratio = getAbsoluteRatio(d.population);
+            const alpha = Math.floor(isOutboundFlow ? 10 + ratio * 80 : 180 + ratio * 75);
+            return isOutbound ? [255, 100, 80, alpha] : [80, 150, 255, alpha];
+          },
+          getWidth: d => 0.15 + getAbsoluteRatio(d.population) * 3,
+          parameters: { depthTest: false }
+        });
+      };
+
+      function updateArcs(abbr) {
+        const newLayers = [
+          new deck.GeoJsonLayer({
+            id: "states-fill",
+            data: statesGeo,
+            pickable: true,
+            stroked: true,
+            filled: true,
+            getFillColor: [0, 0, 0, 0],
+            getLineColor: [120, 120, 120, 60],
+            lineWidthMinPixels: 0.5,
+
+            onHover: ({object, x, y}) => {
+              if (!object) {
+                if (currentHoveredState !== null) {
+                  currentHoveredState = null;
+                  hideTooltip();
+                  updateArcs(null);
+                }
+                return;
+              }
+
+              const stateAbbr = object.properties.STUSPS;
+              const stateName = object.properties.NAME;
+
+              if (stateAbbr !== currentHoveredState) {
+                currentHoveredState = stateAbbr;
+                updateArcs(stateAbbr);
+
+                const topOut = idx.out.get(stateAbbr) || [];
+                const topIn = idx.inn.get(stateAbbr) || [];
+
+                showTooltip(x, y, `
+                  <strong>${stateAbbr} ƒ?" ${stateName}</strong><br/>
+                  <div class="muted">Top outbound</div>
+                  ${formatTop(topOut, "out")}<br/>
+                  <div class="muted" style="margin-top:6px;">Top inbound</div>
+                  ${formatTop(topIn, "in")}
+                `);
+              }
+            }
+          })
+        ];
+
+        if (abbr) {
+          const outboundFlows = flows.filter(d => d.from_abbr === abbr);
+          const inboundFlows = flows.filter(d => d.to_abbr === abbr);
+
+          if (outboundFlows.length > 0) {
+            newLayers.push(createColoredLayer(outboundFlows, "flows-outbound", true, true));
+          }
+          if (inboundFlows.length > 0) {
+            newLayers.push(createColoredLayer(inboundFlows, "flows-inbound", false, false));
+          }
+        }
+
+        overlay.setProps({ layers: newLayers });
+      }
+
+      updateArcs(null);
+      map.addControl(new mapboxgl.NavigationControl(), "top-right");
     });
+  });
+
+  return map;
+}
+
+const map = initMap("map", "tooltip");
+const map2 = initMap("map2", "tooltip2");
+
+let isSyncingMaps = false;
+function syncMapView(source, target) {
+  source.on("move", () => {
+    if (isSyncingMaps) return;
+    isSyncingMaps = true;
+    const center = source.getCenter();
+    target.jumpTo({
+      center: [center.lng, center.lat],
+      zoom: source.getZoom(),
+      bearing: source.getBearing(),
+      pitch: source.getPitch()
+    });
+    isSyncingMaps = false;
+  });
+}
+
+syncMapView(map, map2);
+syncMapView(map2, map);
+
+const initialMap = new mapboxgl.Map({
+  container: "initialMap",
+  style: "mapbox://styles/mapbox/light-v11",
+  projection: 'mercator',
+   
+  center: [-121.9166, 36.617],
+  zoom: 13,
+  scrollZoom: false, // Disable zoom with mouse wheel
+    boxZoom: false, // Disable box zoom (shift + drag)
+    doubleClickZoom: false, // Disable double-click zoom
+    keyboard: false, // Disable keyboard shortcuts (+/- keys)
+    touchZoomRotate: false,
+     
+  pitch: 0,
+  bearing: 0
+});
+
+const initialMapSection = document.querySelector(".mapSlides");
+let initialMapTriggerTop = 0;
+const initialMapViews = {
+  stage1: { center: [-98.5795, 39.8283], zoom: 3.3 },
+  stage2: { center: [-98.5795, 39.8283], zoom: .05 }
+};
+let initialMapStartView = null;
+let initialMapStage = 0;
+let initialMapScrollRaf = null;
+
+function refreshInitialMapTrigger() {
+  if (!initialMapSection) return;
+  const rect = initialMapSection.getBoundingClientRect();
+  initialMapTriggerTop = rect.top + window.scrollY;
+}
+ 
+initialMap.on('load', () => {
+   initialMap.setRenderWorldCopies(false);
+   initialMap.setPaintProperty('water', 'fill-color', '#e5dccf')
+  initialMapStartView = {
+    center: {
+      lng: initialMap.getCenter().lng,
+      lat: initialMap.getCenter().lat
+    },
+    zoom: initialMap.getZoom(),
+    bearing: initialMap.getBearing(),
+    pitch: initialMap.getPitch()
+  };
+  refreshInitialMapTrigger();
+
+  // Example for a specific layer ID
+  initialMap.setLayoutProperty('place-city-sm', 'visibility', 'none');
+ 
+  // Example to hide all symbol layers (which often include most labels)
+  initialMap.getStyle().layers.forEach((layer) => {
+    if (layer.type === 'symbol' && layer.layout.hasOwnProperty('text-field')) {
+      initialMap.setLayoutProperty(layer.id, 'visibility', 'none');
+    }
+  });
+});
+
+function updateInitialMapOnScroll() {
+  if (!initialMapStartView) return;
+  const stage1Threshold = initialMapTriggerTop + window.innerHeight;
+  const stage2Threshold = initialMapTriggerTop + window.innerHeight * 2 - 80    ;
+
+  let nextStage = 0;
+  if (window.scrollY >= stage2Threshold) {
+    nextStage = 2;
+  } else if (window.scrollY >= stage1Threshold) {
+    nextStage = 1;
+  }
+
+  if (nextStage === initialMapStage) return;
+  initialMapStage = nextStage;
+
+  const targetView =
+    nextStage === 2
+      ? initialMapViews.stage2
+      : nextStage === 1
+        ? initialMapViews.stage1
+        : null;
+
+  initialMap.easeTo({
+    center: targetView
+      ? targetView.center
+      : [initialMapStartView.center.lng, initialMapStartView.center.lat],
+    zoom: targetView ? targetView.zoom : initialMapStartView.zoom,
+    bearing: initialMapStartView.bearing,
+    pitch: initialMapStartView.pitch,
+    duration: 1200,
+    essential: true
+  });
+}
+
+function scheduleInitialMapScrollUpdate() {
+  if (initialMapScrollRaf !== null) return;
+  initialMapScrollRaf = requestAnimationFrame(() => {
+    initialMapScrollRaf = null;
+    updateInitialMapOnScroll();
+  });
+}
+
+window.addEventListener("scroll", scheduleInitialMapScrollUpdate, { passive: true });
+window.addEventListener("resize", () => {
+  refreshInitialMapTrigger();
+  scheduleInitialMapScrollUpdate();
+});
+window.addEventListener("load", () => {
+  refreshInitialMapTrigger();
+  scheduleInitialMapScrollUpdate();
+});
+scheduleInitialMapScrollUpdate();
+
     </script>
 
     <script type="module" src="/main.js"></script>
