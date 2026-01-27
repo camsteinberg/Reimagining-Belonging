@@ -873,7 +873,7 @@ function formatTop(list, dir) {
   if (!list || list.length === 0) return `<div class="muted">No data</div>`;
   return list.slice(0, 3).map(d => {
     const other = dir === "out" ? d.to_abbr : d.from_abbr;
-    return `${dir === "out" ? "ƒ+'" : "ƒ+?"} <strong>${other}</strong> <span class="muted">${Number(d.population).toLocaleString()}</span>`;
+    return `${dir === "out" ? "→" : "←"} <strong>${other}</strong> <span class="muted">${Number(d.population).toLocaleString()}</span>`;
   }).join("<br/>");
 }
 
@@ -1031,7 +1031,7 @@ function initMap(containerId, tooltipId) {
                 const topIn = idx.inn.get(stateAbbr) || [];
 
                 showTooltip(x, y, `
-                  <strong>${stateAbbr} ƒ?" ${stateName}</strong><br/>
+                  <strong>${stateAbbr} —  ${stateName}</strong><br/>
                   <div class="muted">Top outbound</div>
                   ${formatTop(topOut, "out")}<br/>
                   <div class="muted" style="margin-top:6px;">Top inbound</div>

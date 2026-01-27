@@ -230,6 +230,7 @@
   top: 13vh;
   width: 100vw;
   font-size: 20px;
+  z-index: 20;
 }
 
 .initMapText2 {
@@ -238,6 +239,11 @@
   top: 111vh;
   width: 100vw;
   font-size: 20px;
+   
+}
+
+.initMapText1, .initMapText2, .initMapText3 {
+  z-index: 20;
 }
 
 .initMapText3 {
