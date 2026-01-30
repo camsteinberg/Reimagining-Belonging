@@ -22,12 +22,24 @@
 
 </head>
 <body>
-    <div class="bg" aria-hidden="true" > </div>
+    <!--GSAP-->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
+
+    <div class="bg bg--front" aria-hidden="true"></div>
+    <div class="bg bg--back" aria-hidden="true"></div>
     <div class="phoneOverlay" aria-hidden="true">
         <div class="slide2Phone hidden"></div>
         <div class="svgContainer">
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="40" fill="#e5dccf" />
+            <defs>
+                <linearGradient id="phoneGradient" x1="1" x2="0" y1="1" y2="0">
+                    <stop offset="50%" stop-color="#333333" />
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                </linearGradient>
+            </defs>
+            <circle class="phoneOrbBase" cx="50" cy="50" r="40" fill="#e5dccf" />
+            <circle class="phoneOrbGradient" cx="50" cy="50" r="40" fill="url(#phoneGradient)" />
             </svg>
         </div>    
     </div>
@@ -322,14 +334,44 @@
             </div>
         </div>
         <div class="slide19Media" aria-hidden="true">
-            <img class="drawing1" src="./images/drawing1.png" alt="Place image" />
-            <img class="drawing2" src="./images/drawing2.png" alt="Object image" />
-            <img class="drawing3" src="./images/drawing3.png" alt="Person image" />
-            <img class="drawing4" src="./images/drawing4.png" alt="Language image" />
+            <div class="slide19Drawing">
+                <svg class="slide19Circle" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <circle cx="50" cy="50" r="50" fill="#ffffff" />
+                </svg>
+                <img class="drawing1" src="./images/section06-1.png" alt="Place image" />
+            </div>
+            <div class="slide19Drawing">
+                <svg class="slide19Circle" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <circle cx="50" cy="50" r="50" fill="#ffffff" />
+                </svg>
+                <img class="drawing2" src="./images/section06-2.png" alt="Object image" />
+            </div>
+            <div class="slide19Drawing">
+                <svg class="slide19Circle" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <circle cx="50" cy="50" r="50" fill="#ffffff" />
+                </svg>
+                <img class="drawing3" src="./images/section06-3.png" alt="Person image" />
+            </div>
+            <div class="slide19Drawing">
+                <svg class="slide19Circle" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <circle cx="50" cy="50" r="50" fill="#ffffff" />
+                </svg>
+                <img class="drawing4" src="./images/section06-4.png" alt="Language image" />
+            </div>
         </div>
-    </section>
 
-    <section class="slide slide20" data-bg="./images/whiteBackground.png">
+        <div class="slide19QuoteContainer">
+            <img class="slide19Quote1" src="./images/slide191.png" alt="Place image" />
+            <img class="slide19Quote2" src="./images/slide192.png" alt="Object image" />
+            <img class="slide19Quote3" src="./images/slide193.png" alt="Person image" />
+            <img class="slide19Quote4" src="./images/slide194.png" alt="Language image" />
+        </div>
+
+    </section>
+ 
+
+
+      <section class=" slide slide23" data-bg="./images/whiteBackground.png">
         <div class="slide20TextContainer" style="z-index: 40;">
             <div>
                 When housing and living conditions<br/>
@@ -349,80 +391,24 @@
                 </defs>
                 <circle cx="50" cy="50" r="40" fill="url(#slide20Gradient)" />
             </svg>
-            <svg class="slide20Line" viewBox="0 0 500 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="10" x2="500" y2="10" />
-            </svg>
+            <div class="slide20LineGroup" aria-hidden="true">
+                <svg class="slide20Line slide20Line--dashed" viewBox="0 0 500 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="0" y1="10" x2="500" y2="10" />
+                </svg>
+                <svg class="slide20Line slide20Line--solid slide20Line--up" viewBox="0 0 500 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="0" y1="10" x2="500" y2="10" />
+                </svg>
+                <svg class="slide20Line slide20Line--solid slide20Line--center" viewBox="0 0 500 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="0" y1="10" x2="500" y2="10" />
+                </svg>
+                <svg class="slide20Line slide20Line--solid slide20Line--down" viewBox="0 0 500 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="0" y1="10" x2="500" y2="10" />
+                </svg>
+            </div>
             <svg class="slide20Orb slide20Orb--right" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="50" cy="50" r="40" fill="#ffffff" />
             </svg>
         </div>
-      </section>
-<!--
-      <section class="slide slide21" data-bg="./images/whiteBackground.png">
-        <div class="slide21TextContainer" style="z-index: 40;">
-            <div>
-                Some people place belonging in lighter spaces:<br/>
-                 online relationships, content worlds…<br/>
-                When material conditions cannot keep up,<br/>
-                 meaning first takes shape outside physical reality.<br/>
-            </div>
-        </div>
-        <img class="slide21Img" src="./images/slide21.png" alt="Place image" />
-        <div class="slide21Orbs" aria-hidden="true">
-            <svg class="slide21Orb slide21Orb--left" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="slide21Gradient" x1="0" x2="1" y1="0" y2="1">
-                        <stop offset="50%" stop-color="#333333" />
-                        <stop offset="100%" stop-color="transparent" />
-                    </linearGradient>
-                </defs>
-                <circle cx="50" cy="50" r="40" fill="url(#slide21Gradient)" />
-            </svg>
-            <svg class="slide21Line" viewBox="0 0 150 21" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="10" x2="150" y2="10" />
-            </svg>
-            <svg class="slide21Orb slide21Orb--right" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="40" fill="#ffffff" />
-            </svg>
-        </div>
-      </section>
-
-      <section class="slide slide22" data-bg="./images/whiteBackground.png">
-        <div class="slide22TextContainer" style="z-index: 40;">
-            <div>
-                Others try to reconnect meaning to everyday life:
-<br/>
-                  turning relationships into repeatable encounters,<br/>
-                 preferences into executable routines,<br/>
-                 and ideals into small-scale spatial arrangements.
-<br/>
-            </div>
-        </div>
-        <img class="slide22Img" src="./images/slide22.png" alt="Place image" />
-        <div class="slide21Orbs" aria-hidden="true">
-            <svg class="slide21Orb slide21Orb--left" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="slide21Gradient" x1="0" x2="1" y1="0" y2="1">
-                        <stop offset="50%" stop-color="#333333" />
-                        <stop offset="100%" stop-color="transparent" />
-                    </linearGradient>
-                </defs>
-                <circle cx="50" cy="50" r="40" fill="url(#slide21Gradient)" />
-            </svg>
-            <svg class="slide21Line" viewBox="0 0 150 21" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="0" y1="10" x2="150" y2="10" />
-            </svg>
-            <svg class="slide21Orb slide21Orb--right" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="40" fill="#ffffff" />
-            </svg>
-        </div>
-      </section>
--->
-
-
-
-
-      <section class=" slide slide23" data-bg="./images/whiteBackground.png">
 
         <div class="slide21TextContainer">
             Some people place belonging in lighter spaces:<br/>
@@ -453,6 +439,7 @@ Reimagining belonging becomes something that can be tried, repeated, and built t
         <img class="slide23Right" src="./images/23Right.png" alt="Place image" />
         <img class="img21" src="./images/21.png" alt="Place image" />
         <img class="img22" src="./images/22.png" alt="Place image" />
+        <!-- 
         <div class="slide21Orbs" aria-hidden="true">
             <svg class="slide21Orb slide21Orb--left" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -470,6 +457,7 @@ Reimagining belonging becomes something that can be tried, repeated, and built t
                 <circle cx="50" cy="50" r="40" fill="#ffffff" />
             </svg>
         </div>
+        -->
       </section>
 
       <section class="slide slide24" data-bg="./images/whiteBackground.png">
@@ -806,12 +794,12 @@ time I went home, I felt a bit sad.”
          
         </section>
 
-
-        <section class="slide slide26" data-bg="./images/finalImage.png">
+        <section class="slide slide255" data-bg="./images/finalImage.png"></section>
+        <section class="slide slide26" data-bg="./images/finalImage.png" data-fade="2500">
         <div class="slide26TextContainer" style="z-index: 40;">But what if those conditions could be co-built into place?
         </div></section>
 
-        <section class="slide slide27" data-bg="./images/finalImage2.png">
+        <section class="slide slide27" data-bg="./images/finalImage2.png" data-fade="2500">
         <div class="slide27TextContainer" style="z-index: 40;">
             And this is where <span style="color: #9f4f2e; font-weight: 800;">500 Acres</span>  becomes more than research.</br>
             It becomes a bridge between imagination and reality.</br>
@@ -819,7 +807,32 @@ time I went home, I felt a bit sad.”
             <strong>but build it together.</strong>
         </div></section>
 
+        <section class="slide slide28" data-bg="./images/whiteBackground.png">
+            <div class="slide28TextContainer">
+                <strong>How does your belonging take shape?</strong> 
+            </div>
+            <div class="finalSvgMarquee" aria-hidden="true">
+                <div class="finalSvgRow finalSvgRow--left">
+                    <div class="finalSvgTrack"></div>
+                </div>
+                <div class="finalSvgRow finalSvgRow--right">
+                    <div class="finalSvgTrack"></div>
+                </div>
+            </div>
+            <button class="makeIconButton">Make my icon</button>
 
+
+            <div class="slide28BottomText">
+                Editing by <span class="bold-underline">Yuchun Zhang</span><br/>
+
+<br/>With thanks to:<br/>
+<span class="bold-underline">500 Acres</span>, for hosting and supporting this fellowship research project.<br/>
+Aidan Miller (500 Acres), for building the website and supporting its development.<br/>
+The seven Gen Z participants who generously shared their time, stories, drawings, and reflections, making this project possible.<br/>
+Additional thanks to collaborators and reviewers within the 500 Acres community who offered feedback, discussion, and care during development.
+
+            </div>
+        </section>
 
 
 
