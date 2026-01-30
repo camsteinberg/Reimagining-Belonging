@@ -1316,6 +1316,8 @@ p {
   visibility: hidden;
   pointer-events: none;
   transition: opacity .5s ease, visibility 0s linear .5s;
+  z-index: 50;
+  cursor: pointer;
 }
 
 body.slide24-active .slide24SVGContainer object {
@@ -1519,6 +1521,8 @@ body.slide25-active .slide24SVGContainer object {
   visibility: hidden;
   pointer-events: none;
   transition: opacity .5s ease, visibility 0s linear .5s;
+  z-index: 50;
+  cursor: pointer;
 }
 
 body.slide25-active .slide25 .imgContainer,
