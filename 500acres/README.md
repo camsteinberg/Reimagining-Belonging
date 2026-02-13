@@ -1,16 +1,80 @@
-# React + Vite
+# 500 Acres
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A website for **500 Acres**, a non-profit focused on making housing equitable through technology — helping Gen Z build houses with robots by 2026.
 
-Currently, two official plugins are available:
+The homepage preserves the original *Reimagining Belonging* scroll animation — a 28-section interactive experience exploring Gen Z's relationship with home, featuring housing statistics, interactive migration maps, participant interviews, ideal home drawings, and a belonging framework. The rest of the site provides pages for learning about the organization, reading participant stories, accessing housing resources, and getting involved.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## React Compiler
+- **React 19** + **Vite 7** — fast dev server and optimized builds
+- **Tailwind CSS 4** — utility-first styling with a custom woodsy color theme
+- **GSAP** — scroll-driven animations, page transitions, and interactive elements
+- **Mapbox GL** + **Deck.GL** — interactive migration maps with arc layers
+- **React Router** — client-side routing with smooth page transitions
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
+```bash
+# Install dependencies
+npm install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Add your Mapbox token
+cp .env.local.example .env.local
+# Edit .env.local and set VITE_MAPBOX_TOKEN=your_token_here
+
+# Start dev server
+npm run dev
+```
+
+The site will be available at `http://localhost:5173`.
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | Run ESLint |
+
+## Project Structure
+
+```
+500acres/
+├── public/
+│   └── data/              # GeoJSON files for maps
+├── src/
+│   ├── assets/
+│   │   ├── brand/         # Logo files
+│   │   ├── images/        # Section backgrounds, drawings, photos
+│   │   └── svg/           # Participant portrait SVGs
+│   ├── components/
+│   │   ├── homepage/      # 16 scroll animation section components
+│   │   ├── layout/        # Navbar, Footer, PageTransition, ScrollToTop
+│   │   └── shared/        # Modal, Logo
+│   ├── data/              # Participant profiles, slide config, map config
+│   ├── hooks/             # Custom React hooks
+│   ├── pages/             # Route-level page components
+│   └── styles/            # Global CSS + Tailwind theme
+├── .env.local             # Mapbox token (not committed)
+└── vercel.json            # Vercel deployment config
+```
+
+## Pages
+
+- **/** — The full scroll animation experience (28 sections)
+- **/about** — Mission, vision timeline, origin story
+- **/stories** — Participant grid with links to individual profiles
+- **/stories/:slug** — Individual participant story with quotes and drawings
+- **/resources** — Filterable housing resource cards and partner organizations
+- **/get-involved** — Volunteer form, engagement funnel, donation CTA
+
+## Environment Variables
+
+| Variable | Description |
+|---|---|
+| `VITE_MAPBOX_TOKEN` | Mapbox GL access token (required for map sections) |
+
+## Deployment
+
+Configured for **Vercel** with SPA fallback routing via `vercel.json`.
