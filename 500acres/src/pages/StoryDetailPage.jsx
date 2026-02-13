@@ -96,7 +96,7 @@ export default function StoryDetailPage() {
         <div className="page-container max-w-4xl mx-auto">
           <blockquote className="reveal-up">
             <span className="block font-serif text-6xl md:text-8xl leading-none opacity-10" style={{ color: accentColor }}>"</span>
-            <p className="font-serif text-xl md:text-3xl lg:text-4xl text-charcoal italic leading-[1.3] -mt-8 md:-mt-12">
+            <p className="font-serif text-xl md:text-3xl lg:text-4xl text-charcoal italic leading-[1.5] -mt-8 md:-mt-12">
               {participant.belongingQuote}
             </p>
           </blockquote>

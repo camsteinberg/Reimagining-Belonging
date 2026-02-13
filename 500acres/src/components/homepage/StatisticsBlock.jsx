@@ -1,3 +1,65 @@
+import { useState, useEffect, useRef, useCallback } from "react";
+
+function AnimatedCounter({ target, duration = 2000 }) {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const ref = useRef(null);
+
+  const animate = useCallback(() => {
+    if (hasAnimated) return;
+    setHasAnimated(true);
+
+    const start = performance.now();
+
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic: 1 - (1 - t)^3
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(eased * target));
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    }
+
+    requestAnimationFrame(step);
+  }, [target, duration, hasAnimated]);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animate();
+            observer.unobserve(node);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(node);
+
+    return () => {
+      observer.unobserve(node);
+    };
+  }, [animate]);
+
+  return (
+    <span
+      ref={ref}
+      className="counter-number"
+      style={{ color: "#9f4f2e" }}
+    >
+      {count}%
+    </span>
+  );
+}
+
 export default function StatisticsBlock() {
   return (
     <>
@@ -34,11 +96,11 @@ export default function StatisticsBlock() {
         </div>
         <div className="slide9BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "55%", textAlign: "center", fontSize: "22px", zIndex: 20 }}>
           <div style={{ color: "#e5dccf" }}>
-            <span style={{ color: "#9f4f2e" }}>81%</span> of Gen Z say they
+            <AnimatedCounter target={81} /> of Gen Z say they
             cannot afford a home right now,
           </div>
           <div style={{ color: "#e5dccf" }}>
-            and <span style={{ color: "#9f4f2e" }}>82%</span> worry the housing
+            and <AnimatedCounter target={82} /> worry the housing
             market will get worse
           </div>
           <div style={{ color: "#e5dccf" }}>
@@ -62,11 +124,11 @@ export default function StatisticsBlock() {
           </div>
           <div style={{ color: "#e5dccf" }}>On the contrary,</div>
           <div style={{ color: "#e5dccf" }}>
-            <span style={{ color: "#9f4f2e" }}>90%</span> of Gen Z hope to own a
+            <AnimatedCounter target={90} /> of Gen Z hope to own a
             home someday,
           </div>
           <div style={{ color: "#e5dccf" }}>
-            yet <span style={{ color: "#9f4f2e" }}>62%</span> worry that it may
+            yet <AnimatedCounter target={62} /> worry that it may
             never happen.
           </div>
           <div style={{ color: "#e5dccf" }}>

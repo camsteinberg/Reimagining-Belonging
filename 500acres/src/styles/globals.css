@@ -2,42 +2,166 @@
 @import "tailwindcss";
 
 @theme {
-  --color-cream: #e5dccf;
+  /* ── Campfire palette ──
+     Warm earth tones, deep night sky, forest canopy, firelit warmth */
+  --color-cream: #e8e0d0;
   --color-rust: #8b5e3c;
   --color-gold: #b89f65;
-  --color-charcoal: #333333;
-  --color-forest: #4a7c59;
-  --color-navy: #5a7d8b;
-  --color-warm-white: #f4f1ec;
+  --color-charcoal: #2a2520;
+  --color-forest: #3d6b4f;
+  --color-navy: #3a5a6e;
+  --color-warm-white: #f5f1ea;
   --color-sage: #6b8f71;
-  --color-moss: #3d6b4f;
-  --color-bark: #6b4a3a;
-  --color-clay: #c4856d;
-  --color-amber: #c9a96e;
+  --color-moss: #365f45;
+  --color-bark: #5c3d2e;
+  --color-clay: #b8755d;
+  --color-amber: #d4a84b;
+  --color-ember: #c45d3e;
+  --color-night: #1a1714;
+  --color-starlight: #f0ead6;
+  --color-smoke: #8a837a;
+  --color-pine: #2d4a37;
+  --color-hearth: #a0522d;
 
   --font-serif: "EB Garamond", serif;
   --font-sans: "Inter", sans-serif;
 }
 
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+/* Reset must be in @layer base so Tailwind utility classes
+   (which live in @layer utilities) can override it.
+   Without this, the unlayered * rule silently blocks
+   ALL Tailwind padding / margin utilities. */
+@layer base {
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
 }
 
-:root {
-  --bg: #f2efe7;
-  --ink: #111;
-  --panel: #ffffffcc;
-  --stroke: #111;
+@layer base {
+  :root {
+    --bg: #f2efe7;
+    --ink: #111;
+    --panel: #ffffffcc;
+    --stroke: #111;
+  }
+
+  body {
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    background-color: var(--color-charcoal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ── Focus visible ── */
+  *:focus-visible {
+    outline: 2px solid var(--color-sage);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
 }
 
-body {
-  font-family: var(--font-serif);
-  color: var(--color-charcoal);
-  background-color: var(--color-charcoal);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ── Hide default cursor on pointer devices ── */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
+/* ── Custom cursor ── */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-charcoal);
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease,
+              background-color 0.3s ease, opacity 0.3s ease;
+  mix-blend-mode: difference;
+  opacity: 0;
+}
+
+.custom-cursor.is-active {
+  opacity: 1;
+}
+
+.custom-cursor.is-hovering {
+  width: 50px;
+  height: 50px;
+  border-color: var(--color-sage);
+  background-color: rgba(107, 143, 113, 0.1);
+}
+
+.custom-cursor.on-dark {
+  border-color: var(--color-cream);
+}
+
+/* Hide custom cursor on touch devices */
+@media (hover: none), (pointer: coarse) {
+  .custom-cursor { display: none; }
+}
+
+/* ── Scroll progress bar ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-ember), var(--color-amber), var(--color-sage));
+  z-index: 9998;
+  transform-origin: left;
+  transform: scaleX(0);
+  will-change: transform;
+}
+
+/* ── Loading screen ── */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--color-night);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease, visibility 0s linear 0.6s;
+}
+
+.loading-screen.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-screen .loading-ember {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-amber);
+  animation: emberFloat 1.5s ease-in-out infinite;
+}
+
+.loading-screen .loading-ember:nth-child(2) { animation-delay: 0.2s; }
+.loading-screen .loading-ember:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes emberFloat {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-12px); opacity: 1; }
 }
 
 /* Reusable page container — guaranteed centered content with generous,
@@ -1805,6 +1929,474 @@ body.slide25-active .slide25 .imgContainer7 {
 
 /* Inner page text selection */
 .inner-page ::selection {
-  background: #c4a448;
-  color: #333333;
+  background: var(--color-amber);
+  color: var(--color-charcoal);
+}
+
+/* ── Inner page typography defaults ── */
+@layer base {
+  .inner-page p,
+  .inner-page blockquote p {
+    line-height: 1.8;
+  }
+
+  .inner-page h1, .inner-page h2, .inner-page h3 {
+    line-height: 1.15;
+  }
+
+  /* Card text width constraint — prevents text from stretching edge-to-edge */
+  .card-prose {
+    max-width: 55ch;
+  }
+}
+
+/* ── Firefly particles (decorative background) ── */
+@keyframes fireflyDrift {
+  0%, 100% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.8; }
+  50% { transform: translate(40px, -60px); opacity: 0.4; }
+  90% { opacity: 0.7; }
+}
+
+.firefly {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--color-amber);
+  box-shadow: 0 0 6px 2px rgba(212, 168, 75, 0.4);
+  animation: fireflyDrift 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Counter animation ── */
+.counter-number {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Card tilt effect base ── */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease;
+}
+
+/* ── Image reveal wipe ── */
+.image-reveal {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.image-reveal.is-revealed {
+  clip-path: inset(0 0% 0 0);
+}
+
+/* ── Parallax blob depth ── */
+.parallax-blob {
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+/* ═══════════════════════════════════════
+   MOBILE RESPONSIVE — HOMEPAGE
+   ═══════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Hero intro */
+  .introHeader {
+    font-size: 28px;
+    top: 30%;
+    padding: 0 20px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .introSub {
+    font-size: 18px;
+    top: 48%;
+    padding: 0 30px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .startButton {
+    width: 100px;
+    height: 100px;
+    font-size: 16px;
+    top: 68%;
+  }
+
+  /* Slide text containers — make readable on mobile */
+  .slide2TextContainer,
+  .slide3TextContainer,
+  .slide4TextContainer,
+  .slide5TextContainer,
+  .slide6TextContainer,
+  .slide7TextContainer,
+  .slide8TextContainer,
+  .slide9TextContainer,
+  .slide10TextContainer,
+  .slide11TextContainer {
+    font-size: 16px;
+    padding: 0 24px;
+    width: 100%;
+  }
+
+  .slide6BottomText,
+  .slide8BottomText,
+  .slide9BottomText,
+  .slide11BottomText {
+    font-size: 16px;
+    padding: 0 24px;
+    width: 100%;
+  }
+
+  /* Slide 2 phone overlay */
+  .slide2Phone {
+    height: 200vh;
+  }
+
+  /* Phone overlay */
+  .phoneOverlay .svgContainer svg {
+    width: 80vh;
+    height: 80vh;
+  }
+
+  /* Slide 17 — Belonging reveal */
+  .slide17 .svgContainer2 {
+    width: 50vw;
+    height: 50vw;
+    top: 25vh;
+  }
+
+  .slide17 .belongingLabel {
+    font-size: 22px;
+    top: 55vh;
+  }
+
+  .slide17 .slide17Reveal {
+    width: 40vw;
+    min-width: 140px;
+  }
+
+  .slide17 .slide17Reveal.left {
+    left: -20vw;
+    top: 35vh;
+  }
+
+  .slide17 .slide17Reveal.right {
+    left: 10vw;
+    top: 35vh;
+  }
+
+  /* Slide 18 — Circles */
+  .slide18Media {
+    width: 90vw;
+  }
+
+  .greenSVGContainer { left: 5vw; top: 55vh; }
+  .yellowSVGContainer { left: 25vw; top: 55vh; }
+  .redSVGContainer { left: 45vw; top: 55vh; }
+  .blueSVGContainer { left: 65vw; top: 55vh; }
+
+  .circleLabel {
+    font-size: 14px;
+  }
+
+  /* Slide 19 — Drawings */
+  .slide19Media {
+    flex-wrap: wrap;
+    height: auto;
+    width: 90vw;
+    top: 70%;
+    gap: 10px;
+  }
+
+  .slide19Drawing {
+    width: 45%;
+    height: auto;
+    padding: 10px;
+  }
+
+  .slide19QuoteContainer {
+    display: none; /* Hide quotes on mobile since hover doesn't work */
+  }
+
+  .slide19TextContainer {
+    font-size: 16px;
+    padding: 0 20px;
+    width: 100%;
+  }
+
+  /* Slide 20-23 — Orbs */
+  .slide20Orbs {
+    --orb-size: 180px;
+    --orb-edge-inset: 15px;
+    --orb-edge-inset-right: 10px;
+    top: calc(18px + 20vh);
+  }
+
+  .slide20Orb--left { left: 3vw; }
+  .slide20Orb--right { right: 3vw; }
+
+  .slide20TextContainer,
+  .slide21TextContainer,
+  .slide22TextContainer,
+  .slide23TextContainer {
+    font-size: 16px;
+    padding: 0 24px;
+    width: 100%;
+  }
+
+  /* Slide 24 — SVG portraits (handled by inline styles, but help with sizing) */
+  .slide24TextContainer,
+  .slide25TextContainer {
+    left: 5vw;
+    font-size: 16px;
+    padding-right: 20px;
+  }
+
+  /* Slide 25 — Ideal home drawings */
+  .slide25 .imgContainer,
+  .slide25 .imgContainer2,
+  .slide25 .imgContainer3,
+  .slide25 .imgContainer4,
+  .slide25 .imgContainer5,
+  .slide25 .imgContainer6,
+  .slide25 .imgContainer7 {
+    width: min(35vw, 150px);
+  }
+
+  .slide25 .imgContainer { top: 8vh; left: 15vw; }
+  .slide25 .imgContainer2 { top: 8vh; left: 50vw; }
+  .slide25 .imgContainer3 { top: 35vh; left: 10vw; }
+  .slide25 .imgContainer4 { top: 35vh; left: 45vw; }
+  .slide25 .imgContainer5 { top: 35vh; left: 75vw; }
+  .slide25 .imgContainer6 { top: 60vh; left: 25vw; }
+  .slide25 .imgContainer7 { top: 60vh; left: 60vw; }
+
+  /* Popup containers — full width on mobile */
+  .popupContainer,
+  .svg1popupContainer,
+  .svg2popupContainer,
+  .svg3popupContainer,
+  .svg4popupContainer,
+  .svg5popupContainer,
+  .svg6popupContainer,
+  .svg7popupContainer {
+    width: 95vw;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 20px;
+  }
+
+  .popupHeader {
+    position: static;
+    margin: 20px;
+    font-size: 22px;
+  }
+
+  .popupDesc {
+    position: static;
+    margin: 0 20px 15px;
+    max-width: none;
+    font-size: 14px;
+  }
+
+  .popupTopText {
+    margin-left: 20px;
+    margin-top: 15px;
+    font-size: 17px;
+    padding-right: 20px;
+  }
+
+  .popupBottomText {
+    margin-left: 20px;
+    font-size: 14px;
+    padding-right: 20px;
+    padding-bottom: 30px;
+  }
+
+  .popWinContainer1,
+  .popWinContainer2,
+  .popWinContainer3,
+  .popWinContainer4,
+  .popWinContainer5,
+  .popWinContainer6,
+  .popWinContainer7 {
+    width: 95vw;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 20px;
+  }
+
+  .popWinContainer1 img,
+  .popWinContainer2 img,
+  .popWinContainer3 img,
+  .popWinContainer4 img,
+  .popWinContainer5 img,
+  .popWinContainer6 img,
+  .popWinContainer7 img {
+    position: static;
+    width: 100%;
+    max-height: 50vh;
+    margin: 20px 0;
+    padding: 0 20px !important;
+  }
+
+  .popWinHeader {
+    position: static;
+    margin: 20px;
+    font-size: 24px;
+  }
+
+  .popWinDesc {
+    position: static;
+    margin: 0 20px 30px;
+    font-size: 15px;
+    padding-right: 0;
+  }
+
+  /* Maps — responsive sizing */
+  .mapWrap {
+    width: 95vw;
+    height: 60vh;
+    top: 30vh;
+  }
+
+  #initialMap {
+    width: 95vw;
+    height: 60vh;
+    top: 30vh;
+  }
+
+  .slide15 .mapWrap,
+  .slide16 .mapWrap {
+    top: 30vh;
+  }
+
+  .slide15TextContainer,
+  .slide16TextContainer,
+  .initMapText1 {
+    font-size: 16px;
+    padding: 0 20px;
+  }
+
+  .initMapText2,
+  .initMapText3 {
+    font-size: 16px;
+    padding: 0 20px;
+  }
+
+  .initMapText3Quote {
+    font-size: 13px;
+    left: 20px;
+    right: 20px;
+    text-align: center;
+  }
+
+  .legend {
+    font-size: 11px;
+    padding: 10px 12px;
+    max-width: 180px;
+  }
+
+  .tooltip {
+    max-width: 220px;
+    font-size: 12px;
+  }
+
+  /* Slide 28 — Final slide */
+  .slide28TextContainer {
+    font-size: 16px;
+    padding: 0 20px;
+  }
+
+  .slide28BottomText {
+    font-size: 10px;
+    padding: 0 20px;
+    top: 82vh;
+  }
+
+  .finalSvgRow {
+    height: 120px;
+  }
+
+  .finalSvgIcon {
+    height: 120px;
+    margin-right: -100px;
+  }
+
+  .makeIconButton {
+    font-size: 14px;
+    padding: 0 14px;
+    height: 26px;
+  }
+
+  /* Close button */
+  .closeButton {
+    top: 12px;
+    margin-right: 12px;
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Images in slides 21-23 */
+  .img21, .img22 {
+    width: 50%;
+  }
+
+  .slide23Left, .slide23Right {
+    width: 40vw;
+  }
+
+  .slide23Left { left: 5%; }
+  .slide23Right { left: 55%; }
+}
+
+/* Small mobile - further adjustments */
+@media (max-width: 480px) {
+  .introHeader {
+    font-size: 24px;
+    top: 28%;
+  }
+
+  .introSub {
+    font-size: 15px;
+  }
+
+  .slide2TextContainer,
+  .slide3TextContainer,
+  .slide4TextContainer,
+  .slide5TextContainer,
+  .slide6TextContainer,
+  .slide7TextContainer,
+  .slide8TextContainer,
+  .slide9TextContainer,
+  .slide10TextContainer,
+  .slide11TextContainer,
+  .slide6BottomText,
+  .slide8BottomText,
+  .slide9BottomText,
+  .slide11BottomText {
+    font-size: 14px;
+    padding: 0 16px;
+  }
+
+  .slide20Orbs {
+    --orb-size: 120px;
+  }
+
+  .slide17 .belongingLabel {
+    font-size: 18px;
+  }
+
+  .greenSVGContainer,
+  .yellowSVGContainer,
+  .redSVGContainer,
+  .blueSVGContainer {
+    --circle-green: 18vw;
+    --circle-yellow: 18vw;
+    --circle-red: 18vw;
+    --circle-blue: 18vw;
+  }
 }

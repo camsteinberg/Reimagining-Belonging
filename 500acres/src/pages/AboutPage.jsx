@@ -1,9 +1,20 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import useReveal from "../hooks/useReveal";
 import Logo from "../components/shared/Logo";
 
 export default function AboutPage() {
   const ref = useReveal();
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleNewsletter = (e) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubscribed(true);
+      setEmail("");
+    }
+  };
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
@@ -18,12 +29,15 @@ export default function AboutPage() {
             About 500 Acres
           </p>
           <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-8">
-            Equitable housing
+            Turning empty land
             <br />
-            <span className="text-forest">through technology.</span>
+            <span className="text-forest">into real homes.</span>
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/60 max-w-md leading-relaxed">
-            Helping Gen Z build houses with robots by 2026.
+          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/60 max-w-lg">
+            500 Acres is a social enterprise transforming underutilized land
+            near America's national parks into communities where young adults
+            learn to build sustainable housing — and build their own path
+            to homeownership.
           </p>
         </div>
 
@@ -51,23 +65,116 @@ export default function AboutPage() {
               Our Mission
             </p>
             <h2 className="reveal-left stagger-1 font-serif text-3xl md:text-4xl font-bold text-charcoal leading-[1.15]">
-              Making home
-              <br />possible.
+              Empty land becomes shelter.
+              <br />Shelter becomes skill.
+              <br />Skill becomes wealth.
             </h2>
           </div>
           <div className="md:col-span-6 md:col-start-6 flex flex-col justify-center">
             <p className="reveal-right font-serif text-lg text-charcoal/70 leading-[1.8] mb-6">
-              500 Acres is a non-profit organization focused on making housing
-              equitable through technology. We believe that by empowering Gen Z with
-              the tools, knowledge, and community to build — literally build — their
-              own housing, we can begin to close the gap between imagination and
-              reality.
+              500 Acres pairs a Qualified Opportunity Zone investment fund with
+              a 501(c)(3) foundation to acquire land, train the next generation
+              of builders through hands-on fellowships, and deliver low-cost,
+              rapidly assembled housing kits. The result: stabilized workforce
+              housing, measurable career outcomes, and a tested pathway to
+              earned homeownership.
             </p>
             <p className="reveal-right stagger-1 font-serif text-lg text-charcoal/70 leading-[1.8]">
-              What started as a research project exploring belonging has
-              become a bridge between imagination and reality: a place where Gen Z
-              can not only imagine belonging, but build it together.
+              What began as the "Reimagining Belonging" research project — a
+              qualitative study exploring what home means to Gen Z — became the
+              blueprint for everything we build. The research revealed that when
+              housing stability is missing, belonging shifts to portable anchors
+              of meaning. 500 Acres exists to bring that meaning back to
+              physical reality.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Values Section */}
+      <section className="py-24 md:py-36 bg-warm-white">
+        <div className="page-container">
+          <div className="text-center mb-20 md:mb-24">
+            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+              What We Believe
+            </p>
+            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal">
+              Our Values
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-14">
+            {[
+              {
+                icon: (
+                  <svg className="w-10 h-10 text-ember" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 36c-6 0-14-4-14-14C6 12 20 4 20 4s14 8 14 18c0 10-8 14-14 14z" />
+                    <path d="M20 36c-2 0-6-2-6-8 0-6 6-10 6-10s6 4 6 10c0 6-4 8-6 8z" />
+                  </svg>
+                ),
+                title: "Build Homes, Build Hope",
+                color: "bg-hearth/10",
+                accent: "bg-ember",
+                desc: "We deliver habitable capacity quickly and affordably — camp pods, nesting kits, and A-frames. Each structure is a training site and revenue asset that reduces housing costs and creates pathways to ownership.",
+              },
+              {
+                icon: (
+                  <svg className="w-10 h-10 text-forest" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 4L10 18h6l-5 10h6l-5 10h16l-5-10h6l-5-10h6L20 4z" />
+                    <line x1="20" y1="34" x2="20" y2="38" />
+                  </svg>
+                ),
+                title: "Grow People, Close Gaps",
+                color: "bg-sage/10",
+                accent: "bg-forest",
+                desc: "Our Six Steps fellowship curriculum teaches digital fabrication, timber framing, and small-business skills so participants can increase wages and launch micro-enterprises. We track completion, placement, and verified wage uplift.",
+              },
+              {
+                icon: (
+                  <svg className="w-10 h-10 text-gold" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="20" cy="20" r="14" />
+                    <line x1="20" y1="6" x2="20" y2="34" />
+                    <path d="M14 14c0 0 3-2 6-2s6 2 6 2" />
+                    <path d="M14 26c0 0 3 2 6 2s6-2 6-2" />
+                  </svg>
+                ),
+                title: "Social Repair",
+                color: "bg-amber/10",
+                accent: "bg-gold",
+                desc: "We invest in community trust through transparent communication and facilitated mediation built into every site's governance. Better relationships reduce turnover, speed builds, and improve long-term outcomes.",
+              },
+              {
+                icon: (
+                  <svg className="w-10 h-10 text-bark" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 32L20 8l12 24" />
+                    <line x1="12" y1="26" x2="28" y2="26" />
+                    <line x1="20" y1="8" x2="20" y2="32" />
+                    <circle cx="14" cy="20" r="2" />
+                    <circle cx="26" cy="20" r="2" />
+                  </svg>
+                ),
+                title: "Design & Stewardship",
+                color: "bg-clay/10",
+                accent: "bg-bark",
+                desc: "Every housing unit is scored for form, comfort, and connection to place. Stewardship of land — low-impact siting, native planting, and site maintenance — is built into project budgets and fellow responsibilities.",
+              },
+            ].map((value, i) => (
+              <div
+                key={value.title}
+                className={`reveal-up stagger-${i + 1} group relative p-10 md:p-14 rounded-2xl ${value.color} transition-transform duration-500 hover:-translate-y-2`}
+              >
+                <div className={`w-16 h-16 rounded-xl ${value.color} flex items-center justify-center mb-10`}>
+                  {value.icon}
+                </div>
+                <div className={`w-8 h-[3px] ${value.accent} rounded-full mb-8`} />
+                <h3 className="font-serif text-xl md:text-2xl font-bold text-charcoal mb-6">
+                  {value.title}
+                </h3>
+                <p className="font-serif text-base text-charcoal/70 leading-[1.85] card-prose">
+                  {value.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -78,12 +185,11 @@ export default function AboutPage() {
           <Logo className="absolute -right-[10%] top-1/2 -translate-y-1/2 w-[60vw] h-[60vw]" showText={false} />
         </div>
         <div className="page-container relative z-10 text-center max-w-4xl mx-auto">
-          <blockquote className="reveal-scale font-serif text-2xl md:text-4xl lg:text-5xl text-cream leading-[1.3] font-bold italic">
-            "Home is not just four walls — it's the feeling that you belong somewhere,
-            that somewhere belongs to you."
+          <blockquote className="reveal-scale font-serif text-2xl md:text-4xl lg:text-5xl text-cream leading-[1.5] font-bold italic">
+            "Empty land becomes shelter. Shelter becomes skill. Skill becomes wealth."
           </blockquote>
           <p className="reveal-up stagger-2 font-sans text-sm uppercase tracking-[0.3em] text-cream/40 mt-10">
-            — From participant interviews
+            — 500 Acres Mission
           </p>
         </div>
       </section>
@@ -94,45 +200,45 @@ export default function AboutPage() {
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
             The Path Forward
           </p>
-          <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-16 md:mb-20">
-            Vision: 2024 → 2026
+          <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-20 md:mb-24">
+            2024 &rarr; 2026 &rarr; Beyond
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-14">
             {[
               {
                 num: "01",
-                title: "Research",
+                title: "Research & Design",
                 color: "bg-amber",
                 textColor: "text-charcoal",
-                desc: "Understanding how Gen Z reimagines belonging through interviews, drawings, and data.",
+                desc: "Published the Habitable White Paper. Completed the Reimagining Belonging study with seven Gen Z participants. Ran fellowship pilots, assembled core team, and identified site pipeline near Grand Canyon, Yellowstone, Bryce, and Olympic.",
               },
               {
                 num: "02",
-                title: "Prototype",
+                title: "Prototype & Train",
                 color: "bg-bark",
                 textColor: "text-cream",
-                desc: "Developing robotic construction tools and community design frameworks.",
+                desc: "Set up ShopBot CNC production in Boise. Designed and revealed the Camp Pod kit with CWI students. Running the first 'Raise the Pod' prototype build. Developing the Six Steps workforce training curriculum.",
               },
               {
                 num: "03",
-                title: "Build",
+                title: "Deploy & Scale",
                 color: "bg-moss",
                 textColor: "text-cream",
-                desc: "Gen Z building houses with robots, turning belonging from imagination into reality.",
+                desc: "Producing four housing kits and deploying to Grand Canyon. Scaling into A-Frame production. Expanding fellowship cohorts and matched savings programs. Opening site pipeline across national park gateway communities.",
               },
             ].map((step, i) => (
               <div
                 key={step.num}
-                className={`reveal-up stagger-${i + 1} group relative p-8 md:p-10 rounded-2xl ${step.color} transition-transform duration-500 hover:-translate-y-2`}
+                className={`reveal-up stagger-${i + 1} group relative p-10 md:p-14 rounded-2xl ${step.color} transition-transform duration-500 hover:-translate-y-2`}
               >
-                <span className={`block font-sans text-6xl md:text-7xl font-bold ${step.textColor} opacity-10 mb-4`}>
+                <span className={`block font-sans text-6xl md:text-7xl font-bold ${step.textColor} opacity-10 mb-8`}>
                   {step.num}
                 </span>
-                <h3 className={`font-serif text-2xl md:text-3xl font-bold ${step.textColor} mb-4`}>
+                <h3 className={`font-serif text-2xl md:text-3xl font-bold ${step.textColor} mb-8`}>
                   {step.title}
                 </h3>
-                <p className={`font-serif text-base ${step.textColor} opacity-80 leading-relaxed`}>
+                <p className={`font-serif text-base ${step.textColor} opacity-80 leading-[1.85]`}>
                   {step.desc}
                 </p>
                 {/* Connecting line */}
@@ -141,6 +247,112 @@ export default function AboutPage() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div className="page-container">
+        <div className="h-px bg-charcoal/10" />
+      </div>
+
+      {/* Team Section */}
+      <section className="py-24 md:py-36">
+        <div className="page-container">
+          <div className="text-center mb-20 md:mb-24">
+            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+              Leadership
+            </p>
+            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
+              Our Team
+            </h2>
+            <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl mx-auto">
+              The people building 500 Acres — from land acquisition and fund
+              management to on-site construction and digital fabrication.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+            {[
+              {
+                name: "Michelle Crosby",
+                role: "Founder & General Partner",
+                accent: "bg-forest",
+                bio: "Leads 500 Acres' investment fund and foundation, overseeing land acquisition, partnerships, and organizational strategy.",
+              },
+              {
+                name: "Meg",
+                role: "Chief Financial Officer",
+                accent: "bg-sage",
+                bio: "Manages fund financials, investor relations, and organizational operations across the fund and foundation.",
+              },
+              {
+                name: "Cam Steinberg",
+                role: "Project Manager, R&D",
+                accent: "bg-amber",
+                bio: "Builds and manages the teams behind 500 Acres' technical infrastructure — currently leading website development and streamlining internal communications systems.",
+              },
+              {
+                name: "John",
+                role: "General Contractor",
+                accent: "bg-bark",
+                bio: "Oversees on-site construction, manages build crews, and ensures quality across prototype and production builds.",
+              },
+              {
+                name: "Mikey",
+                role: "Superintendent",
+                accent: "bg-clay",
+                bio: "Leads day-to-day site operations, coordinates build logistics, and supervises construction crews.",
+              },
+              {
+                name: "Koki",
+                role: "Design Partner (VUILD)",
+                accent: "bg-moss",
+                bio: "Leads digital fabrication design through the VUILD partnership, developing CNC nesting patterns and housing kit architecture.",
+              },
+            ].map((member, i) => (
+              <div
+                key={member.name}
+                className={`reveal-up stagger-${(i % 3) + 1} group text-center`}
+              >
+                <div className="relative w-40 h-40 mx-auto mb-10">
+                  <div className="w-full h-full rounded-full bg-charcoal/5 flex items-center justify-center overflow-hidden">
+                    <span className="font-serif text-4xl font-bold text-charcoal/20">
+                      {member.name.split(" ").map((n) => n[0]).join("")}
+                    </span>
+                  </div>
+                  <div className={`absolute -bottom-1 -right-1 w-8 h-8 ${member.accent} rounded-full`} />
+                </div>
+                <h3 className="font-serif text-xl font-bold text-charcoal mb-1">
+                  {member.name}
+                </h3>
+                <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/40 mb-6">
+                  {member.role}
+                </p>
+                <p className="font-serif text-sm text-charcoal/60 leading-[1.75] max-w-[260px] mx-auto">
+                  {member.bio}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Contributors */}
+          <div className="mt-20 md:mt-24 text-center">
+            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-10">
+              Contributors
+            </p>
+            <div className="reveal-up stagger-1 flex flex-wrap justify-center gap-8 md:gap-12">
+              {[
+                { name: "Aidan Miller", role: "R&D" },
+                { name: "Cole Kreiling", role: "Backend Engineer" },
+                { name: "Yuchun Zhang", role: "Research & Story" },
+              ].map((c) => (
+                <div key={c.name} className="text-center">
+                  <p className="font-serif text-base font-bold text-charcoal">{c.name}</p>
+                  <p className="font-sans text-xs text-charcoal/40 tracking-wide">{c.role}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -170,16 +382,69 @@ export default function AboutPage() {
             </h2>
             <p className="reveal-right stagger-2 font-serif text-lg text-charcoal/70 leading-[1.8] mb-6">
               500 Acres grew from the "Reimagining Belonging" research project —
-              a design fellowship that explored how seven Gen Z participants
-              relate to home, place, and community in the face of housing
-              instability.
+              a qualitative study led by the 500 Acres Foundation that explored
+              what home means to seven Gen Z participants. Through interviews,
+              drawings, and conversations, the research revealed a central
+              finding: when material stability is missing, people anchor
+              belonging in portable meaning — places, objects, people, and
+              language.
             </p>
             <p className="reveal-right stagger-3 font-serif text-lg text-charcoal/70 leading-[1.8]">
-              Their stories, drawings, and dreams of home became the foundation
-              for everything we do. Each voice revealed a universal truth:
-              belonging isn't given — it's built.
+              That insight became the foundation for the 500 Acres model:
+              acquire underutilized land near national parks, train young adults
+              to build through hands-on fellowships, and deliver housing kits
+              that convert labor into asset ownership. The research didn't just
+              inform the mission — it is the mission.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Newsletter Signup */}
+      <section className="py-24 md:py-32 bg-night overflow-hidden">
+        <div className="page-container relative z-10 text-center max-w-2xl mx-auto">
+          {/* Decorative stars */}
+          <div className="absolute top-8 left-[15%] w-1 h-1 bg-starlight rounded-full opacity-40" />
+          <div className="absolute top-16 right-[20%] w-1.5 h-1.5 bg-starlight rounded-full opacity-30" />
+          <div className="absolute bottom-12 left-[25%] w-1 h-1 bg-starlight rounded-full opacity-25" />
+          <div className="absolute top-24 right-[35%] w-0.5 h-0.5 bg-starlight rounded-full opacity-50" />
+
+          <h2 className="reveal-up font-serif text-3xl md:text-4xl font-bold text-cream mb-4">
+            Stay Connected
+          </h2>
+          <p className="reveal-up stagger-1 font-serif text-lg text-cream/60 mb-10 max-w-lg mx-auto">
+            Build updates, fellowship announcements, and Live Forum
+            invitations — delivered to your inbox, never more than twice
+            a month.
+          </p>
+
+          {subscribed ? (
+            <div className="reveal-up stagger-2">
+              <p className="font-serif text-lg text-sage">
+                You're in. We'll be in touch.
+              </p>
+            </div>
+          ) : (
+            <form
+              onSubmit={handleNewsletter}
+              className="reveal-up stagger-2 flex flex-col sm:flex-row items-center gap-5 max-w-md mx-auto"
+            >
+              <input
+                type="email"
+                required
+                placeholder="Your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full sm:flex-1 px-6 py-5 rounded-full bg-cream/10 border border-cream/20 text-cream placeholder-cream/30 font-serif text-base focus:outline-none focus:border-sage/60 transition-colors duration-300"
+              />
+              <button
+                type="submit"
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-ember text-cream font-serif text-base font-bold hover:bg-rust transition-colors duration-300 whitespace-nowrap"
+              >
+                Join Us
+              </button>
+            </form>
+          )}
         </div>
       </section>
 
@@ -187,10 +452,12 @@ export default function AboutPage() {
       <section className="relative py-24 md:py-36 bg-moss overflow-hidden">
         <div className="page-container relative z-10 text-center">
           <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            Ready to build belonging?
+            Ready to build?
           </h2>
           <p className="reveal-up stagger-1 font-serif text-lg text-cream/70 mb-10 max-w-xl mx-auto">
-            Whether you want to learn, volunteer, or build — there's a place for you.
+            Whether you want to apply for a fellowship, attend a Live Forum,
+            volunteer for a build weekend, or support the mission — there's
+            a place for you here.
           </p>
           <Link
             to="/get-involved"

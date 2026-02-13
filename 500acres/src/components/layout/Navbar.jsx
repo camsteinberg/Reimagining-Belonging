@@ -57,8 +57,11 @@ export default function Navbar({ isHomepage }) {
           cl.contains("bg-charcoal") ||
           cl.contains("bg-moss") ||
           cl.contains("bg-bark") ||
+          cl.contains("bg-night") ||
+          cl.contains("bg-pine") ||
           cl.contains("diagonal-top") ||
-          el.style.backgroundColor === "#333333"
+          el.style.backgroundColor === "#333333" ||
+          el.style.backgroundColor === "#2a2520"
         );
       });
 
@@ -239,7 +242,8 @@ export default function Navbar({ isHomepage }) {
                 ref={(el) => setLinkRef(el, i)}
                 to={link.to}
                 onClick={(e) => handleNavClick(e, link.to)}
-                className={`group flex items-baseline gap-4 md:gap-6 py-2 transition-colors duration-300 ${
+                aria-current={location.pathname === link.to ? "page" : undefined}
+                className={`group flex items-baseline gap-4 md:gap-6 transition-colors duration-300 ${
                   location.pathname === link.to ? "text-forest" : "text-cream hover:text-forest"
                 }`}
               >
@@ -254,20 +258,20 @@ export default function Navbar({ isHomepage }) {
             ))}
           </nav>
 
-          <div className="menu-footer mt-20 md:mt-28 flex flex-col md:flex-row md:items-end justify-between gap-8 opacity-0">
+          <div className="menu-footer mt-16 md:mt-20 flex flex-col md:flex-row md:items-end justify-between gap-8 opacity-0">
             <div>
               <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/40 mb-2">
-                Equitable housing through technology
+                Build your home · Build your skills · Build your wealth
               </p>
               <p className="font-serif text-cream/60 text-sm">
-                Helping Gen Z build houses with robots by 2026.
+                Land, training, and pathways to ownership near America's national parks.
               </p>
             </div>
             <div className="flex gap-6">
-              <a href="#" className="font-sans text-xs uppercase tracking-widest text-cream/40 hover:text-cream transition-colors">
+              <a href="https://instagram.com/500acres" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="font-sans text-xs uppercase tracking-widest text-cream/40 hover:text-cream transition-colors">
                 Instagram
               </a>
-              <a href="#" className="font-sans text-xs uppercase tracking-widest text-cream/40 hover:text-cream transition-colors">
+              <a href="https://twitter.com/500acres" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter" className="font-sans text-xs uppercase tracking-widest text-cream/40 hover:text-cream transition-colors">
                 Twitter
               </a>
             </div>

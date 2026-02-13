@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "../shared/Logo";
 
@@ -8,7 +9,24 @@ const FOOTER_LINKS = [
   { to: "/get-involved", label: "Get Involved" },
 ];
 
+const SOCIAL_LINKS = [
+  { label: "Instagram", href: "https://instagram.com/500acres", ariaLabel: "Follow us on Instagram" },
+  { label: "Twitter", href: "https://twitter.com/500acres", ariaLabel: "Follow us on Twitter" },
+  { label: "Email", href: "mailto:hello@500acres.org", ariaLabel: "Send us an email" },
+];
+
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleNewsletter = (e) => {
+    e.preventDefault();
+    if (email) {
+      setSubscribed(true);
+      setEmail("");
+    }
+  };
+
   return (
     <footer className="bg-charcoal text-cream overflow-hidden">
       {/* Main footer content */}
@@ -19,27 +37,57 @@ export default function Footer() {
             Ready?
           </p>
           <h2 className="font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-cream mb-10">
-            Let's build
+            Let's start
             <br />
-            <span className="italic text-sage">belonging.</span>
+            <span className="italic text-sage">building.</span>
           </h2>
           <Link
             to="/get-involved"
             className="group inline-flex items-center gap-4 bg-cream text-charcoal px-8 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
           >
             <span>Get Involved</span>
-            <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+            <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
           </Link>
         </div>
 
-        {/* Two-column layout */}
+        {/* Newsletter signup */}
+        <div className="mb-20 md:mb-24 max-w-md">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-cream/20 mb-6">
+            Stay Connected
+          </p>
+          {subscribed ? (
+            <p className="font-serif text-sage text-lg">
+              You're in. We'll be in touch.
+            </p>
+          ) : (
+            <form onSubmit={handleNewsletter} className="flex gap-3">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                aria-label="Email address for newsletter"
+                className="flex-1 bg-transparent border-b border-cream/20 px-3 py-3 font-serif text-cream placeholder-cream/30 focus:outline-none focus:border-sage transition-colors"
+              />
+              <button
+                type="submit"
+                className="font-sans text-xs uppercase tracking-wider text-cream/50 hover:text-sage transition-colors"
+              >
+                Join →
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* Three-column layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 pb-16 border-b border-cream/10">
           {/* Logo + tagline */}
           <div className="md:col-span-5">
             <Logo className="w-16 h-16 mb-8" showText={false} />
-            <p className="font-serif text-cream/40 text-sm leading-relaxed max-w-xs">
-              Equitable housing through technology.
-              Helping Gen Z build houses with robots by 2026.
+            <p className="font-serif text-cream/40 text-sm leading-[1.8] max-w-xs">
+              Transforming land near national parks into housing, training,
+              and pathways to ownership for the next generation.
             </p>
           </div>
 
@@ -48,17 +96,19 @@ export default function Footer() {
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-cream/20 mb-8">
               Navigate
             </p>
-            <div className="flex flex-col gap-4">
-              {FOOTER_LINKS.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className="creative-link font-serif text-base text-cream/50 hover:text-cream transition-colors w-fit"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
+            <nav aria-label="Footer navigation">
+              <div className="flex flex-col gap-5">
+                {FOOTER_LINKS.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="creative-link font-serif text-base text-cream/50 hover:text-cream transition-colors w-fit"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </nav>
           </div>
 
           {/* Social */}
@@ -66,14 +116,17 @@ export default function Footer() {
             <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-cream/20 mb-8">
               Connect
             </p>
-            <div className="flex flex-col gap-4">
-              {["Instagram", "Twitter", "Email"].map((social) => (
+            <div className="flex flex-col gap-5">
+              {SOCIAL_LINKS.map((social) => (
                 <a
-                  key={social}
-                  href="#"
+                  key={social.label}
+                  href={social.href}
+                  target={social.label !== "Email" ? "_blank" : undefined}
+                  rel={social.label !== "Email" ? "noopener noreferrer" : undefined}
+                  aria-label={social.ariaLabel}
                   className="creative-link font-serif text-base text-cream/50 hover:text-cream transition-colors w-fit"
                 >
-                  {social}
+                  {social.label}
                 </a>
               ))}
             </div>
