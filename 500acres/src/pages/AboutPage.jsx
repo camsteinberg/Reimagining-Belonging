@@ -161,16 +161,16 @@ export default function AboutPage() {
             ].map((value, i) => (
               <div
                 key={value.title}
-                className={`reveal-up stagger-${i + 1} group relative p-10 md:p-14 rounded-2xl ${value.color} transition-transform duration-500 hover:-translate-y-2`}
+                className={`reveal-up stagger-${i + 1} group relative p-8 md:p-10 rounded-2xl ${value.color} transition-transform duration-500 hover:-translate-y-2`}
               >
-                <div className={`w-16 h-16 rounded-xl ${value.color} flex items-center justify-center mb-10`}>
+                <div className={`w-12 h-12 rounded-xl ${value.color} flex items-center justify-center mb-6`}>
                   {value.icon}
                 </div>
-                <div className={`w-8 h-[3px] ${value.accent} rounded-full mb-8`} />
-                <h3 className="font-serif text-xl md:text-2xl font-bold text-charcoal mb-6">
+                <div className={`w-8 h-[3px] ${value.accent} rounded-full mb-5`} />
+                <h3 className="font-serif text-lg md:text-xl font-bold text-charcoal mb-4">
                   {value.title}
                 </h3>
-                <p className="font-serif text-base text-charcoal/70 leading-[1.85] card-prose">
+                <p className="font-serif text-sm text-charcoal/70 leading-[1.8] card-prose">
                   {value.desc}
                 </p>
               </div>
