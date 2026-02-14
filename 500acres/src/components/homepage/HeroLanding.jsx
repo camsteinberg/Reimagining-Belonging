@@ -1,7 +1,26 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import finalImage from "../../assets/images/finalImage2.png";
+
+function TypingDots() {
+  return (
+    <div style={{ display: "flex", gap: 4, alignItems: "center", justifyContent: "center", padding: "4px 0" }}>
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            background: "#6B8F71",
+            animation: `scoutDotBounce 1s ease-in-out ${i * 0.15}s infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function HeroLanding({ show, onDismiss }) {
   const containerRef = useRef(null);
@@ -12,6 +31,9 @@ export default function HeroLanding({ show, onDismiss }) {
   const lineLeftRef = useRef(null);
   const lineRightRef = useRef(null);
   const imgRef = useRef(null);
+  const scoutRef = useRef(null);
+  const bubbleRef = useRef(null);
+  const [bubblePhase, setBubblePhase] = useState("hidden");
   const dismissingRef = useRef(false);
 
   const dismiss = useCallback(() => {
@@ -102,6 +124,32 @@ export default function HeroLanding({ show, onDismiss }) {
     };
   }, [show, dismiss]);
 
+  // Speech bubble sequence
+  useEffect(() => {
+    if (!show) {
+      setBubblePhase("hidden");
+      return;
+    }
+    // Scout appears at ~2.8s; bubble 2s after that
+    const dotsTimer = setTimeout(() => setBubblePhase("dots"), 4000);
+    const messageTimer = setTimeout(() => setBubblePhase("message"), 5200);
+    return () => {
+      clearTimeout(dotsTimer);
+      clearTimeout(messageTimer);
+    };
+  }, [show]);
+
+  // Animate bubble pop-in
+  useEffect(() => {
+    if (bubblePhase === "dots" && bubbleRef.current) {
+      gsap.fromTo(
+        bubbleRef.current,
+        { scale: 0, opacity: 0, transformOrigin: "0% 100%" },
+        { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.7)" }
+      );
+    }
+  }, [bubblePhase]);
+
   // Entrance animations
   useGSAP(
     () => {
@@ -160,6 +208,23 @@ export default function HeroLanding({ show, onDismiss }) {
         });
       }
 
+      // Scout idle bob
+      if (scoutRef.current) {
+        gsap.fromTo(
+          scoutRef.current,
+          { y: 0, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, delay: 1.8, ease: "power2.out" }
+        );
+        gsap.to(scoutRef.current, {
+          y: -4,
+          duration: 2,
+          ease: "power1.inOut",
+          repeat: -1,
+          yoyo: true,
+          delay: 2.5,
+        });
+      }
+
       // Spinning ring
       if (ringRef.current) {
         gsap.to(ringRef.current, {
@@ -197,6 +262,118 @@ export default function HeroLanding({ show, onDismiss }) {
           background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.2) 100%)",
         }}
       />
+
+      {/* Subtle glow under Scout's feet */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          left: "16.25%",
+          top: "31%",
+          width: "8%",
+          height: "6%",
+          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, transparent 70%)",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Scout — cute hiker on left mountain peak */}
+      <div
+        ref={scoutRef}
+        className="absolute z-10 pointer-events-none opacity-0"
+        style={{ left: "18.5%", top: "25.5%", width: "clamp(32px, 3.5vw, 55px)" }}
+      >
+        <svg viewBox="0 0 44 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: "scaleX(-1)" }}>
+          {/* Walking stick */}
+          <line x1="10" y1="22" x2="7" y2="58" stroke="#C4A87A" strokeWidth="2" strokeLinecap="round" />
+          {/* Flag on stick */}
+          <polygon points="7,18 7,25 14,21.5" fill="#E07A5F" opacity="0.9" />
+
+          {/* Backpack */}
+          <rect x="26" y="28" width="7" height="11" rx="2.5" fill="#9B7B4A" />
+          <line x1="27" y1="31" x2="32" y2="31" stroke="#826539" strokeWidth="0.8" />
+
+          {/* Body / jacket */}
+          <rect x="16" y="27" width="12" height="15" rx="4" fill="#6B8F71" />
+          {/* Jacket pocket detail */}
+          <rect x="18" y="35" width="4" height="2.5" rx="0.8" fill="#5A7D60" />
+
+          {/* Arms */}
+          <line x1="16" y1="30" x2="11" y2="24" stroke="#6B8F71" strokeWidth="3" strokeLinecap="round" />
+          <line x1="28" y1="31" x2="32" y2="36" stroke="#6B8F71" strokeWidth="3" strokeLinecap="round" />
+
+          {/* Legs */}
+          <rect x="17" y="42" width="4.5" height="12" rx="2" fill="#4A4A4A" />
+          <rect x="23" y="42" width="4.5" height="12" rx="2" fill="#4A4A4A" />
+
+          {/* Boots */}
+          <ellipse cx="19.5" cy="55" rx="3.5" ry="2.5" fill="#5C3D2E" />
+          <ellipse cx="25.5" cy="55" rx="3.5" ry="2.5" fill="#5C3D2E" />
+
+          {/* Head */}
+          <circle cx="22" cy="18" r="8" fill="#F5DEB3" />
+
+          {/* Hat brim */}
+          <ellipse cx="22" cy="12" rx="12" ry="3.5" fill="#C4A87A" />
+          {/* Hat crown */}
+          <path d="M14 12 Q14 4 22 3 Q30 4 30 12" fill="#9B7B4A" />
+          {/* Hat band */}
+          <rect x="14" y="10" width="16" height="2.5" rx="1" fill="#826539" />
+
+          {/* Eyes — happy closed arcs */}
+          <path d="M18 17 Q19.5 15 21 17" stroke="#333" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+          <path d="M23 17 Q24.5 15 26 17" stroke="#333" strokeWidth="1.2" strokeLinecap="round" fill="none" />
+
+          {/* Smile */}
+          <path d="M19 21 Q22 24.5 25 21" stroke="#333" strokeWidth="1" strokeLinecap="round" fill="none" />
+
+          {/* Rosy cheeks */}
+          <circle cx="17.5" cy="20" r="1.8" fill="#E8A090" opacity="0.5" />
+          <circle cx="26.5" cy="20" r="1.8" fill="#E8A090" opacity="0.5" />
+        </svg>
+
+        {/* Speech bubble */}
+        {bubblePhase !== "hidden" && (
+          <div
+            ref={bubbleRef}
+            style={{
+              position: "absolute",
+              left: "110%",
+              bottom: "70%",
+              minWidth: 180,
+              maxWidth: 210,
+              background: "rgba(245, 241, 230, 0.95)",
+              borderRadius: 12,
+              padding: "10px 14px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+              pointerEvents: "auto",
+              cursor: "pointer",
+            }}
+          >
+            {/* Tail pointing toward Scout */}
+            <div
+              style={{
+                position: "absolute",
+                left: -6,
+                bottom: 12,
+                width: 0,
+                height: 0,
+                borderTop: "6px solid transparent",
+                borderBottom: "6px solid transparent",
+                borderRight: "8px solid rgba(245, 241, 230, 0.95)",
+              }}
+            />
+            {bubblePhase === "dots" ? (
+              <TypingDots />
+            ) : (
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, lineHeight: 1.5, color: "#333" }}>
+                <strong style={{ color: "#6B8F71", fontSize: 12 }}>Hi, I'm Scout!</strong>
+                <br />
+                I'm your AI guide to 500 Acres. Click on me anytime to chat!
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Thin inset border frame */}
       <div className="absolute inset-6 md:inset-10 border border-cream/15 rounded-sm pointer-events-none z-10" />
