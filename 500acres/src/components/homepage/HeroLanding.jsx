@@ -187,7 +187,7 @@ export default function HeroLanding({ show, onDismiss }) {
         src={finalImage}
         alt=""
         className="absolute inset-0 w-full h-full object-cover will-change-transform"
-        style={{ transform: "scale(1.1)" }}
+        style={{ transform: "scale(1.1)", filter: "brightness(0.4) saturate(1.4) sepia(0.25)" }}
       />
 
       {/* Vignette overlay — dark edges, clear center */}

@@ -48,7 +48,7 @@ export default function CustomCursor() {
         el.addEventListener("mouseenter", onEnterInteractive);
         el.addEventListener("mouseleave", onLeaveInteractive);
       });
-      document.querySelectorAll(".bg-charcoal, .bg-night, .bg-bark, .bg-moss, .bg-pine").forEach((el) => {
+      document.querySelectorAll(".bg-charcoal, .bg-night, .bg-bark, .bg-moss, .bg-pine, .loading-screen").forEach((el) => {
         el.addEventListener("mouseenter", onEnterDark);
         el.addEventListener("mouseleave", onLeaveDark);
       });

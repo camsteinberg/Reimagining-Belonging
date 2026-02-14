@@ -90,7 +90,7 @@
   border-radius: 50%;
   border: 1.5px solid var(--color-charcoal);
   pointer-events: none;
-  z-index: 9999;
+  z-index: 10001;
   transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease,
               background-color 0.3s ease, opacity 0.3s ease;
   mix-blend-mode: difference;
@@ -109,6 +109,11 @@
 }
 
 .custom-cursor.on-dark {
+  border-color: var(--color-cream);
+}
+
+/* Force cream cursor while loading screen is visible */
+.loading-screen:not(.is-hidden) ~ .custom-cursor {
   border-color: var(--color-cream);
 }
 
