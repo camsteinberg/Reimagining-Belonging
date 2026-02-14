@@ -223,7 +223,7 @@ export default function HeroLanding({ show, onDismiss }) {
       {/* Scout — cute hiker on left mountain peak, hidden on mobile */}
       <div
         ref={scoutRef}
-        className="absolute z-10 pointer-events-auto opacity-0 scout-character cursor-pointer"
+        className="absolute z-10 pointer-events-auto opacity-0 scout-character cursor-pointer cursor-hover"
         style={{ left: "18.5%", top: "25.5%", width: "clamp(32px, 3.5vw, 55px)" }}
         onClick={() => window.open("https://scout-ai-500acres.vercel.app/", "_blank", "noopener,noreferrer")}
       >
