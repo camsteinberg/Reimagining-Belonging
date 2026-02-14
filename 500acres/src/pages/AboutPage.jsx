@@ -43,7 +43,7 @@ export default function AboutPage() {
 
         {/* Scroll indicator */}
         <div className="reveal-up stagger-3 absolute bottom-16 right-[max(2.5rem,6vw)] flex flex-col items-center gap-2">
-          <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-charcoal/30 rotate-90 origin-center translate-y-8">
+          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/30 rotate-90 origin-center translate-y-8">
             Scroll
           </span>
           <div className="w-[1px] h-16 bg-charcoal/20 mt-12">

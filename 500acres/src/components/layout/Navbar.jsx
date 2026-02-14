@@ -114,7 +114,7 @@ export default function Navbar({ isHomepage }) {
           duration: 0.6,
           ease: "power3.out",
         },
-        "-=0.3"
+        "-=0.05"
       );
 
       tl.fromTo(

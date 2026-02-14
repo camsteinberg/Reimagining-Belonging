@@ -52,7 +52,7 @@ export default function Footer() {
 
         {/* Newsletter signup */}
         <div className="mb-20 md:mb-24 max-w-md">
-          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-cream/20 mb-6">
+          <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/20 mb-6">
             Stay Connected
           </p>
           {subscribed ? (
@@ -93,7 +93,7 @@ export default function Footer() {
 
           {/* Navigation */}
           <div className="md:col-span-3 md:col-start-7">
-            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-cream/20 mb-8">
+            <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/20 mb-8">
               Navigate
             </p>
             <nav aria-label="Footer navigation">
@@ -113,7 +113,7 @@ export default function Footer() {
 
           {/* Social */}
           <div className="md:col-span-3 md:col-start-10">
-            <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-cream/20 mb-8">
+            <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/20 mb-8">
               Connect
             </p>
             <div className="flex flex-col gap-5">
@@ -135,10 +135,10 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-sans text-[11px] text-cream/20 tracking-wide">
+          <p className="font-sans text-xs text-cream/20 tracking-wide">
             &copy; {new Date().getFullYear()} 500 Acres. All rights reserved.
           </p>
-          <p className="font-sans text-[11px] text-cream/20 tracking-wide">
+          <p className="font-sans text-xs text-cream/20 tracking-wide">
             Built by Gen Z, for Gen Z.
           </p>
         </div>

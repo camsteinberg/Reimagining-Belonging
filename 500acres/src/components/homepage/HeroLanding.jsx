@@ -343,7 +343,7 @@ export default function HeroLanding({ show, onDismiss }) {
         {/* Tagline */}
         <p
           ref={taglineRef}
-          className="font-sans text-[10px] md:text-xs uppercase tracking-[0.5em] text-cream/60 opacity-0"
+          className="font-sans text-xs md:text-xs uppercase tracking-[0.5em] text-cream/60 opacity-0"
         >
           Reimagining Belonging
         </p>
@@ -354,7 +354,7 @@ export default function HeroLanding({ show, onDismiss }) {
         ref={arrowRef}
         className="absolute bottom-10 md:bottom-14 z-10 flex flex-col items-center gap-4 opacity-0"
       >
-        <span className="font-sans text-[10px] uppercase tracking-[0.5em] text-cream/70">
+        <span className="font-sans text-xs uppercase tracking-[0.5em] text-cream/70">
           Explore
         </span>
         <button

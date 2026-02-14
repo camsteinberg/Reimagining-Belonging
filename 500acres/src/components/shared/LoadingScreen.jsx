@@ -89,11 +89,11 @@ export default function LoadingScreen() {
         @media (max-width: 640px) {
           .loading-title-stroke,
           .loading-title-fill {
-            font-size: 48px;
+            font-size: 54px;
           }
 
           .loading-tagline {
-            font-size: 11px;
+            font-size: 12px;
             letter-spacing: 0.25em;
           }
         }

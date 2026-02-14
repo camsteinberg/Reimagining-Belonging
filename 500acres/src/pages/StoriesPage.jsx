@@ -62,7 +62,7 @@ export default function StoriesPage() {
 
                   <div className="p-8 md:p-12 flex flex-col">
                     {/* Participant number */}
-                    <span className="font-sans text-[10px] uppercase tracking-[0.3em] text-charcoal/25 mb-auto" aria-hidden="true">
+                    <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/25 mb-auto" aria-hidden="true">
                       Participant {String(i + 1).padStart(2, "0")}
                     </span>
 

@@ -74,7 +74,7 @@ export default function StoryDetailPage() {
 
           {/* Name + info */}
           <div className="md:col-span-7">
-            <p className="reveal-up font-sans text-[10px] uppercase tracking-[0.4em] text-charcoal/30 mb-4">
+            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/30 mb-4">
               Participant {String(currentIndex + 1).padStart(2, "0")} / {String(participants.length).padStart(2, "0")}
             </p>
             <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-5">
@@ -190,7 +190,7 @@ export default function StoryDetailPage() {
               to={`/stories/${prev.slug}`}
               className="group page-container py-12 md:py-16 hover:bg-charcoal/5 transition-colors"
             >
-              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-charcoal/30 mb-2">
+              <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/30 mb-2">
                 Previous
               </p>
               <p className="font-serif text-lg md:text-2xl font-bold text-charcoal group-hover:text-forest transition-colors">
@@ -205,7 +205,7 @@ export default function StoryDetailPage() {
               to={`/stories/${next.slug}`}
               className="group page-container py-12 md:py-16 text-right hover:bg-charcoal/5 transition-colors border-l border-charcoal/10"
             >
-              <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-charcoal/30 mb-2">
+              <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/30 mb-2">
                 Next
               </p>
               <p className="font-serif text-lg md:text-2xl font-bold text-charcoal group-hover:text-forest transition-colors">
