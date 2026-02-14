@@ -211,7 +211,7 @@ export default function MigrationMap({ slideNum }) {
           Shaped by education, work, and uneven access to opportunity, leaving
           home is not unusual for many Gen Z.
           <br />
-          <em>Hover over a state to see Gen Z outbound and inbound migration flows.</em>
+          <em>Hover or tap a state to see Gen Z outbound and inbound migration flows.</em>
         </div>
       </div>
     ) : (

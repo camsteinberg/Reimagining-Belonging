@@ -47,6 +47,10 @@
     --stroke: #111;
   }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   body {
     font-family: var(--font-serif);
     color: var(--color-charcoal);
@@ -526,6 +530,7 @@ body.force-scroll.popup-open::before {
   top: calc(100vh + 40vh);
 }
 
+.slide4BottomText,
 .slide6BottomText,
 .slide8BottomText,
 .slide9BottomText,
@@ -2051,6 +2056,7 @@ body.slide25-active .slide25 .imgContainer7 {
     width: 100%;
   }
 
+  .slide4BottomText,
   .slide6BottomText,
   .slide8BottomText,
   .slide9BottomText,
@@ -2067,8 +2073,8 @@ body.slide25-active .slide25 .imgContainer7 {
 
   /* Phone overlay */
   .phoneOverlay .svgContainer svg {
-    width: 80vh;
-    height: 80vh;
+    width: min(80vh, 95vw);
+    height: min(80vh, 95vw);
   }
 
   /* Slide 17 — Belonging reveal */
@@ -2322,7 +2328,7 @@ body.slide25-active .slide25 .imgContainer7 {
   }
 
   .slide28BottomText {
-    font-size: 10px;
+    font-size: 12px;
     padding: 0 20px;
     top: 82vh;
   }
@@ -2338,16 +2344,16 @@ body.slide25-active .slide25 .imgContainer7 {
 
   .makeIconButton {
     font-size: 14px;
-    padding: 0 14px;
-    height: 26px;
+    padding: 4px 18px;
+    height: 40px;
   }
 
   /* Close button */
   .closeButton {
     top: 12px;
     margin-right: 12px;
-    width: 24px;
-    height: 24px;
+    width: 36px;
+    height: 36px;
   }
 
   /* Images in slides 21-23 */
@@ -2361,6 +2367,12 @@ body.slide25-active .slide25 .imgContainer7 {
 
   .slide23Left { left: 5%; }
   .slide23Right { left: 55%; }
+
+  /* Hide Scout, speech bubble, and glow on mobile */
+  .scout-character,
+  .scout-glow {
+    display: none !important;
+  }
 }
 
 /* Small mobile - further adjustments */
@@ -2384,6 +2396,7 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide9TextContainer,
   .slide10TextContainer,
   .slide11TextContainer,
+  .slide4BottomText,
   .slide6BottomText,
   .slide8BottomText,
   .slide9BottomText,
@@ -2410,3 +2423,23 @@ body.slide25-active .slide25 .imgContainer7 {
     --circle-blue: 18vw;
   }
 }
+
+/* Scout speech bubble — desktop: right of Scout */
+.scout-speech-bubble {
+  left: 110%;
+  bottom: 70%;
+  min-width: 180px;
+  max-width: 210px;
+}
+
+.scout-bubble-tail {
+  position: absolute;
+  left: -6px;
+  bottom: 12px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 8px solid rgba(245, 241, 230, 0.95);
+}
+

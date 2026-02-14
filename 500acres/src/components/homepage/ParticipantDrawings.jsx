@@ -98,7 +98,7 @@ export default function ParticipantDrawings() {
           <strong>optional, reversible, and repeatable.</strong>
           <br />
           <br />
-          <em>Hover to explore.</em>
+          <em>Hover or tap to explore.</em>
         </div>
       </div>
 

@@ -109,7 +109,7 @@ export default function ZoomTransition() {
         <div className="brownText">home?</div>
       </div>
       <div className="slide6Stage7" aria-hidden="true" />
-      <div className="slide7TextContainer" style={{ fontSize: "30px" }}>
+      <div className="slide7TextContainer">
         <div>Is this place</div>
         <div>still</div>
         <div className="brownText">home?</div>

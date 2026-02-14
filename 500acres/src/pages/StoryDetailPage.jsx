@@ -184,7 +184,7 @@ export default function StoryDetailPage() {
 
       {/* Navigation — prev/next with hover effects */}
       <section className="border-t border-charcoal/10">
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2">
           {prev ? (
             <Link
               to={`/stories/${prev.slug}`}

@@ -18,7 +18,7 @@ export default function BelongingReveal() {
           when material stability is missing, meaning takes on the extra weight.
           <br />
           <br />
-          <em>Hover to see what they said.</em>
+          <em>Hover or tap to see what they said.</em>
         </div>
       </div>
 

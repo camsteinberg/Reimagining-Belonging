@@ -68,14 +68,14 @@ export default function StatisticsBlock() {
           <div style={{ color: "#e5dccf" }}>For a long time,</div>
           <div style={{ color: "#e5dccf" }}>home was a clear and stable concept.</div>
         </div>
-        <div className="slide8BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "55%", textAlign: "center", fontSize: "22px", zIndex: 20 }}>
+        <div className="slide8BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "55%", textAlign: "center", zIndex: 20 }}>
           <div style={{ color: "#e5dccf" }}>But for many Gen Z today,</div>
           <div style={{ color: "#e5dccf" }}>that reality is shifting.</div>
         </div>
       </section>
 
       <section className="slide slide9" data-bg="">
-        <div className="slide9TextContainer" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "40%", textAlign: "center", fontSize: "22px", zIndex: 20 }}>
+        <div className="slide9TextContainer" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "40%", textAlign: "center", zIndex: 20 }}>
           <div style={{ color: "#e5dccf" }}>
             In the United States, young people's homeownership
           </div>
@@ -94,7 +94,7 @@ export default function StatisticsBlock() {
             </a>
           </div>
         </div>
-        <div className="slide9BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "55%", textAlign: "center", fontSize: "22px", zIndex: 20 }}>
+        <div className="slide9BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "55%", textAlign: "center", zIndex: 20 }}>
           <div style={{ color: "#e5dccf" }}>
             <AnimatedCounter target={81} /> of Gen Z say they
             cannot afford a home right now,
@@ -151,7 +151,7 @@ export default function StatisticsBlock() {
           </div>
           <div style={{ color: "#e5dccf" }}>long-term plans get delayed.</div>
         </div>
-        <div className="slide11BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "55%", textAlign: "center", fontSize: "22px", zIndex: 20 }}>
+        <div className="slide11BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "55%", textAlign: "center", zIndex: 20 }}>
           <div style={{ color: "#e5dccf" }}>Under that pressure,</div>
           <div style={{ color: "#e5dccf" }}>
             home loses its sense of stability.

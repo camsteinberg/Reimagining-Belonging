@@ -207,9 +207,9 @@ export default function HeroLanding({ show, onDismiss }) {
         }}
       />
 
-      {/* Subtle glow under Scout's feet */}
+      {/* Subtle glow under Scout's feet — hidden on mobile */}
       <div
-        className="absolute pointer-events-none"
+        className="absolute pointer-events-none scout-glow"
         style={{
           left: "16.25%",
           top: "31%",
@@ -220,10 +220,10 @@ export default function HeroLanding({ show, onDismiss }) {
         }}
       />
 
-      {/* Scout — cute hiker on left mountain peak */}
+      {/* Scout — cute hiker on left mountain peak, hidden on mobile */}
       <div
         ref={scoutRef}
-        className="absolute z-10 pointer-events-none opacity-0"
+        className="absolute z-10 pointer-events-none opacity-0 scout-character"
         style={{ left: "18.5%", top: "25.5%", width: "clamp(32px, 3.5vw, 55px)" }}
       >
         <svg viewBox="0 0 44 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: "scaleX(-1)" }}>
@@ -279,12 +279,9 @@ export default function HeroLanding({ show, onDismiss }) {
         {bubblePhase !== "hidden" && (
           <div
             ref={bubbleRef}
+            className="scout-speech-bubble"
             style={{
               position: "absolute",
-              left: "110%",
-              bottom: "70%",
-              minWidth: 180,
-              maxWidth: 210,
               background: "rgba(245, 241, 230, 0.95)",
               borderRadius: 12,
               padding: "10px 14px",
@@ -293,19 +290,8 @@ export default function HeroLanding({ show, onDismiss }) {
               cursor: "pointer",
             }}
           >
-            {/* Tail pointing toward Scout */}
-            <div
-              style={{
-                position: "absolute",
-                left: -6,
-                bottom: 12,
-                width: 0,
-                height: 0,
-                borderTop: "6px solid transparent",
-                borderBottom: "6px solid transparent",
-                borderRight: "8px solid rgba(245, 241, 230, 0.95)",
-              }}
-            />
+            {/* Tail pointing toward Scout — left on desktop, bottom on mobile */}
+            <div className="scout-bubble-tail" />
             {bubblePhase === "dots" ? (
               <TypingDots />
             ) : (

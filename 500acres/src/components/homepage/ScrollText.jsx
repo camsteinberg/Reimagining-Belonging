@@ -28,7 +28,7 @@ export default function ScrollText() {
           <div>Anxiety</div>
           <div>Hope</div>
         </div>
-        <div className="slide4BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "70%", textAlign: "center", fontSize: "22px", zIndex: 20 }}>
+        <div className="slide4BottomText" style={{ display: "flex", flexDirection: "column", position: "absolute", top: "70%", textAlign: "center", zIndex: 20 }}>
           <div>Everything</div>
           <div>is constantly refreshed</div>
         </div>

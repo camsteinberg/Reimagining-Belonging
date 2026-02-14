@@ -14,7 +14,7 @@ export default function BelongingFramework() {
           anchors of meaning.
           <br />
           <br />
-          <em>Hover to explore.</em>
+          <em>Hover or tap to explore.</em>
         </div>
       </div>
 
