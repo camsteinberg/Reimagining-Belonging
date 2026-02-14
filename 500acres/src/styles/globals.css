@@ -47,11 +47,8 @@
     --stroke: #111;
   }
 
-  html, body {
-    overflow-x: hidden;
-  }
-
   body {
+    overflow-x: hidden;
     font-family: var(--font-serif);
     color: var(--color-charcoal);
     background-color: var(--color-charcoal);
@@ -528,9 +525,13 @@ body.force-scroll.popup-open::before {
 
 .slide6 .slide7TextContainer {
   top: calc(100vh + 40vh);
+  font-size: 30px;
 }
 
-.slide4BottomText,
+.slide4BottomText {
+  font-size: 22px;
+}
+
 .slide6BottomText,
 .slide8BottomText,
 .slide9BottomText,
@@ -2056,7 +2057,12 @@ body.slide25-active .slide25 .imgContainer7 {
     width: 100%;
   }
 
-  .slide4BottomText,
+  .slide4BottomText {
+    font-size: 18px;
+    padding: 0 24px;
+    width: 100%;
+  }
+
   .slide6BottomText,
   .slide8BottomText,
   .slide9BottomText,
@@ -2064,6 +2070,10 @@ body.slide25-active .slide25 .imgContainer7 {
     font-size: 18px;
     padding: 0 24px;
     width: 100%;
+  }
+
+  .slide6 .slide7TextContainer {
+    font-size: 18px;
   }
 
   /* Slide 2 phone overlay */
@@ -2403,6 +2413,10 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide11BottomText {
     font-size: 16px;
     padding: 0 16px;
+  }
+
+  .slide6 .slide7TextContainer {
+    font-size: 16px;
   }
 
   .slide20Orbs {

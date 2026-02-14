@@ -31,11 +31,15 @@ export default function HomePage() {
   }, []);
 
   // Scroll up at the top of the page triggers the hero to come back
+  // Guarded with a cooldown to prevent retriggering during iOS bounce scroll
   useEffect(() => {
     if (showHero) return;
 
+    let cooldown = true;
+    const cooldownTimer = setTimeout(() => { cooldown = false; }, 1000);
+
     const onWheel = (e) => {
-      if (window.scrollY === 0 && e.deltaY < 0) {
+      if (!cooldown && window.scrollY === 0 && e.deltaY < 0) {
         onShowHero();
       }
     };
@@ -45,7 +49,7 @@ export default function HomePage() {
       touchStartY = e.touches[0].clientY;
     };
     const onTouchMove = (e) => {
-      if (window.scrollY === 0 && e.touches[0].clientY - touchStartY > 50) {
+      if (!cooldown && window.scrollY === 0 && e.touches[0].clientY - touchStartY > 80) {
         onShowHero();
       }
     };
@@ -55,6 +59,7 @@ export default function HomePage() {
     window.addEventListener("touchmove", onTouchMove, { passive: true });
 
     return () => {
+      clearTimeout(cooldownTimer);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);

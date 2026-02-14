@@ -90,6 +90,11 @@ export default function Navbar({ isHomepage }) {
     if (!overlayRef.current) return;
 
     if (isOpen) {
+      // Hide all content while clip-path expands to prevent text clipping
+      const links = linksRef.current.filter(Boolean);
+      gsap.set(links, { opacity: 0, y: 80, rotateX: -15 });
+      gsap.set(".menu-footer", { opacity: 0, y: 30 });
+
       const tl = gsap.timeline();
       tlRef.current = tl;
 
@@ -98,30 +103,28 @@ export default function Navbar({ isHomepage }) {
         { clipPath: "circle(0% at calc(100% - 3rem) 2.5rem)" },
         {
           clipPath: "circle(150% at calc(100% - 3rem) 2.5rem)",
-          duration: 0.7,
+          duration: 0.6,
           ease: "power3.inOut",
         }
       );
 
-      tl.fromTo(
-        linksRef.current.filter(Boolean),
-        { y: 80, opacity: 0, rotateX: -15 },
+      // Links start only AFTER clip-path is fully expanded
+      tl.to(
+        links,
         {
           y: 0,
           opacity: 1,
           rotateX: 0,
-          stagger: 0.08,
-          duration: 0.6,
+          stagger: 0.06,
+          duration: 0.5,
           ease: "power3.out",
-        },
-        "-=0.05"
+        }
       );
 
-      tl.fromTo(
+      tl.to(
         ".menu-footer",
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-        "-=0.3"
+        { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" },
+        "-=0.25"
       );
     } else {
       if (tlRef.current) {
