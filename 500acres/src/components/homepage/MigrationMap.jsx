@@ -50,7 +50,7 @@ export default function MigrationMap({ slideNum }) {
   const tooltipId = slideNum === 15 ? "tooltip" : "tooltip2";
 
   useEffect(() => {
-    if (mapRef.current || !mapContainerRef.current) return;
+    if (mapRef.current || !mapContainerRef.current || !MAPBOX_TOKEN) return;
 
     const tooltip = tooltipRef.current;
 

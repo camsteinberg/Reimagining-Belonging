@@ -10,7 +10,7 @@ export default function InitialMap() {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    if (mapRef.current || !mapContainerRef.current) return;
+    if (mapRef.current || !mapContainerRef.current || !MAPBOX_TOKEN) return;
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
