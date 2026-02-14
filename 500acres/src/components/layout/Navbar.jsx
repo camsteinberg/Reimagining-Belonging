@@ -187,7 +187,7 @@ export default function Navbar({ isHomepage }) {
         <Link to="/" className="block group" aria-label="500 Acres Home">
           <Logo
             className="w-20 h-20 md:w-28 md:h-28 transition-transform duration-300 group-hover:scale-110"
-            style={{ filter: "drop-shadow(0 0 0.5px white) drop-shadow(0 0 0.5px white) drop-shadow(0 0 0.5px white)" }}
+            style={{ filter: "drop-shadow(0 0 0.3px rgba(255,255,255,0.5))" }}
             showText={false}
           />
         </Link>

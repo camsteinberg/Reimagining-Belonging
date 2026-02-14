@@ -1,5 +1,4 @@
 import { useRef, useEffect, useCallback, useState } from "react";
-import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import finalImage from "../../assets/images/finalImage2.png";
 
@@ -35,6 +34,7 @@ export default function HeroLanding({ show, onDismiss }) {
   const bubbleRef = useRef(null);
   const [bubblePhase, setBubblePhase] = useState("hidden");
   const dismissingRef = useRef(false);
+  const prevShowRef = useRef(show);
 
   const dismiss = useCallback(() => {
     if (dismissingRef.current || !show) return;
@@ -60,10 +60,46 @@ export default function HeroLanding({ show, onDismiss }) {
     });
   }, [show, onDismiss]);
 
-  // Animate in when hero is re-shown (slide down from above)
-  const prevShowRef = useRef(show);
+  // Entrance animations — run once on mount, no context revert
+  useEffect(() => {
+    if (imgRef.current) {
+      gsap.fromTo(imgRef.current, { scale: 1.1 }, { scale: 1, duration: 8, ease: "none" });
+    }
+    if (titleRef.current) {
+      gsap.fromTo(titleRef.current, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, delay: 0.3, ease: "power3.out" });
+    }
+    if (lineLeftRef.current && lineRightRef.current) {
+      gsap.fromTo([lineLeftRef.current, lineRightRef.current], { scaleX: 0 }, { scaleX: 1, duration: 0.8, delay: 1, ease: "power2.out" });
+    }
+    if (taglineRef.current) {
+      gsap.fromTo(taglineRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, delay: 1.2, ease: "power2.out" });
+    }
+    if (arrowRef.current) {
+      gsap.fromTo(arrowRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6, delay: 1.6, ease: "power2.out" });
+    }
+    gsap.to(".hero-arrow-icon", { y: 10, duration: 1.2, ease: "power1.inOut", repeat: -1, yoyo: true, delay: 2 });
+    if (scoutRef.current) {
+      gsap.fromTo(scoutRef.current, { opacity: 0 }, { opacity: 1, duration: 1, delay: 1.8, ease: "power2.out" });
+      gsap.to(scoutRef.current, { y: -4, duration: 2, ease: "power1.inOut", repeat: -1, yoyo: true, delay: 2.5 });
+    }
+    if (ringRef.current) {
+      gsap.to(ringRef.current, { rotation: 360, duration: 20, ease: "none", repeat: -1 });
+    }
+  }, []);
+
+  // Re-show: snap to final state, then slide in
   useEffect(() => {
     if (show && !prevShowRef.current && containerRef.current) {
+      // Snap elements to final state, then slide in from above
+      gsap.set(containerRef.current, { opacity: 1 });
+      if (imgRef.current) gsap.set(imgRef.current, { scale: 1 });
+      if (titleRef.current) gsap.set(titleRef.current, { y: 0, opacity: 1 });
+      if (lineLeftRef.current) gsap.set(lineLeftRef.current, { scaleX: 1 });
+      if (lineRightRef.current) gsap.set(lineRightRef.current, { scaleX: 1 });
+      if (taglineRef.current) gsap.set(taglineRef.current, { y: 0, opacity: 1 });
+      if (arrowRef.current) gsap.set(arrowRef.current, { opacity: 1 });
+      if (scoutRef.current) gsap.set(scoutRef.current, { opacity: 1 });
+
       gsap.fromTo(
         containerRef.current,
         { yPercent: -100 },
@@ -71,7 +107,7 @@ export default function HeroLanding({ show, onDismiss }) {
       );
       dismissingRef.current = false;
     } else if (show && containerRef.current) {
-      gsap.set(containerRef.current, { yPercent: 0 });
+      gsap.set(containerRef.current, { yPercent: 0, opacity: 1 });
       dismissingRef.current = false;
     }
     prevShowRef.current = show;
@@ -124,20 +160,18 @@ export default function HeroLanding({ show, onDismiss }) {
     };
   }, [show, dismiss]);
 
-  // Speech bubble sequence
+  // Speech bubble — each phase independently advances to the next
   useEffect(() => {
-    if (!show) {
-      setBubblePhase("hidden");
-      return;
+    if (!show) return;
+    if (bubblePhase === "hidden") {
+      const timer = setTimeout(() => setBubblePhase("dots"), 4000);
+      return () => clearTimeout(timer);
     }
-    // Scout appears at ~2.8s; bubble 2s after that
-    const dotsTimer = setTimeout(() => setBubblePhase("dots"), 4000);
-    const messageTimer = setTimeout(() => setBubblePhase("message"), 5200);
-    return () => {
-      clearTimeout(dotsTimer);
-      clearTimeout(messageTimer);
-    };
-  }, [show]);
+    if (bubblePhase === "dots") {
+      const timer = setTimeout(() => setBubblePhase("message"), 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [show, bubblePhase]);
 
   // Animate bubble pop-in
   useEffect(() => {
@@ -150,101 +184,11 @@ export default function HeroLanding({ show, onDismiss }) {
     }
   }, [bubblePhase]);
 
-  // Entrance animations
-  useGSAP(
-    () => {
-      if (!show) return;
-
-      // Slow Ken Burns zoom on background
-      if (imgRef.current) {
-        gsap.fromTo(imgRef.current, { scale: 1.1 }, { scale: 1, duration: 8, ease: "none" });
-      }
-
-      // Title fade + rise
-      if (titleRef.current) {
-        gsap.fromTo(
-          titleRef.current,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1.2, delay: 0.3, ease: "power3.out" }
-        );
-      }
-
-      // Decorative lines expand outward from center
-      if (lineLeftRef.current && lineRightRef.current) {
-        gsap.fromTo(
-          [lineLeftRef.current, lineRightRef.current],
-          { scaleX: 0 },
-          { scaleX: 1, duration: 0.8, delay: 1, ease: "power2.out" }
-        );
-      }
-
-      // Tagline fade in
-      if (taglineRef.current) {
-        gsap.fromTo(
-          taglineRef.current,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, delay: 1.2, ease: "power2.out" }
-        );
-      }
-
-      // Arrow + ring fade in
-      if (arrowRef.current) {
-        gsap.fromTo(
-          arrowRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.6, delay: 1.6, ease: "power2.out" }
-        );
-      }
-
-      // Bouncing arrow
-      if (arrowRef.current) {
-        gsap.to(".hero-arrow-icon", {
-          y: 10,
-          duration: 1.2,
-          ease: "power1.inOut",
-          repeat: -1,
-          yoyo: true,
-          delay: 2,
-        });
-      }
-
-      // Scout idle bob
-      if (scoutRef.current) {
-        gsap.fromTo(
-          scoutRef.current,
-          { y: 0, opacity: 0 },
-          { y: 0, opacity: 1, duration: 1, delay: 1.8, ease: "power2.out" }
-        );
-        gsap.to(scoutRef.current, {
-          y: -4,
-          duration: 2,
-          ease: "power1.inOut",
-          repeat: -1,
-          yoyo: true,
-          delay: 2.5,
-        });
-      }
-
-      // Spinning ring
-      if (ringRef.current) {
-        gsap.to(ringRef.current, {
-          rotation: 360,
-          duration: 20,
-          ease: "none",
-          repeat: -1,
-        });
-      }
-    },
-    { scope: containerRef, dependencies: [show] }
-  );
-
-  if (!show) return null;
-
   return (
     <div
       ref={containerRef}
       className="fixed inset-0 flex flex-col items-center justify-center"
-      style={{ zIndex: 100 }}
+      style={{ zIndex: 100, pointerEvents: show ? "auto" : "none" }}
     >
       {/* Background image with slow zoom */}
       <img
@@ -252,7 +196,7 @@ export default function HeroLanding({ show, onDismiss }) {
         src={finalImage}
         alt=""
         className="absolute inset-0 w-full h-full object-cover will-change-transform"
-        style={{ transform: "scale(1.1)", filter: "brightness(0.4) saturate(1.4) sepia(0.25)" }}
+        style={{ transform: "scale(1.1)", filter: "brightness(0.5) saturate(1.4) sepia(0.25)" }}
       />
 
       {/* Vignette overlay — dark edges, clear center */}
