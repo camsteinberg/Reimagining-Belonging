@@ -8,7 +8,7 @@ export default function NotFoundPage() {
       <div className="absolute bottom-[15%] right-[10%] w-[20vw] h-[20vw] bg-amber/10 blob pointer-events-none blur-2xl" style={{ animationDelay: "-3s" }} />
 
       <div className="relative z-10 text-center page-container">
-        <p className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/30 mb-8">
+        <p className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/50 mb-8">
           Page Not Found
         </p>
         <h1 className="font-serif text-[clamp(5rem,15vw,12rem)] leading-none font-bold text-charcoal/10 mb-4">
@@ -17,7 +17,7 @@ export default function NotFoundPage() {
         <p className="font-serif text-xl md:text-2xl text-charcoal/60 mb-4 max-w-md mx-auto leading-relaxed">
           This path doesn't lead anywhere yet.
         </p>
-        <p className="font-serif text-base text-charcoal/40 mb-10 max-w-sm mx-auto">
+        <p className="font-serif text-base text-charcoal/60 mb-10 max-w-sm mx-auto">
           But there are plenty of trails to explore.
         </p>
         <Link

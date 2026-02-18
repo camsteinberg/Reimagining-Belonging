@@ -166,7 +166,7 @@ export default function ResourcesPage() {
         <div className="absolute bottom-[10%] right-[-5%] w-[25vw] h-[25vw] bg-forest/5 blob pointer-events-none" style={{ animationDelay: "-3s" }} />
 
         <div className="page-container relative z-10">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-10">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             Resources
           </p>
           <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-8">
@@ -174,7 +174,7 @@ export default function ResourcesPage() {
             <br />
             <span className="text-forest">and frameworks.</span>
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/50 max-w-md leading-[1.8]">
+          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/70 max-w-md leading-[1.8]">
             Publications, guides, and resources to understand the housing
             landscape — and the tools 500 Acres is building to change it.
           </p>
@@ -184,7 +184,7 @@ export default function ResourcesPage() {
       {/* Featured Resource */}
       <section className="py-24 md:py-32 bg-forest/[0.03]">
         <div className="page-container">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-8">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-8">
             Featured
           </p>
           <a
@@ -201,21 +201,21 @@ export default function ResourcesPage() {
 
             <div className="flex items-center gap-3 mb-10">
               <div className={`w-2.5 h-2.5 rounded-full ${FEATURED_RESOURCE.accentDot}`} />
-              <span className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/40">
+              <span className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/60">
                 {FEATURED_RESOURCE.category}
               </span>
             </div>
 
-            <h3 className="font-serif text-2xl md:text-4xl font-bold text-charcoal mb-8 group-hover:text-forest transition-colors max-w-2xl">
+            <h2 className="font-serif text-2xl md:text-4xl font-bold text-charcoal mb-8 group-hover:text-forest transition-colors max-w-2xl">
               {FEATURED_RESOURCE.title}
-            </h3>
+            </h2>
 
             <p className="font-serif text-base md:text-lg text-charcoal/60 leading-[1.85] mb-12 max-w-2xl">
               {FEATURED_RESOURCE.description}
             </p>
 
             <div className="flex items-center justify-between">
-              <span className="font-sans text-xs uppercase tracking-wider bg-charcoal/5 px-4 py-2 rounded-full text-charcoal/50">
+              <span className="font-sans text-xs uppercase tracking-wider bg-charcoal/5 px-4 py-2 rounded-full text-charcoal/70">
                 {FEATURED_RESOURCE.type}
               </span>
               <span className="font-sans text-sm text-forest/60 group-hover:text-forest group-hover:translate-x-2 transition-all duration-300 flex items-center gap-2">
@@ -233,7 +233,7 @@ export default function ResourcesPage() {
             CATEGORIES.filter((c) => c !== "All").map((cat, i) => (
               <span
                 key={`${setIdx}-${i}`}
-                className="font-sans text-sm uppercase tracking-[0.3em] text-charcoal/20 whitespace-nowrap px-10"
+                className="font-sans text-sm uppercase tracking-[0.3em] text-charcoal/60 whitespace-nowrap px-10"
               >
                 {cat} &#x2022;
               </span>
@@ -283,24 +283,24 @@ export default function ResourcesPage() {
 
                 <div className="flex items-center gap-3 mb-10">
                   <div className={`w-2 h-2 rounded-full ${resource.accentDot}`} />
-                  <span className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/40">
+                  <span className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/60">
                     {resource.category}
                   </span>
                 </div>
 
-                <h3 className="font-serif text-xl md:text-2xl font-bold text-charcoal mb-6 group-hover:text-forest transition-colors">
+                <h2 className="font-serif text-xl md:text-2xl font-bold text-charcoal mb-6 group-hover:text-forest transition-colors">
                   {resource.title}
-                </h3>
+                </h2>
 
                 <p className="font-serif text-base text-charcoal/60 leading-[1.8] mb-10 max-w-md">
                   {resource.description}
                 </p>
 
                 <div className="flex items-center justify-between">
-                  <span className="font-sans text-xs uppercase tracking-wider bg-charcoal/5 px-4 py-2 rounded-full text-charcoal/50">
+                  <span className="font-sans text-xs uppercase tracking-wider bg-charcoal/5 px-4 py-2 rounded-full text-charcoal/70">
                     {resource.type}
                   </span>
-                  <span className="font-sans text-sm text-charcoal/30 group-hover:text-forest group-hover:translate-x-1 transition-all duration-300" aria-hidden="true">
+                  <span className="font-sans text-sm text-charcoal/50 group-hover:text-forest group-hover:translate-x-1 transition-all duration-300" aria-hidden="true">
                     &rarr;
                   </span>
                 </div>
@@ -313,13 +313,13 @@ export default function ResourcesPage() {
       {/* Partners section */}
       <section className="py-24 md:py-36 bg-charcoal diagonal-top">
         <div className="page-container text-center">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/40 mb-4">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/60 mb-4">
             Our Partners
           </p>
           <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
             Our partners.
           </h2>
-          <p className="reveal-up stagger-2 font-serif text-lg text-cream/50 max-w-xl mx-auto mb-16">
+          <p className="reveal-up stagger-2 font-serif text-lg text-cream/70 max-w-xl mx-auto mb-16">
             We work with organizations that share our commitment to innovative
             housing, digital fabrication, and expanding opportunity for the next generation.
           </p>

@@ -96,6 +96,10 @@ export default function IdealHomes() {
             className={containerClass}
             style={{ top: pos.top, left: pos.left }}
             onClick={() => setActivePopup(p.id)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActivePopup(p.id); } }}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${p.name}'s ideal home: ${p.idealHomeTitle}`}
           >
             <img src={imgSrc} alt={p.idealHomeTitle} loading="lazy" />
           </div>

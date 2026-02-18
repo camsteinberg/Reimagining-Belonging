@@ -9,12 +9,18 @@ import {
   WATER_COLOR,
 } from "../../data/mapConfig";
 
+function esc(str) {
+  const el = document.createElement("span");
+  el.textContent = str;
+  return el.innerHTML;
+}
+
 function formatTop(list, dir) {
   if (!list || list.length === 0) return '<div class="muted">No data</div>';
   return list
     .slice(0, 3)
     .map((d) => {
-      const other = dir === "out" ? d.to_abbr : d.from_abbr;
+      const other = esc(dir === "out" ? d.to_abbr : d.from_abbr);
       return `${dir === "out" ? "\u2192" : "\u2190"} <strong>${other}</strong> <span class="muted">${Number(d.population).toLocaleString()}</span>`;
     })
     .join("<br/>");
@@ -196,7 +202,7 @@ export default function MigrationMap({ slideNum }) {
                       showTooltip(
                         x,
                         y,
-                        `<strong>${stateAbbr} \u2014 ${stateName}</strong><br/>
+                        `<strong>${esc(stateAbbr)} \u2014 ${esc(stateName)}</strong><br/>
                         <div class="muted">Top outbound</div>
                         ${formatTop(topOut, "out")}<br/>
                         <div class="muted" style="margin-top:6px;">Top inbound</div>
@@ -302,8 +308,8 @@ export default function MigrationMap({ slideNum }) {
     <section className={`slide ${slideClass}`}>
       {textContent}
       <div className="mapWrap">
-        <div ref={mapContainerRef} id={mapId} />
-        <div ref={tooltipRef} id={tooltipId} className="tooltip" />
+        <div ref={mapContainerRef} id={mapId} role="img" aria-label="Interactive US migration map — hover or tap states to see Gen Z movement flows" />
+        <div ref={tooltipRef} id={tooltipId} className="tooltip" role="status" aria-live="polite" aria-atomic="true" />
         <div id={slideNum === 15 ? "legend" : "legend2"} className="legend">
           <div className="legend-title">Gen Z Migration</div>
           <div className="legend-item">

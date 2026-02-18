@@ -12,7 +12,7 @@ export default function StoriesPage() {
         <div className="absolute top-[20%] right-[5%] w-[35vw] h-[35vw] bg-clay/5 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-10">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             Stories
           </p>
           <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-8">
@@ -20,7 +20,7 @@ export default function StoriesPage() {
             <br />
             <span className="italic text-forest">one vision.</span>
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/50 max-w-md leading-[1.8]">
+          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/70 max-w-md leading-[1.8]">
             Gen Z participants shared their stories, drawings, and visions
             of home as part of the Reimagining Belonging research project.
             Their insights shaped the 500 Acres model — here's what they said.
@@ -36,7 +36,7 @@ export default function StoriesPage() {
       {/* Participant grid — editorial masonry-style */}
       <section className="py-24 md:py-32">
         <div className="page-container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12" role="list">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
             {participants.map((p, i) => {
               const svgUrl = new URL(
                 `../assets/svg/${p.svgIndex}inline.svg`,
@@ -47,7 +47,6 @@ export default function StoriesPage() {
                 <Link
                   key={p.slug}
                   to={`/stories/${p.slug}`}
-                  role="listitem"
                   aria-label={`Read ${p.name}'s story`}
                   className={`reveal-up stagger-${(i % 4) + 1} story-card group relative rounded-2xl overflow-hidden border border-charcoal/8 bg-warm-white`}
                 >
@@ -78,18 +77,18 @@ export default function StoriesPage() {
 
                     {/* Info */}
                     <div className="mt-auto">
-                      <h3 className="font-serif text-xl md:text-2xl font-bold text-charcoal mb-1 group-hover:text-forest transition-colors">
+                      <h2 className="font-serif text-xl md:text-2xl font-bold text-charcoal mb-1 group-hover:text-forest transition-colors">
                         {p.name}
-                      </h3>
-                      <p className="font-sans text-xs text-charcoal/40 mb-6 tracking-wide">
+                      </h2>
+                      <p className="font-sans text-xs text-charcoal/60 mb-6 tracking-wide">
                         {p.age} · {p.location}
                       </p>
-                      <p className="font-serif text-sm text-charcoal/50 italic leading-[1.75] line-clamp-2 mb-8">
+                      <p className="font-serif text-sm text-charcoal/70 italic leading-[1.75] line-clamp-2 mb-8">
                         "{p.belongingQuote}"
                       </p>
 
                       {/* Read more arrow */}
-                      <div className="mt-6 flex items-center gap-2 text-charcoal/20 group-hover:text-forest transition-all duration-300">
+                      <div className="mt-6 flex items-center gap-2 text-charcoal/60 group-hover:text-forest transition-all duration-300">
                         <span className="font-sans text-xs uppercase tracking-wider">Read story</span>
                         <span className="transition-transform duration-300 group-hover:translate-x-2" aria-hidden="true">→</span>
                       </div>
@@ -108,7 +107,7 @@ export default function StoriesPage() {
           <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
             Your story matters too.
           </h2>
-          <p className="reveal-up stagger-1 font-serif text-lg text-cream/40 leading-[1.8] mb-10 max-w-xl mx-auto">
+          <p className="reveal-up stagger-1 font-serif text-lg text-cream/60 leading-[1.8] mb-10 max-w-xl mx-auto">
             The Reimagining Belonging research continues. Want to share
             your experience with housing, belonging, and home? Your voice
             helps shape what we build next.

@@ -33,7 +33,7 @@ export default function Footer() {
       <div className="page-container pt-28 md:pt-40 pb-16">
         {/* Large typographic CTA */}
         <div className="mb-24 md:mb-32">
-          <p className="font-sans text-xs uppercase tracking-[0.4em] text-cream/20 mb-8">
+          <p className="font-sans text-xs uppercase tracking-[0.4em] text-cream/50 mb-8">
             Ready?
           </p>
           <h2 className="font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-cream mb-10">
@@ -52,7 +52,7 @@ export default function Footer() {
 
         {/* Newsletter signup */}
         <div className="mb-20 md:mb-24 max-w-md">
-          <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/20 mb-6">
+          <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/50 mb-6">
             Stay Connected
           </p>
           {subscribed ? (
@@ -72,7 +72,7 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                className="font-sans text-xs uppercase tracking-wider text-cream/50 hover:text-sage transition-colors"
+                className="font-sans text-xs uppercase tracking-wider text-cream/70 hover:text-sage transition-colors"
               >
                 Join →
               </button>
@@ -85,7 +85,7 @@ export default function Footer() {
           {/* Logo + tagline */}
           <div className="md:col-span-5">
             <Logo className="w-16 h-16 mb-8" showText={false} />
-            <p className="font-serif text-cream/40 text-sm leading-[1.8] max-w-xs">
+            <p className="font-serif text-cream/60 text-sm leading-[1.8] max-w-xs">
               Transforming land near national parks into housing, training,
               and pathways to ownership for the next generation.
             </p>
@@ -93,7 +93,7 @@ export default function Footer() {
 
           {/* Navigation */}
           <div className="md:col-span-3 md:col-start-7">
-            <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/20 mb-8">
+            <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/50 mb-8">
               Navigate
             </p>
             <nav aria-label="Footer navigation">
@@ -102,7 +102,7 @@ export default function Footer() {
                   <Link
                     key={link.to}
                     to={link.to}
-                    className="creative-link font-serif text-base text-cream/50 hover:text-cream transition-colors w-fit"
+                    className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit"
                   >
                     {link.label}
                   </Link>
@@ -113,7 +113,7 @@ export default function Footer() {
 
           {/* Social */}
           <div className="md:col-span-3 md:col-start-10">
-            <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/20 mb-8">
+            <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/50 mb-8">
               Connect
             </p>
             <div className="flex flex-col gap-5">
@@ -124,7 +124,7 @@ export default function Footer() {
                   target={social.label !== "Email" ? "_blank" : undefined}
                   rel={social.label !== "Email" ? "noopener noreferrer" : undefined}
                   aria-label={social.ariaLabel}
-                  className="creative-link font-serif text-base text-cream/50 hover:text-cream transition-colors w-fit"
+                  className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit"
                 >
                   {social.label}
                 </a>
@@ -135,10 +135,10 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="pt-10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="font-sans text-xs text-cream/20 tracking-wide">
+          <p className="font-sans text-xs text-cream/40 tracking-wide">
             &copy; {new Date().getFullYear()} 500 Acres. All rights reserved.
           </p>
-          <p className="font-sans text-xs text-cream/20 tracking-wide">
+          <p className="font-sans text-xs text-cream/40 tracking-wide">
             Built by Gen Z, for Gen Z.
           </p>
         </div>

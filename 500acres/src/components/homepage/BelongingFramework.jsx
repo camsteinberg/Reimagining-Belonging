@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
-import greenImg from "../../assets/images/greenImg.png";
-import yellowImg from "../../assets/images/yellowImg.png";
-import redImg from "../../assets/images/redImg.png";
-import blueImg from "../../assets/images/blueImg.png";
+import greenImg from "../../assets/images/greenImg.webp";
+import yellowImg from "../../assets/images/yellowImg.webp";
+import redImg from "../../assets/images/redImg.webp";
+import blueImg from "../../assets/images/blueImg.webp";
 
 const CIRCLES = [
   { key: "green", container: "greenSVGContainer", fill: "#234635", label: "Place" },
@@ -45,12 +45,19 @@ export default function BelongingFramework() {
           key={key}
           className={`${container}${activeCircle === key ? " circle-active" : ""}`}
           onClick={() => handleCircleClick(key)}
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCircleClick(key); } }}
+          role="button"
+          tabIndex={0}
+          aria-pressed={activeCircle === key}
+          aria-label={`${label} — belonging anchor`}
         >
           <svg
             height="100"
             width="100"
             viewBox="0 0 160 160"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+            focusable="false"
           >
             <circle className="circleFill" cx="80" cy="80" r="70" fill={fill} />
             <circle className="circleHit" cx="80" cy="80" r="70" fill={fill} />

@@ -233,12 +233,14 @@ export default function Navbar({ isHomepage }) {
         ref={overlayRef}
         className="fixed inset-0 z-[240] bg-charcoal pointer-events-none"
         style={{ clipPath: "circle(0% at calc(100% - 3rem) 2.5rem)" }}
+        aria-hidden={!isOpen}
+        inert={!isOpen ? "" : undefined}
       >
         <div
           className="pointer-events-auto w-full h-full flex flex-col justify-center"
           style={{ paddingLeft: "max(3rem, 8vw)", paddingRight: "max(3rem, 8vw)" }}
         >
-          <nav className="flex flex-col gap-2 md:gap-4">
+          <nav aria-label="Main navigation" className="flex flex-col gap-2 md:gap-4">
             {NAV_LINKS.map((link, i) => (
               <Link
                 key={link.to}
@@ -263,7 +265,7 @@ export default function Navbar({ isHomepage }) {
 
           <div className="menu-footer mt-16 md:mt-20 flex flex-col md:flex-row md:items-end justify-between gap-8 opacity-0">
             <div>
-              <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/40 mb-2">
+              <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/60 mb-2">
                 Build your home · Build your skills · Build your wealth
               </p>
               <p className="font-serif text-cream/60 text-sm">
@@ -271,10 +273,10 @@ export default function Navbar({ isHomepage }) {
               </p>
             </div>
             <div className="flex gap-6">
-              <a href="https://instagram.com/500acres" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="font-sans text-xs uppercase tracking-widest text-cream/40 hover:text-cream transition-colors">
+              <a href="https://instagram.com/500acres" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="font-sans text-xs uppercase tracking-widest text-cream/60 hover:text-cream transition-colors">
                 Instagram
               </a>
-              <a href="https://twitter.com/500acres" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter" className="font-sans text-xs uppercase tracking-widest text-cream/40 hover:text-cream transition-colors">
+              <a href="https://twitter.com/500acres" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter" className="font-sans text-xs uppercase tracking-widest text-cream/60 hover:text-cream transition-colors">
                 Twitter
               </a>
             </div>

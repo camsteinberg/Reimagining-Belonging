@@ -160,7 +160,7 @@ export default function InitialMap() {
             </p>
           </div>
         ) : (
-          <div ref={mapContainerRef} id="initialMap" />
+          <div ref={mapContainerRef} id="initialMap" role="img" aria-label="Interactive map showing Gen Z migration journey across countries" />
         )}
       </div>
     </section>

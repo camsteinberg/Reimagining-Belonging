@@ -25,7 +25,7 @@ export default function AboutPage() {
         <div className="absolute bottom-[20%] left-[-5%] w-[30vw] h-[30vw] bg-clay/6 blob pointer-events-none" style={{ animationDelay: "-4s" }} />
 
         <div className="page-container relative z-10">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-10">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             About 500 Acres
           </p>
           <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-8">
@@ -43,7 +43,7 @@ export default function AboutPage() {
 
         {/* Scroll indicator */}
         <div className="reveal-up stagger-3 absolute bottom-16 right-[max(2.5rem,6vw)] flex flex-col items-center gap-2">
-          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/30 rotate-90 origin-center translate-y-8">
+          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 rotate-90 origin-center translate-y-8">
             Scroll
           </span>
           <div className="w-[1px] h-16 bg-charcoal/20 mt-12">
@@ -61,7 +61,7 @@ export default function AboutPage() {
       <section className="py-24 md:py-36">
         <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
           <div className="md:col-span-4 md:col-start-1">
-            <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+            <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
               Our Mission
             </p>
             <h2 className="reveal-left stagger-1 font-serif text-3xl md:text-4xl font-bold text-charcoal leading-[1.15]">
@@ -95,7 +95,7 @@ export default function AboutPage() {
       <section className="py-24 md:py-36 bg-warm-white">
         <div className="page-container">
           <div className="text-center mb-20 md:mb-24">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
               What We Believe
             </p>
             <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal">
@@ -188,7 +188,7 @@ export default function AboutPage() {
           <blockquote className="reveal-scale font-serif text-2xl md:text-4xl lg:text-5xl text-cream leading-[1.5] font-bold italic">
             "Empty land becomes shelter. Shelter becomes skill. Skill becomes wealth."
           </blockquote>
-          <p className="reveal-up stagger-2 font-sans text-sm uppercase tracking-[0.3em] text-cream/40 mt-10">
+          <p className="reveal-up stagger-2 font-sans text-sm uppercase tracking-[0.3em] text-cream/60 mt-10">
             — 500 Acres Mission
           </p>
         </div>
@@ -197,7 +197,7 @@ export default function AboutPage() {
       {/* Vision Timeline — horizontal stepped cards */}
       <section className="py-24 md:py-36">
         <div className="page-container">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
             The Path Forward
           </p>
           <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-20 md:mb-24">
@@ -260,7 +260,7 @@ export default function AboutPage() {
       <section className="py-24 md:py-36">
         <div className="page-container">
           <div className="text-center mb-20 md:mb-24">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
               Leadership
             </p>
             <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
@@ -326,7 +326,7 @@ export default function AboutPage() {
                 <h3 className="font-serif text-xl font-bold text-charcoal mb-1">
                   {member.name}
                 </h3>
-                <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/40 mb-6">
+                <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/60 mb-6">
                   {member.role}
                 </p>
                 <p className="font-serif text-sm text-charcoal/60 leading-[1.75] max-w-[260px] mx-auto">
@@ -338,7 +338,7 @@ export default function AboutPage() {
 
           {/* Contributors */}
           <div className="mt-20 md:mt-24 text-center">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-10">
+            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
               Contributors
             </p>
             <div className="reveal-up stagger-1 flex flex-wrap justify-center gap-8 md:gap-12">
@@ -349,7 +349,7 @@ export default function AboutPage() {
               ].map((c) => (
                 <div key={c.name} className="text-center">
                   <p className="font-serif text-base font-bold text-charcoal">{c.name}</p>
-                  <p className="font-sans text-xs text-charcoal/40 tracking-wide">{c.role}</p>
+                  <p className="font-sans text-xs text-charcoal/60 tracking-wide">{c.role}</p>
                 </div>
               ))}
             </div>
@@ -373,7 +373,7 @@ export default function AboutPage() {
             <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-sage/20 rounded-full" />
           </div>
           <div className="md:col-span-6 md:col-start-7">
-            <p className="reveal-right font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+            <p className="reveal-right font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
               How We Started
             </p>
             <h2 className="reveal-right stagger-1 font-serif text-3xl md:text-4xl font-bold text-charcoal mb-6 leading-[1.15]">

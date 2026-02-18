@@ -1,8 +1,8 @@
 import { useRef, useEffect } from "react";
-import drawing1 from "../../assets/images/section06-1.png";
-import drawing2 from "../../assets/images/section06-2.png";
-import drawing3 from "../../assets/images/section06-3.png";
-import drawing4 from "../../assets/images/section06-4.png";
+import drawing1 from "../../assets/images/section06-1.webp";
+import drawing2 from "../../assets/images/section06-2.webp";
+import drawing3 from "../../assets/images/section06-3.webp";
+import drawing4 from "../../assets/images/section06-4.webp";
 import quote1 from "../../assets/images/slide191.png";
 import quote2 from "../../assets/images/slide192.png";
 import quote3 from "../../assets/images/slide193.png";

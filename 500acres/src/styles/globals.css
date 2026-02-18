@@ -315,7 +315,7 @@ body.force-scroll.popup-open::before {
 
 /* Slide 2 phone */
 .slide2Phone {
-  background-image: url("../assets/images/section01-scroll-1.png");
+  background-image: url("../assets/images/section01-scroll-1.webp");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;

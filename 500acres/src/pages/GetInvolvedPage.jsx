@@ -80,7 +80,7 @@ export default function GetInvolvedPage() {
         <div className="absolute top-[60%] left-[50%] w-[20vw] h-[20vw] bg-sage/10 blob pointer-events-none blur-3xl" style={{ animationDelay: "-6s" }} />
 
         <div className="page-container relative z-10 w-full">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/30 mb-10">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/70 mb-10">
             Get Involved
           </p>
           <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-cream mb-8">
@@ -88,7 +88,7 @@ export default function GetInvolvedPage() {
             <br />
             <span className="italic text-sage">us.</span>
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-cream/50 max-w-md leading-[1.8]">
+          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-cream/70 max-w-md leading-[1.8]">
             500 Acres brings together fellows, builders, and supporters to
             transform land near national parks into homes. Whether you want to
             train in digital fabrication, volunteer for a build weekend, or
@@ -100,7 +100,7 @@ export default function GetInvolvedPage() {
       {/* Engagement funnel -- stacked editorial cards */}
       <section className="py-24 md:py-36">
         <div className="page-container">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
             Your Journey
           </p>
           <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-20 md:mb-24">
@@ -121,7 +121,7 @@ export default function GetInvolvedPage() {
                     {step.desc}
                   </p>
                   {/* Arrow on hover */}
-                  <div className="flex items-center gap-2 text-charcoal/30 group-hover:text-charcoal transition-colors">
+                  <div className="flex items-center gap-2 text-charcoal/50 group-hover:text-charcoal transition-colors">
                     <span className="font-sans text-sm">{step.linkLabel}</span>
                     <span className="transition-transform duration-300 group-hover:translate-x-2">→</span>
                   </div>
@@ -166,14 +166,14 @@ export default function GetInvolvedPage() {
       <section id="volunteer-form" className="py-24 md:py-36 bg-warm-white">
         <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
           <div className="md:col-span-4">
-            <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+            <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
               Get Started
             </p>
             <h2 className="reveal-left stagger-1 font-serif text-3xl md:text-4xl font-bold text-charcoal leading-[1.15] mb-6">
               Express
               <br />interest.
             </h2>
-            <p className="reveal-left stagger-2 font-serif text-base text-charcoal/50">
+            <p className="reveal-left stagger-2 font-serif text-base text-charcoal/70">
               Tell us about yourself and what interests you. Whether you're
               exploring the fellowship, want to volunteer at a build weekend,
               or have another way to contribute — we want to hear from you.
@@ -198,13 +198,13 @@ export default function GetInvolvedPage() {
                 <h3 className="font-serif text-2xl md:text-3xl font-bold text-charcoal mb-4">
                   Thanks for reaching out.
                 </h3>
-                <p className="font-serif text-base text-charcoal/50 max-w-sm mb-8">
+                <p className="font-serif text-base text-charcoal/70 max-w-sm mb-8">
                   We've received your message and a member of our team will
                   get back to you soon.
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="group flex items-center gap-3 text-charcoal/40 hover:text-charcoal font-sans text-sm transition-colors"
+                  className="group flex items-center gap-3 text-charcoal/60 hover:text-charcoal font-sans text-sm transition-colors"
                 >
                   <span className="transition-transform duration-300 group-hover:-translate-x-1">&larr;</span>
                   <span>Submit another response</span>
@@ -226,7 +226,7 @@ export default function GetInvolvedPage() {
                     />
                     <label
                       htmlFor="firstName"
-                      className="absolute left-3 top-4 font-sans text-sm text-charcoal/40 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
+                      className="absolute left-3 top-4 font-sans text-sm text-charcoal/60 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
                     >
                       First Name
                     </label>
@@ -244,7 +244,7 @@ export default function GetInvolvedPage() {
                     />
                     <label
                       htmlFor="lastName"
-                      className="absolute left-3 top-4 font-sans text-sm text-charcoal/40 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
+                      className="absolute left-3 top-4 font-sans text-sm text-charcoal/60 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
                     >
                       Last Name
                     </label>
@@ -264,7 +264,7 @@ export default function GetInvolvedPage() {
                   />
                   <label
                     htmlFor="email"
-                    className="absolute left-3 top-4 font-sans text-sm text-charcoal/40 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
+                    className="absolute left-3 top-4 font-sans text-sm text-charcoal/60 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
                   >
                     Email
                   </label>
@@ -288,7 +288,7 @@ export default function GetInvolvedPage() {
                     <option value="general">General Inquiry</option>
                     <option value="other">Other</option>
                   </select>
-                  <span className="absolute right-0 top-1/2 -translate-y-1/2 text-charcoal/30 pointer-events-none">&darr;</span>
+                  <span className="absolute right-0 top-1/2 -translate-y-1/2 text-charcoal/50 pointer-events-none">&darr;</span>
                 </div>
 
                 <div className="relative">
@@ -303,7 +303,7 @@ export default function GetInvolvedPage() {
                   />
                   <label
                     htmlFor="message"
-                    className="absolute left-3 top-4 font-sans text-sm text-charcoal/40 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
+                    className="absolute left-3 top-4 font-sans text-sm text-charcoal/60 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
                   >
                     Tell us about yourself...
                   </label>
@@ -325,7 +325,7 @@ export default function GetInvolvedPage() {
       {/* Build section anchor */}
       <section id="build" className="py-24 md:py-36">
         <div className="page-container">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
             Build Program
           </p>
           <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-10">
@@ -358,7 +358,7 @@ export default function GetInvolvedPage() {
       {/* Newsletter signup */}
       <section className="py-24 md:py-36 bg-cream">
         <div className="page-container max-w-2xl mx-auto text-center">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/40 mb-4">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
             Stay Connected
           </p>
           <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-4xl font-bold text-charcoal mb-4">
@@ -366,7 +366,7 @@ export default function GetInvolvedPage() {
             <br />
             <span className="italic text-hearth">the field.</span>
           </h2>
-          <p className="reveal-up stagger-2 font-serif text-base text-charcoal/50 mb-10 max-w-md mx-auto">
+          <p className="reveal-up stagger-2 font-serif text-base text-charcoal/70 mb-10 max-w-md mx-auto">
             Build progress, fellowship announcements, and Live Forum
             invitations — delivered to your inbox, never more than twice
             a month.
@@ -408,7 +408,7 @@ export default function GetInvolvedPage() {
                 />
                 <label
                   htmlFor="newsletterEmail"
-                  className="absolute left-3 top-3 font-sans text-sm text-charcoal/40 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
+                  className="absolute left-3 top-3 font-sans text-sm text-charcoal/60 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
                 >
                   Email address
                 </label>
@@ -431,7 +431,7 @@ export default function GetInvolvedPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-sage/5 rounded-full blur-3xl" />
         </div>
         <div className="page-container relative z-10 text-center">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/30 mb-10">
+          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/70 mb-10">
             Support
           </p>
           <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl lg:text-6xl font-bold text-cream leading-[1.05] mb-6">
@@ -439,7 +439,7 @@ export default function GetInvolvedPage() {
             <br />
             <span className="italic text-sage">where they're needed most.</span>
           </h2>
-          <p className="reveal-up stagger-2 font-serif text-lg text-cream/40 max-w-xl mx-auto mb-10">
+          <p className="reveal-up stagger-2 font-serif text-lg text-cream/60 max-w-xl mx-auto mb-10">
             Your contribution helps acquire land near national parks, fund
             fellowship training, produce housing kits, and create communities
             where the next generation can afford to live and build careers.
