@@ -60,12 +60,16 @@ export default function ParticipantDrawings() {
       resetActive();
     };
 
+    // Detect touch device at event-binding time
+    const isTouchDevice =
+      window.matchMedia("(hover: none), (pointer: coarse)").matches;
+
     const handlers = [];
     slide19Drawings.forEach((drawingEl, index) => {
       const quoteEl = slide19Quotes[index];
       if (!quoteEl) return;
 
-      const handler = () => {
+      const activate = () => {
         if (activeDrawing === drawingEl) return;
         if (activeDrawing && activeDrawing !== drawingEl) resetActive();
         activeDrawing = drawingEl;
@@ -76,15 +80,42 @@ export default function ParticipantDrawings() {
         document.addEventListener("mousemove", onPointerMove);
       };
 
-      drawingEl.addEventListener("mouseenter", handler);
-      handlers.push({ el: drawingEl, handler });
+      if (!isTouchDevice) {
+        // Desktop: mouseenter triggers expansion
+        drawingEl.addEventListener("mouseenter", activate);
+        handlers.push({ el: drawingEl, type: "mouseenter", handler: activate });
+      } else {
+        // Touch: tap toggles expansion; tap same drawing to collapse
+        const touchHandler = (e) => {
+          e.preventDefault();
+          if (activeDrawing === drawingEl) {
+            resetActive();
+          } else {
+            activate();
+          }
+        };
+        drawingEl.addEventListener("click", touchHandler);
+        handlers.push({ el: drawingEl, type: "click", handler: touchHandler });
+      }
     });
 
+    // On touch devices, tapping outside any drawing collapses the active one
+    const onDocumentTouch = (e) => {
+      if (!activeDrawing) return;
+      const tappedDrawing = e.target.closest(".slide19Drawing");
+      if (!tappedDrawing) resetActive();
+    };
+
+    if (isTouchDevice) {
+      document.addEventListener("touchstart", onDocumentTouch, { passive: true });
+    }
+
     return () => {
-      handlers.forEach(({ el, handler }) =>
-        el.removeEventListener("mouseenter", handler)
+      handlers.forEach(({ el, type, handler }) =>
+        el.removeEventListener(type, handler)
       );
       document.removeEventListener("mousemove", onPointerMove);
+      document.removeEventListener("touchstart", onDocumentTouch);
     };
   }, []);
 

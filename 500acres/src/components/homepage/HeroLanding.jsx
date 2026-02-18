@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useState } from "react";
 import gsap from "gsap";
-import finalImage from "../../assets/images/finalImage2.png";
+import finalImage from "../../assets/images/finalImage2.webp";
 
 function TypingDots() {
   return (

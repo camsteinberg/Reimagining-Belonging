@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MapboxOverlay } from "@deck.gl/mapbox";
@@ -44,6 +44,7 @@ export default function MigrationMap({ slideNum }) {
   const mapContainerRef = useRef(null);
   const tooltipRef = useRef(null);
   const mapRef = useRef(null);
+  const [loadError, setLoadError] = useState(false);
 
   const slideClass = `slide${slideNum}`;
   const mapId = slideNum === 15 ? "map" : "map2";
@@ -80,22 +81,34 @@ export default function MigrationMap({ slideNum }) {
       if (tooltip) tooltip.style.display = "none";
     };
 
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: MAPBOX_STYLE,
-      projection: "mercator",
-      center: DEFAULT_CENTER,
-      zoom: DEFAULT_ZOOM,
-      pitch: 0,
-      bearing: 0,
-      scrollZoom: false,
-      boxZoom: false,
-      doubleClickZoom: false,
-      keyboard: false,
-      touchZoomRotate: false,
-    });
+    let map;
+    try {
+      map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: MAPBOX_STYLE,
+        projection: "mercator",
+        center: DEFAULT_CENTER,
+        zoom: DEFAULT_ZOOM,
+        pitch: 0,
+        bearing: 0,
+        scrollZoom: false,
+        boxZoom: false,
+        doubleClickZoom: false,
+        keyboard: false,
+        touchZoomRotate: false,
+      });
+    } catch (err) {
+      console.error("Failed to initialize migration map:", err);
+      setLoadError(true);
+      return;
+    }
 
     mapRef.current = map;
+
+    map.on("error", (e) => {
+      console.error("Mapbox runtime error:", e.error);
+      setLoadError(true);
+    });
 
     map.on("load", () => {
       map.setPaintProperty("water", "fill-color", WATER_COLOR);
@@ -193,6 +206,9 @@ export default function MigrationMap({ slideNum }) {
 
         updateArcs(null);
         map.addControl(new mapboxgl.NavigationControl(), "top-right");
+      }).catch((err) => {
+        console.error("Failed to load migration data:", err);
+        setLoadError(true);
       });
     });
 
@@ -224,6 +240,30 @@ export default function MigrationMap({ slideNum }) {
         </div>
       </div>
     );
+
+  if (loadError) {
+    return (
+      <section className={`slide ${slideClass}`}>
+        {textContent}
+        <div className="mapWrap">
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#3a3228",
+            }}
+          >
+            <p style={{ color: "#e8e0d0", fontFamily: "var(--font-serif), 'EB Garamond', Georgia, serif", fontSize: "18px" }}>
+              Map data temporarily unavailable
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={`slide ${slideClass}`}>

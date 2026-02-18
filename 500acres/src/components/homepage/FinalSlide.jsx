@@ -30,7 +30,7 @@ export default function FinalSlide() {
         img.className = "finalSvgIcon";
         img.src = svgSources[Math.floor(Math.random() * svgSources.length)];
         img.alt = "";
-        img.loading = "eager";
+        img.decoding = "async";
         created.push(img);
         track.appendChild(img);
       }

@@ -1013,6 +1013,16 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   opacity: 1;
 }
 
+/* Touch devices: show image for the tapped (active) circle */
+@media (hover: none), (pointer: coarse) {
+  .slide18:has(.greenSVGContainer.circle-active) .slide18Media .img-green,
+  .slide18:has(.yellowSVGContainer.circle-active) .slide18Media .img-yellow,
+  .slide18:has(.redSVGContainer.circle-active) .slide18Media .img-red,
+  .slide18:has(.blueSVGContainer.circle-active) .slide18Media .img-blue {
+    opacity: 1;
+  }
+}
+
 .greenSVGContainer {
   position: absolute;
   top: 60vh;
@@ -1048,6 +1058,15 @@ body:not(.phone-circle-visible) .slide6 .brownText {
 
 .slide18 .greenSVGContainer:has(.circleHit:hover) {
   z-index: 1;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .slide18 .greenSVGContainer.circle-active .circleFill {
+    transform: scale(30);
+  }
+  .slide18 .greenSVGContainer.circle-active {
+    z-index: 1;
+  }
 }
 
 .yellowSVGContainer {
@@ -1087,6 +1106,15 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   z-index: 1;
 }
 
+@media (hover: none), (pointer: coarse) {
+  .slide18 .yellowSVGContainer.circle-active .circleFill {
+    transform: scale(30);
+  }
+  .slide18 .yellowSVGContainer.circle-active {
+    z-index: 1;
+  }
+}
+
 .redSVGContainer {
   position: absolute;
   top: 60vh;
@@ -1122,6 +1150,15 @@ body:not(.phone-circle-visible) .slide6 .brownText {
 
 .slide18 .redSVGContainer:has(.circleHit:hover) {
   z-index: 1;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .slide18 .redSVGContainer.circle-active .circleFill {
+    transform: scale(30);
+  }
+  .slide18 .redSVGContainer.circle-active {
+    z-index: 1;
+  }
 }
 
 .blueSVGContainer {
@@ -1161,6 +1198,15 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   z-index: 1;
 }
 
+@media (hover: none), (pointer: coarse) {
+  .slide18 .blueSVGContainer.circle-active .circleFill {
+    transform: scale(30);
+  }
+  .slide18 .blueSVGContainer.circle-active {
+    z-index: 1;
+  }
+}
+
 .circleLabel {
   position: absolute;
   top: calc(-10vh + 50%);
@@ -1181,6 +1227,16 @@ body:not(.phone-circle-visible) .slide6 .brownText {
 .slide18 .redSVGContainer:has(.circleHit:hover) .circleLabel,
 .slide18 .blueSVGContainer:has(.circleHit:hover) .circleLabel {
   opacity: 0;
+}
+
+/* Touch: hide label when circle is tapped active */
+@media (hover: none), (pointer: coarse) {
+  .slide18 .greenSVGContainer.circle-active .circleLabel,
+  .slide18 .yellowSVGContainer.circle-active .circleLabel,
+  .slide18 .redSVGContainer.circle-active .circleLabel,
+  .slide18 .blueSVGContainer.circle-active .circleLabel {
+    opacity: 0;
+  }
 }
 
 /* Slide 19 — Drawings */
@@ -2435,6 +2491,41 @@ body.slide25-active .slide25 .imgContainer7 {
     --circle-yellow: 18vw;
     --circle-red: 18vw;
     --circle-blue: 18vw;
+  }
+}
+
+/* ── Touch device improvements ── */
+@media (hover: none), (pointer: coarse) {
+  /* Ensure footer social links meet 44x44px minimum touch target */
+  footer .creative-link {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Mapbox attribution links — enlarge touch target */
+  .mapboxgl-ctrl-attrib a {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 4px;
+  }
+
+  /* Ensure SVG circle containers are tappable on touch devices */
+  .greenSVGContainer,
+  .yellowSVGContainer,
+  .redSVGContainer,
+  .blueSVGContainer {
+    cursor: pointer;
+  }
+
+  .greenSVGContainer svg,
+  .yellowSVGContainer svg,
+  .redSVGContainer svg,
+  .blueSVGContainer svg {
+    pointer-events: auto;
   }
 }
 

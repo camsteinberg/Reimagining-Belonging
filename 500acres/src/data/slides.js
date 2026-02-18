@@ -3,8 +3,8 @@ import sectionBg2 from "../assets/images/section01-bg-2.png";
 import sectionBg3 from "../assets/images/section01-bg-3.png";
 import sectionBg4 from "../assets/images/section01-bg-4.png";
 import sectionBg5 from "../assets/images/section01-bg-5.png";
-import finalImage from "../assets/images/finalImage.png";
-import finalImage2 from "../assets/images/finalImage2.png";
+import finalImage from "../assets/images/finalImage.webp";
+import finalImage2 from "../assets/images/finalImage2.webp";
 
 // White background is replaced with CSS background-color
 const WHITE_BG = null;

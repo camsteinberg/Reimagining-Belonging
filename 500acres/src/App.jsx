@@ -36,7 +36,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <LoadingScreen />
+      <LoadingScreen show={isHomepage} />
       <CustomCursor />
       <ScrollProgress />
       <ScrollToTop />

@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 
-export default function LoadingScreen() {
+export default function LoadingScreen({ show = true }) {
   const [hidden, setHidden] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
+    // Skip timers entirely when not shown (e.g. subpages)
+    if (!show) return;
+
     // Start fade out after writing animation completes
     const timer = setTimeout(() => setFadeOut(true), 2800);
     const removeTimer = setTimeout(() => setHidden(true), 3400);
@@ -12,9 +15,9 @@ export default function LoadingScreen() {
       clearTimeout(timer);
       clearTimeout(removeTimer);
     };
-  }, []);
+  }, [show]);
 
-  if (hidden) return null;
+  if (!show || hidden) return null;
 
   const strokeLength = 2000;
   const textColor = "#e8e0d0";

@@ -68,6 +68,7 @@ export default function StoryDetailPage() {
             <img
               src={svgUrl}
               alt={participant.name}
+              loading="lazy"
               className="reveal-scale w-56 h-36 md:w-72 md:h-48 object-contain"
             />
           </div>
@@ -170,6 +171,7 @@ export default function StoryDetailPage() {
                 <img
                   src={idealHomeUrl}
                   alt={`${participant.name}'s ideal home: ${participant.idealHomeTitle}`}
+                  loading="lazy"
                   className="w-full max-h-[60vh] object-contain p-6 md:p-10"
                 />
               </div>

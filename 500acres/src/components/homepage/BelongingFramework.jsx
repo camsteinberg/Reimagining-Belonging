@@ -1,9 +1,24 @@
+import { useState, useCallback } from "react";
 import greenImg from "../../assets/images/greenImg.png";
 import yellowImg from "../../assets/images/yellowImg.png";
 import redImg from "../../assets/images/redImg.png";
 import blueImg from "../../assets/images/blueImg.png";
 
+const CIRCLES = [
+  { key: "green", container: "greenSVGContainer", fill: "#234635", label: "Place" },
+  { key: "yellow", container: "yellowSVGContainer", fill: "#c4a448", label: "Object" },
+  { key: "red", container: "redSVGContainer", fill: "#9f4f2e", label: "Person" },
+  { key: "blue", container: "blueSVGContainer", fill: "#2f5496", label: "Language" },
+];
+
 export default function BelongingFramework() {
+  const [activeCircle, setActiveCircle] = useState(null);
+
+  // Toggle circle on tap — tapping the same circle deactivates it
+  const handleCircleClick = useCallback((key) => {
+    setActiveCircle((prev) => (prev === key ? null : key));
+  }, []);
+
   return (
     <section className="slide slide18" data-bg="">
       <div className="slide18TextContainer" style={{ zIndex: 40 }}>
@@ -25,57 +40,24 @@ export default function BelongingFramework() {
         <img className="img-blue" src={blueImg} alt="Language image" />
       </div>
 
-      <div className="greenSVGContainer">
-        <svg
-          height="100"
-          width="100"
-          viewBox="0 0 160 160"
-          xmlns="http://www.w3.org/2000/svg"
+      {CIRCLES.map(({ key, container, fill, label }) => (
+        <div
+          key={key}
+          className={`${container}${activeCircle === key ? " circle-active" : ""}`}
+          onClick={() => handleCircleClick(key)}
         >
-          <circle className="circleFill" cx="80" cy="80" r="70" fill="#234635" />
-          <circle className="circleHit" cx="80" cy="80" r="70" fill="#234635" />
-        </svg>
-        <div className="circleLabel">Place</div>
-      </div>
-
-      <div className="yellowSVGContainer">
-        <svg
-          height="100"
-          width="100"
-          viewBox="0 0 160 160"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle className="circleFill" cx="80" cy="80" r="70" fill="#c4a448" />
-          <circle className="circleHit" cx="80" cy="80" r="70" fill="#c4a448" />
-        </svg>
-        <div className="circleLabel">Object</div>
-      </div>
-
-      <div className="redSVGContainer">
-        <svg
-          height="100"
-          width="100"
-          viewBox="0 0 160 160"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle className="circleFill" cx="80" cy="80" r="70" fill="#9f4f2e" />
-          <circle className="circleHit" cx="80" cy="80" r="70" fill="#9f4f2e" />
-        </svg>
-        <div className="circleLabel">Person</div>
-      </div>
-
-      <div className="blueSVGContainer">
-        <svg
-          height="100"
-          width="100"
-          viewBox="0 0 160 160"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle className="circleFill" cx="80" cy="80" r="70" fill="#2f5496" />
-          <circle className="circleHit" cx="80" cy="80" r="70" fill="#2f5496" />
-        </svg>
-        <div className="circleLabel">Language</div>
-      </div>
+          <svg
+            height="100"
+            width="100"
+            viewBox="0 0 160 160"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle className="circleFill" cx="80" cy="80" r="70" fill={fill} />
+            <circle className="circleHit" cx="80" cy="80" r="70" fill={fill} />
+          </svg>
+          <div className="circleLabel">{label}</div>
+        </div>
+      ))}
     </section>
   );
 }

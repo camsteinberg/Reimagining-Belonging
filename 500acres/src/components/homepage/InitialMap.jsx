@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MAPBOX_TOKEN, MAPBOX_STYLE, WATER_COLOR } from "../../data/mapConfig";
@@ -8,37 +8,51 @@ mapboxgl.accessToken = MAPBOX_TOKEN;
 export default function InitialMap() {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     if (mapRef.current || !mapContainerRef.current || !MAPBOX_TOKEN) return;
 
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: MAPBOX_STYLE,
-      projection: "mercator",
-      center: [-71.06, 42.36],
-      zoom: 10,
-      pitch: 0,
-      bearing: 0,
-      scrollZoom: false,
-      boxZoom: false,
-      doubleClickZoom: false,
-      keyboard: false,
-      touchZoomRotate: false,
-      dragPan: false,
-      dragRotate: false,
-    });
+    let map;
+    try {
+      map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: MAPBOX_STYLE,
+        projection: "mercator",
+        center: [-71.06, 42.36],
+        zoom: 10,
+        pitch: 0,
+        bearing: 0,
+        scrollZoom: false,
+        boxZoom: false,
+        doubleClickZoom: false,
+        keyboard: false,
+        touchZoomRotate: false,
+        dragPan: false,
+        dragRotate: false,
+      });
+    } catch (err) {
+      console.error("Failed to initialize map:", err);
+      setLoadError(true);
+      return;
+    }
 
     map.on("load", () => {
       map.setPaintProperty("water", "fill-color", WATER_COLOR);
+    });
+
+    map.on("error", (e) => {
+      console.error("Mapbox runtime error:", e.error);
+      setLoadError(true);
     });
 
     mapRef.current = map;
 
     // Scroll-driven zoom out
     const section = document.querySelector(".mapSlides");
+    let observer;
     if (section) {
-      const observer = new IntersectionObserver(
+      observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting && map) {
             map.flyTo({
@@ -55,6 +69,7 @@ export default function InitialMap() {
     }
 
     return () => {
+      if (observer) observer.disconnect();
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
@@ -101,7 +116,24 @@ export default function InitialMap() {
         </div>
       </div>
       <div className="mapWrap">
-        <div ref={mapContainerRef} id="initialMap" />
+        {loadError ? (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#3a3228",
+            }}
+          >
+            <p style={{ color: "#e8e0d0", fontFamily: "var(--font-serif), 'EB Garamond', Georgia, serif", fontSize: "18px" }}>
+              Map temporarily unavailable
+            </p>
+          </div>
+        ) : (
+          <div ref={mapContainerRef} id="initialMap" />
+        )}
       </div>
     </section>
   );

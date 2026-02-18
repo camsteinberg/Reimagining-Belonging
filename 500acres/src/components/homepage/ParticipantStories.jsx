@@ -57,6 +57,7 @@ export default function ParticipantStories() {
             key={p.id}
             src={svgMap[p.svgIndex]}
             alt={p.name}
+            loading="lazy"
             className="participant-svg"
             style={p.svgStyle}
             onClick={() => setActivePopup(p.id)}
@@ -74,6 +75,7 @@ export default function ParticipantStories() {
           <img
             src={svgMap[p.svgIndex]}
             alt={p.name}
+            loading="lazy"
             style={{
               width: "35%",
               position: "absolute",

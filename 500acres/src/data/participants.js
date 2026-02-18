@@ -9,7 +9,7 @@ export const participants = [
     status: "Based in Boston and job hunting",
     svgIndex: "01",
     idealHomeTitle: "Corners",
-    idealHomeImage: "01.png",
+    idealHomeImage: "01.webp",
     belongingQuote: "Belonging is a space where I can choose when and how to engage.",
     summary:
       "Sherry values spaces that allow optional engagement. Because frequent moves weaken place-based attachment, she treats \"home\" less as a fixed location and more as a functional, comfortable setup that supports daily routines. She's especially attuned to spatial structure as a social buffer: shared settings that allow interaction to happen, but never require it.",
@@ -88,7 +88,7 @@ export const participants = [
     status: "Recently moved to Orange County; currently job hunting",
     svgIndex: "04",
     idealHomeTitle: "Layered",
-    idealHomeImage: "04.png",
+    idealHomeImage: "04.webp",
     belongingQuote:
       "Belonging is inter mixing different types of people, cultures, scales, architecture, landscapes to create vibrant communities that are all intermixed and easy to travel to and from.",
     summary:
@@ -144,7 +144,7 @@ export const participants = [
     status: "Lives in New York City in a short-term sublet",
     svgIndex: "06",
     idealHomeTitle: "Soft",
-    idealHomeImage: "06.png",
+    idealHomeImage: "06.webp",
     belongingQuote: "Belonging is a place I can stay for a long term.",
     summary:
       "Joy defines belonging as being able to stay somewhere long term, and feels anxious when housing and work make the near future uncertain. She seeks environments that feel local and grounded, resisting \"copy-paste\" scenes and spaces that feel overly elite or dropped in from elsewhere. Her social life is built mostly through in-person hobbies and local routines, but she isn't very proactive about maintaining long-distance ties.",

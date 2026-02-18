@@ -3,15 +3,15 @@ import { participants } from "../../data/participants";
 import Modal from "../shared/Modal";
 
 // Import ideal home images
-import ih01 from "../../assets/images/idealHome/01.png";
+import ih01 from "../../assets/images/idealHome/01.webp";
 import ih02 from "../../assets/images/idealHome/02.png";
 import ih03 from "../../assets/images/idealHome/03.png";
-import ih04 from "../../assets/images/idealHome/04.png";
+import ih04 from "../../assets/images/idealHome/04.webp";
 import ih05 from "../../assets/images/idealHome/05.png";
-import ih06 from "../../assets/images/idealHome/06.png";
+import ih06 from "../../assets/images/idealHome/06.webp";
 import ih07 from "../../assets/images/idealHome/07.jpg";
 
-const idealHomeImages = { "01.png": ih01, "02.png": ih02, "03.png": ih03, "04.png": ih04, "05.png": ih05, "06.png": ih06, "07.jpg": ih07 };
+const idealHomeImages = { "01.webp": ih01, "02.png": ih02, "03.png": ih03, "04.webp": ih04, "05.png": ih05, "06.webp": ih06, "07.jpg": ih07 };
 
 const containerPositions = [
   { top: "5vh", left: "26vw" },
@@ -97,7 +97,7 @@ export default function IdealHomes() {
             style={{ top: pos.top, left: pos.left }}
             onClick={() => setActivePopup(p.id)}
           >
-            <img src={imgSrc} alt={p.idealHomeTitle} />
+            <img src={imgSrc} alt={p.idealHomeTitle} loading="lazy" />
           </div>
         );
       })}
@@ -114,6 +114,7 @@ export default function IdealHomes() {
             <img
               src={imgSrc}
               alt={p.idealHomeTitle}
+              loading="lazy"
               style={{ height: "100%", padding: "50px" }}
             />
             <div className="popWinHeader">{p.idealHomeTitle}</div>
