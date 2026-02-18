@@ -10,8 +10,6 @@ export default defineConfig({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-gsap': ['gsap', '@gsap/react', 'gsap/ScrollTrigger'],
-          'vendor-mapbox': ['mapbox-gl'],
-          'vendor-deckgl': ['deck.gl', '@deck.gl/react', '@deck.gl/layers', '@deck.gl/mapbox'],
         },
       },
     },

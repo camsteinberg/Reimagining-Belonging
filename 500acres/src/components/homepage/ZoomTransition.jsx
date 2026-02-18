@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import sectionBg5 from "../../assets/images/section01-bg-5.png";
+import sectionBg5 from "../../assets/images/section01-bg-5.webp";
 
 gsap.registerPlugin(ScrollTrigger);
 

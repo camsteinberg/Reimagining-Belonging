@@ -355,7 +355,7 @@ body.force-scroll.popup-open::before {
   display: flex;
   min-height: 100vh;
   background-color: #000000;
-  background-image: url("../assets/images/introBack.png");
+  background-image: url("../assets/images/introBack.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -2494,26 +2494,26 @@ body.slide25-active .slide25 .imgContainer7 {
   }
 }
 
-/* ── Touch device improvements ── */
+/* ── Touch target improvements (unconditional for all devices) ── */
+/* Ensure footer links meet 44x44px minimum touch/click target */
+footer .creative-link {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Mapbox attribution links — enlarge touch/click target */
+.mapboxgl-ctrl-attrib a {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 4px;
+}
+
+/* ── Touch-only: SVG circle tap behavior ── */
 @media (hover: none), (pointer: coarse) {
-  /* Ensure footer social links meet 44x44px minimum touch target */
-  footer .creative-link {
-    min-height: 44px;
-    min-width: 44px;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  /* Mapbox attribution links — enlarge touch target */
-  .mapboxgl-ctrl-attrib a {
-    min-height: 44px;
-    min-width: 44px;
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 4px;
-  }
-
-  /* Ensure SVG circle containers are tappable on touch devices */
   .greenSVGContainer,
   .yellowSVGContainer,
   .redSVGContainer,

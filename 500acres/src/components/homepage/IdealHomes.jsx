@@ -4,14 +4,14 @@ import Modal from "../shared/Modal";
 
 // Import ideal home images
 import ih01 from "../../assets/images/idealHome/01.webp";
-import ih02 from "../../assets/images/idealHome/02.png";
-import ih03 from "../../assets/images/idealHome/03.png";
+import ih02 from "../../assets/images/idealHome/02.webp";
+import ih03 from "../../assets/images/idealHome/03.webp";
 import ih04 from "../../assets/images/idealHome/04.webp";
-import ih05 from "../../assets/images/idealHome/05.png";
+import ih05 from "../../assets/images/idealHome/05.webp";
 import ih06 from "../../assets/images/idealHome/06.webp";
 import ih07 from "../../assets/images/idealHome/07.jpg";
 
-const idealHomeImages = { "01.webp": ih01, "02.png": ih02, "03.png": ih03, "04.webp": ih04, "05.png": ih05, "06.webp": ih06, "07.jpg": ih07 };
+const idealHomeImages = { "01.webp": ih01, "02.webp": ih02, "03.webp": ih03, "04.webp": ih04, "05.webp": ih05, "06.webp": ih06, "07.jpg": ih07 };
 
 const containerPositions = [
   { top: "5vh", left: "26vw" },

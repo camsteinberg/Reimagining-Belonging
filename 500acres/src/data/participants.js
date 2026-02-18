@@ -33,7 +33,7 @@ export const participants = [
     status: "Based in Kansas City",
     svgIndex: "02",
     idealHomeTitle: "Fireplace",
-    idealHomeImage: "02.png",
+    idealHomeImage: "02.webp",
     belongingQuote:
       "Belonging is feeling accepted as I am and feeling safe and protected where I am.",
     summary:
@@ -61,7 +61,7 @@ export const participants = [
     status: "Based in Bangkok; works remotely",
     svgIndex: "03",
     idealHomeTitle: "Paths",
-    idealHomeImage: "03.png",
+    idealHomeImage: "03.webp",
     belongingQuote: "Belonging is the invitation to be yourself.",
     summary:
       "Lexi builds home through routine, familiarity, and repeated participation, often finding stronger belonging in Bangkok than in her U.S. hometown. Having lived across countries, she turns new cities into a home base by showing up consistently: regular events, repeat places, and shared activities that generate trust over time. For her, belonging is also reciprocal: learning language and customs is part of earning comfort, and her ideal home balances privacy with a lively, rotating social ecosystem.",
@@ -117,7 +117,7 @@ export const participants = [
     status: "Lived mostly between New York and Providence",
     svgIndex: "05",
     idealHomeTitle: "Making",
-    idealHomeImage: "05.png",
+    idealHomeImage: "05.webp",
     belongingQuote:
       "Belonging is being able to express who you are and what's important to you, have it resonate with those around you, and vice versa.",
     summary:

@@ -1,8 +1,8 @@
-import sectionBg1 from "../assets/images/section01-bg-1.png";
-import sectionBg2 from "../assets/images/section01-bg-2.png";
-import sectionBg3 from "../assets/images/section01-bg-3.png";
-import sectionBg4 from "../assets/images/section01-bg-4.png";
-import sectionBg5 from "../assets/images/section01-bg-5.png";
+import sectionBg1 from "../assets/images/section01-bg-1.webp";
+import sectionBg2 from "../assets/images/section01-bg-2.webp";
+import sectionBg3 from "../assets/images/section01-bg-3.webp";
+import sectionBg4 from "../assets/images/section01-bg-4.webp";
+import sectionBg5 from "../assets/images/section01-bg-5.webp";
 import finalImage from "../assets/images/finalImage.webp";
 import finalImage2 from "../assets/images/finalImage2.webp";
 

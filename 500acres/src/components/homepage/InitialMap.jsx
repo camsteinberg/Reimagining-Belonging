@@ -1,9 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
 import { MAPBOX_TOKEN, MAPBOX_STYLE, WATER_COLOR } from "../../data/mapConfig";
-
-mapboxgl.accessToken = MAPBOX_TOKEN;
 
 export default function InitialMap() {
   const mapContainerRef = useRef(null);
@@ -13,64 +9,96 @@ export default function InitialMap() {
   useEffect(() => {
     if (mapRef.current || !mapContainerRef.current || !MAPBOX_TOKEN) return;
 
-    let map;
-    try {
-      map = new mapboxgl.Map({
-        container: mapContainerRef.current,
-        style: MAPBOX_STYLE,
-        projection: "mercator",
-        center: [-71.06, 42.36],
-        zoom: 10,
-        pitch: 0,
-        bearing: 0,
-        scrollZoom: false,
-        boxZoom: false,
-        doubleClickZoom: false,
-        keyboard: false,
-        touchZoomRotate: false,
-        dragPan: false,
-        dragRotate: false,
-      });
-    } catch (err) {
-      console.error("Failed to initialize map:", err);
-      setLoadError(true);
-      return;
-    }
+    let cancelled = false;
 
-    map.on("load", () => {
-      map.setPaintProperty("water", "fill-color", WATER_COLOR);
-    });
+    const initMap = async () => {
+      try {
+        const mapboxgl = (await import("mapbox-gl")).default;
+        await import("mapbox-gl/dist/mapbox-gl.css");
 
-    map.on("error", (e) => {
-      console.error("Mapbox runtime error:", e.error);
-      setLoadError(true);
-    });
+        if (cancelled || mapRef.current) return;
 
-    mapRef.current = map;
+        mapboxgl.accessToken = MAPBOX_TOKEN;
 
-    // Scroll-driven zoom out
-    const section = document.querySelector(".mapSlides");
-    let observer;
-    if (section) {
-      observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting && map) {
-            map.flyTo({
-              center: [-98, 38.5],
-              zoom: 3.5,
-              duration: 3000,
-              essential: true,
-            });
-          }
-        },
-        { threshold: 0.3 }
-      );
-      observer.observe(section);
-    }
+        let map;
+        try {
+          map = new mapboxgl.Map({
+            container: mapContainerRef.current,
+            style: MAPBOX_STYLE,
+            projection: "mercator",
+            center: [-71.06, 42.36],
+            zoom: 10,
+            pitch: 0,
+            bearing: 0,
+            scrollZoom: false,
+            boxZoom: false,
+            doubleClickZoom: false,
+            keyboard: false,
+            touchZoomRotate: false,
+            dragPan: false,
+            dragRotate: false,
+          });
+        } catch (err) {
+          console.error("Failed to initialize map:", err);
+          setLoadError(true);
+          return;
+        }
+
+        map.on("load", () => {
+          map.setPaintProperty("water", "fill-color", WATER_COLOR);
+        });
+
+        map.on("error", (e) => {
+          console.error("Mapbox runtime error:", e.error);
+          setLoadError(true);
+        });
+
+        mapRef.current = map;
+
+        // Scroll-driven zoom out
+        const section = document.querySelector(".mapSlides");
+        if (section) {
+          const scrollObserver = new IntersectionObserver(
+            ([entry]) => {
+              if (entry.isIntersecting && map) {
+                map.flyTo({
+                  center: [-98, 38.5],
+                  zoom: 3.5,
+                  duration: 3000,
+                  essential: true,
+                });
+              }
+            },
+            { threshold: 0.3 }
+          );
+          scrollObserver.observe(section);
+
+          // Store for cleanup
+          map._scrollObserver = scrollObserver;
+        }
+      } catch (err) {
+        console.error("Failed to load map:", err);
+        if (!cancelled) setLoadError(true);
+      }
+    };
+
+    // Use IntersectionObserver to trigger loading when near viewport
+    const loadObserver = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          loadObserver.disconnect();
+          initMap();
+        }
+      },
+      { rootMargin: "500px" }
+    );
+    loadObserver.observe(mapContainerRef.current);
 
     return () => {
-      if (observer) observer.disconnect();
+      cancelled = true;
+      loadObserver.disconnect();
       if (mapRef.current) {
+        if (mapRef.current._scrollObserver) mapRef.current._scrollObserver.disconnect();
         mapRef.current.remove();
         mapRef.current = null;
       }
