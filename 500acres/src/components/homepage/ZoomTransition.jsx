@@ -14,6 +14,7 @@ export default function ZoomTransition() {
     const slide6Stage7 = document.querySelector(".slide6Stage7");
     const slide7Overlay = document.querySelector(".slide7BgOverlay");
     const slide7Text = document.querySelector(".slide7TextContainer");
+    const slide8El = document.querySelector(".slide8");
 
     if (slide6BottomText) {
       gsap.set(slide6BottomText, { scale: 1, opacity: 1, transformOrigin: "center center" });
@@ -22,7 +23,7 @@ export default function ZoomTransition() {
         scrollTrigger: {
           trigger: slide6BottomText,
           start: "center center",
-          endTrigger: slide6Stage7 || ".slide8",
+          endTrigger: slide6Stage7 || slide8El,
           end: "top top",
           scrub: true,
           pin: true,
@@ -51,12 +52,14 @@ export default function ZoomTransition() {
     }
 
     // Slide 8 body class toggle
-    ScrollTrigger.create({
-      trigger: ".slide8",
-      start: "top bottom",
-      end: "bottom top",
-      toggleClass: { targets: document.body, className: "slide8-active" },
-    });
+    if (slide8El) {
+      ScrollTrigger.create({
+        trigger: slide8El,
+        start: "top bottom",
+        end: "bottom top",
+        toggleClass: { targets: document.body, className: "slide8-active" },
+      });
+    }
 
     // Slide 7 fadeout logic
     if (slide7Overlay && slide6Stage7) {
@@ -94,7 +97,7 @@ export default function ZoomTransition() {
         invalidateOnRefresh: true,
       });
     }
-  }, { scope: containerRef });
+  });
 
   return (
     <section ref={containerRef} className="slide slide6 tight-text" data-bg={sectionBg5}>

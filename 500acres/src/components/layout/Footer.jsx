@@ -74,7 +74,7 @@ export default function Footer() {
                 type="submit"
                 className="font-sans text-xs uppercase tracking-wider text-cream/70 hover:text-sage transition-colors"
               >
-                Join →
+                Join <span aria-hidden="true">→</span>
               </button>
             </form>
           )}

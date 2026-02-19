@@ -3,10 +3,10 @@ import drawing1 from "../../assets/images/section06-1.webp";
 import drawing2 from "../../assets/images/section06-2.webp";
 import drawing3 from "../../assets/images/section06-3.webp";
 import drawing4 from "../../assets/images/section06-4.webp";
-import quote1 from "../../assets/images/slide191.png";
-import quote2 from "../../assets/images/slide192.png";
-import quote3 from "../../assets/images/slide193.png";
-import quote4 from "../../assets/images/slide194.png";
+import quote1 from "../../assets/images/slide191.webp";
+import quote2 from "../../assets/images/slide192.webp";
+import quote3 from "../../assets/images/slide193.webp";
+import quote4 from "../../assets/images/slide194.webp";
 
 export default function ParticipantDrawings() {
   const slideRef = useRef(null);
@@ -133,8 +133,8 @@ export default function ParticipantDrawings() {
         </div>
       </div>
 
-      <div className="slide19Media" aria-hidden="true">
-        <div className="slide19Drawing">
+      <div className="slide19Media">
+        <div className="slide19Drawing" role="button" tabIndex={0} aria-label="Sherry's belonging drawing — hover or tap to explore">
           <svg
             className="slide19Circle"
             viewBox="0 0 100 100"
@@ -143,9 +143,9 @@ export default function ParticipantDrawings() {
           >
             <circle cx="50" cy="50" r="50" fill="#ffffff" />
           </svg>
-          <img className="drawing1" src={drawing1} alt="Drawing 1" />
+          <img className="drawing1" src={drawing1} alt="Sherry's drawing about belonging" />
         </div>
-        <div className="slide19Drawing">
+        <div className="slide19Drawing" role="button" tabIndex={0} aria-label="Michaella's belonging drawing — hover or tap to explore">
           <svg
             className="slide19Circle"
             viewBox="0 0 100 100"
@@ -154,9 +154,9 @@ export default function ParticipantDrawings() {
           >
             <circle cx="50" cy="50" r="50" fill="#ffffff" />
           </svg>
-          <img className="drawing2" src={drawing2} alt="Drawing 2" />
+          <img className="drawing2" src={drawing2} alt="Michaella's drawing about belonging" />
         </div>
-        <div className="slide19Drawing">
+        <div className="slide19Drawing" role="button" tabIndex={0} aria-label="Oliver's belonging drawing — hover or tap to explore">
           <svg
             className="slide19Circle"
             viewBox="0 0 100 100"
@@ -165,9 +165,9 @@ export default function ParticipantDrawings() {
           >
             <circle cx="50" cy="50" r="50" fill="#ffffff" />
           </svg>
-          <img className="drawing3" src={drawing3} alt="Drawing 3" />
+          <img className="drawing3" src={drawing3} alt="Oliver's drawing about belonging" />
         </div>
-        <div className="slide19Drawing">
+        <div className="slide19Drawing" role="button" tabIndex={0} aria-label="FY's belonging drawing — hover or tap to explore">
           <svg
             className="slide19Circle"
             viewBox="0 0 100 100"
@@ -176,15 +176,15 @@ export default function ParticipantDrawings() {
           >
             <circle cx="50" cy="50" r="50" fill="#ffffff" />
           </svg>
-          <img className="drawing4" src={drawing4} alt="Drawing 4" />
+          <img className="drawing4" src={drawing4} alt="FY's drawing about belonging" />
         </div>
       </div>
 
-      <div className="slide19QuoteContainer">
-        <img className="slide19Quote1" src={quote1} alt="Quote 1" />
-        <img className="slide19Quote2" src={quote2} alt="Quote 2" />
-        <img className="slide19Quote3" src={quote3} alt="Quote 3" />
-        <img className="slide19Quote4" src={quote4} alt="Quote 4" />
+      <div className="slide19QuoteContainer" aria-hidden="true">
+        <img className="slide19Quote1" src={quote1} alt="" />
+        <img className="slide19Quote2" src={quote2} alt="" />
+        <img className="slide19Quote3" src={quote3} alt="" />
+        <img className="slide19Quote4" src={quote4} alt="" />
       </div>
     </section>
   );

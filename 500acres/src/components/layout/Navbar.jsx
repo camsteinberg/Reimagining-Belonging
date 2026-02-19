@@ -234,7 +234,7 @@ export default function Navbar({ isHomepage }) {
         className="fixed inset-0 z-[240] bg-charcoal pointer-events-none"
         style={{ clipPath: "circle(0% at calc(100% - 3rem) 2.5rem)" }}
         aria-hidden={!isOpen}
-        inert={!isOpen ? "" : undefined}
+        inert={!isOpen || undefined}
       >
         <div
           className="pointer-events-auto w-full h-full flex flex-col justify-center"
@@ -248,7 +248,7 @@ export default function Navbar({ isHomepage }) {
                 to={link.to}
                 onClick={(e) => handleNavClick(e, link.to)}
                 aria-current={location.pathname === link.to ? "page" : undefined}
-                className={`group flex items-baseline gap-4 md:gap-6 transition-colors duration-300 ${
+                className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
                   location.pathname === link.to ? "text-forest" : "text-cream hover:text-forest"
                 }`}
               >

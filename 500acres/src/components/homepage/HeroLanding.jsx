@@ -225,7 +225,11 @@ export default function HeroLanding({ show, onDismiss }) {
         ref={scoutRef}
         className="absolute z-10 pointer-events-auto opacity-0 scout-character cursor-pointer cursor-hover"
         style={{ left: "18.5%", top: "25.5%", width: "clamp(32px, 3.5vw, 55px)" }}
+        role="link"
+        tabIndex={0}
+        aria-label="Open Scout AI guide"
         onClick={() => window.open("https://scout-ai-500acres.vercel.app/", "_blank", "noopener,noreferrer")}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); window.open("https://scout-ai-500acres.vercel.app/", "_blank", "noopener,noreferrer"); } }}
       >
         <svg viewBox="0 0 44 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: "scaleX(-1)" }}>
           {/* Walking stick */}

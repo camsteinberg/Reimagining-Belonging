@@ -61,6 +61,9 @@ export default function ParticipantStories() {
             className="participant-svg"
             style={p.svgStyle}
             onClick={() => setActivePopup(p.id)}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActivePopup(p.id); } }}
+            role="button"
+            tabIndex={0}
           />
         ))}
       </div>

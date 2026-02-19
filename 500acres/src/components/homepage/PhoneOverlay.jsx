@@ -44,8 +44,9 @@ export default function PhoneOverlay() {
     let isSlide1Visible = false;
 
     // Slide 1 observer
+    let s1Observer;
     if (slide1) {
-      const s1Observer = new IntersectionObserver(
+      s1Observer = new IntersectionObserver(
         ([entry]) => { isSlide1Visible = entry.isIntersecting; },
         { threshold: [0.3] }
       );
@@ -218,6 +219,7 @@ export default function PhoneOverlay() {
 
     return () => {
       overlayObserver.disconnect();
+      if (s1Observer) s1Observer.disconnect();
       fadeObservers.forEach((o) => o.disconnect());
       window.removeEventListener("scroll", scheduleTextVisibility);
       window.removeEventListener("resize", scheduleTextVisibility);

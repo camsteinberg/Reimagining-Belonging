@@ -173,7 +173,7 @@ export const participants = [
     status: "Based in New York City",
     svgIndex: "07",
     idealHomeTitle: "Cave",
-    idealHomeImage: "07.jpg",
+    idealHomeImage: "07.webp",
     belongingQuote:
       "Belonging is a place where I can do nothing, and I won't feel guilty.",
     summary:

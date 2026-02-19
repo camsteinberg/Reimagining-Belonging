@@ -9,19 +9,10 @@ import ih03 from "../../assets/images/idealHome/03.webp";
 import ih04 from "../../assets/images/idealHome/04.webp";
 import ih05 from "../../assets/images/idealHome/05.webp";
 import ih06 from "../../assets/images/idealHome/06.webp";
-import ih07 from "../../assets/images/idealHome/07.jpg";
+import ih07 from "../../assets/images/idealHome/07.webp";
 
-const idealHomeImages = { "01.webp": ih01, "02.webp": ih02, "03.webp": ih03, "04.webp": ih04, "05.webp": ih05, "06.webp": ih06, "07.jpg": ih07 };
+const idealHomeImages = { "01.webp": ih01, "02.webp": ih02, "03.webp": ih03, "04.webp": ih04, "05.webp": ih05, "06.webp": ih06, "07.webp": ih07 };
 
-const containerPositions = [
-  { top: "5vh", left: "26vw" },
-  { top: "5vh", left: "41vw" },
-  { top: "35vh", left: "40vw" },
-  { top: "35vh", left: "54vw" },
-  { top: "35vh", left: "68vw" },
-  { top: "64vh", left: "53vw" },
-  { top: "64vh", left: "67vw" },
-];
 
 export default function IdealHomes() {
   const [activePopup, setActivePopup] = useState(null);
@@ -88,13 +79,11 @@ export default function IdealHomes() {
 
       {participants.map((p, index) => {
         const imgSrc = idealHomeImages[p.idealHomeImage];
-        const pos = containerPositions[index];
         const containerClass = index === 0 ? "imgContainer" : `imgContainer${index + 1}`;
         return (
           <div
             key={p.id}
             className={containerClass}
-            style={{ top: pos.top, left: pos.left }}
             onClick={() => setActivePopup(p.id)}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActivePopup(p.id); } }}
             role="button"

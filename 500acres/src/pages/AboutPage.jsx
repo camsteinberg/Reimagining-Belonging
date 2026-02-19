@@ -435,6 +435,7 @@ export default function AboutPage() {
                 placeholder="Your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-label="Email address for newsletter"
                 className="w-full sm:flex-1 px-6 py-5 rounded-full bg-cream/10 border border-cream/20 text-cream placeholder-cream/30 font-serif text-base focus:outline-none focus:border-sage/60 transition-colors duration-300"
               />
               <button
