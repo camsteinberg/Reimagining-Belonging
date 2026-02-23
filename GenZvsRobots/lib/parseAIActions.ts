@@ -1,4 +1,5 @@
 import type { BuildAction, AIResponse, BlockType } from "./types";
+import { GRID_SIZE } from "./constants";
 
 const VALID_BLOCKS = new Set<string>(["wall", "floor", "roof", "window", "door", "empty"]);
 
@@ -16,8 +17,8 @@ export function parseAIResponse(text: string): AIResponse {
             typeof item.row === "number" &&
             typeof item.col === "number" &&
             VALID_BLOCKS.has(item.block) &&
-            item.row >= 0 && item.row < 8 &&
-            item.col >= 0 && item.col < 8
+            item.row >= 0 && item.row < GRID_SIZE &&
+            item.col >= 0 && item.col < GRID_SIZE
           ) {
             actions.push({
               row: item.row,

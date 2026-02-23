@@ -120,10 +120,24 @@ export default class GameRoom implements Party.Server {
     }
   }
 
+  // CORS headers for cross-origin requests from the Next.js frontend
+  corsHeaders(): Record<string, string> {
+    return {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    };
+  }
+
   // HTTP handler — receives AI responses from the Next.js API route
   async onRequest(req: Party.Request): Promise<Response> {
+    // Handle CORS preflight
+    if (req.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: this.corsHeaders() });
+    }
+
     if (req.method !== "POST") {
-      return new Response("Not found", { status: 404 });
+      return new Response("Not found", { status: 404, headers: this.corsHeaders() });
     }
 
     let body: {
@@ -136,11 +150,11 @@ export default class GameRoom implements Party.Server {
     try {
       body = await req.json() as typeof body;
     } catch {
-      return new Response("Bad request", { status: 400 });
+      return new Response("Bad request", { status: 400, headers: this.corsHeaders() });
     }
 
     if (body.type !== "aiResponse") {
-      return new Response("Not found", { status: 404 });
+      return new Response("Not found", { status: 404, headers: this.corsHeaders() });
     }
 
     const { teamId, text, actions } = body;
@@ -166,9 +180,9 @@ export default class GameRoom implements Party.Server {
       isAI: true,
     });
 
-    // Broadcast the build actions so clients can animate AI placements
+    // Broadcast the build actions to the team so clients can animate AI placements
     if (actions.length > 0) {
-      this.broadcast({
+      this.broadcastToTeam(teamId, {
         type: "aiBuilding",
         teamId,
         actions: actions as BuildAction[],
@@ -178,7 +192,7 @@ export default class GameRoom implements Party.Server {
     // Sync full state after AI modifications
     this.broadcastState();
 
-    return new Response("OK");
+    return new Response("OK", { headers: this.corsHeaders() });
   }
 
   // --- Host action handler ---
@@ -205,11 +219,12 @@ export default class GameRoom implements Party.Server {
         break;
       }
       case "nextReveal": {
-        advancePhase(this.state);
-        if (this.state.phase === "round2") {
-          // If advancePhase moved us to round2, start the round + timer
+        if (this.state.phase === "interstitial") {
+          // Start round 2 directly — startRound handles the phase transition
           startRound(this.state);
           this.startTimer();
+        } else {
+          advancePhase(this.state);
         }
         break;
       }

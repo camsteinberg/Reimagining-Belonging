@@ -38,16 +38,16 @@ export const ROUND_2_TARGET: Grid = parseTarget([
 
 // Description for AI system prompt
 export const ROUND_1_DESCRIPTION = `An L-shaped single-story house viewed from above on an 8x8 grid.
-Main section (left): 5 columns wide, 4 rows tall. Roof across the top row (columns 0-4).
-Walls on the perimeter with windows at positions (row 1, col 0) and (row 1, col 4).
-Door at (row 3, col 0). Interior filled with floor tiles.
-Wing (right): extends from row 4 downward, columns 4-7, 4 rows tall.
-Roof at row 4 columns 5-6. Window at (row 5, col 4). Walls around perimeter. Floor inside.`;
+Main section (top-left): 5 columns wide (cols 0-4), 5 rows tall (rows 0-4). Roof across row 0 (cols 0-4).
+Walls on the perimeter with windows at (1,1) and (1,4).
+Door at (3,1). Interior floor tiles at cols 1-3 rows 2-3.
+Wing (bottom-right): extends from row 4 downward, columns 4-7, 4 rows tall (rows 4-7).
+Row 4 is a wall row with roofs at (4,5) and (4,6). Window at (5,5). Walls around perimeter. Floor at cols 5-6 rows 6.`;
 
 export const ROUND_2_DESCRIPTION = `A larger two-room house viewed from above on an 8x8 grid.
-Main rectangular shape roughly centered (columns 1-7), spanning rows 0-7.
+Main rectangular shape spanning columns 1-7, rows 0-7.
 Roof sections at top (row 0, cols 1-6) and bottom (row 7, cols 2-5).
-Interior dividing wall at column 3, creating left room and right room.
-Left room: floor tiles at rows 2-5 cols 1-2, windows at (1,1) and (6,2), door at (6,1).
-Right room: floor tiles at rows 2-5 cols 4-5, windows at (1,3), (1,5), door at (4,3).
-Outer walls around perimeter. About 28 blocks total.`;
+Interior dividing wall at column 4 (rows 2-3 and 5-6), with a door at (4,4).
+Left room (cols 1-3): walls along col 1, floor tiles at rows 2-5 cols 2-3, window at (1,1), door at (6,2), window at (6,3).
+Right room (cols 4-7): walls along col 7, floor tiles at rows 2-5 cols 5-6, window at (1,4), window at (1,6).
+Bottom wall: row 6 cols 4-7 are all walls. About 42 non-empty blocks total.`;
