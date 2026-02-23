@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { motion } from "framer-motion";
 import { generateRoomCode } from "@/lib/constants";
 import TerrainBackground from "@/components/TerrainBackground";
 
@@ -36,12 +35,9 @@ export default function Home() {
       {/* Terrain SVG backdrop — sits behind content */}
       <TerrainBackground />
 
-      <motion.div
+      <div
         style={{ position: "relative", zIndex: 1 }}
-        initial={{ opacity: 0, y: 32 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-md flex flex-col items-center gap-8"
+        className="w-full max-w-md flex flex-col items-center gap-8 animate-fade-in-up"
       >
         {/* Logo / title block */}
         <div className="text-center flex flex-col items-center gap-4">
@@ -78,15 +74,13 @@ export default function Home() {
         </div>
 
         {/* Host button */}
-        <motion.button
+        <button
           type="button"
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
           onClick={handleHost}
-          className="w-full py-4 rounded-xl bg-[#8b5e3c] text-[#f5f1ea] font-[family-name:var(--font-pixel)] text-sm tracking-wide shadow-md hover:bg-[#7a5234] transition-colors"
+          className="w-full min-h-[48px] py-4 rounded-xl bg-[#8b5e3c] text-[#f5f1ea] font-[family-name:var(--font-pixel)] text-sm tracking-wide shadow-md hover:bg-[#7a5234] active:scale-[0.97] hover:scale-[1.03] transition-all focus-ring"
         >
           Host a Game
-        </motion.button>
+        </button>
 
         {/* Join form */}
         <form
@@ -122,14 +116,12 @@ export default function Home() {
                   : "border-[#8b5e3c]/30 focus:border-[#3d6b4f]",
               ].join(" ")}
             />
-            <motion.button
+            <button
               type="submit"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="px-6 py-3 rounded-xl bg-[#3d6b4f] text-[#f5f1ea] font-[family-name:var(--font-pixel)] text-[10px] shadow-md hover:bg-[#365f45] transition-colors"
+              className="px-6 py-3 rounded-xl bg-[#3d6b4f] text-[#f5f1ea] font-[family-name:var(--font-pixel)] text-[10px] shadow-md hover:bg-[#365f45] active:scale-[0.97] hover:scale-[1.03] transition-all"
             >
               Join
-            </motion.button>
+            </button>
           </div>
           {joinError && (
             <p className="text-[#c45d3e] text-[8px] font-[family-name:var(--font-pixel)] self-start">
@@ -137,7 +129,7 @@ export default function Home() {
             </p>
           )}
         </form>
-      </motion.div>
+      </div>
     </main>
   );
 }
