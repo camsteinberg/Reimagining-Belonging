@@ -1,65 +1,139 @@
-import Image from "next/image";
+"use client";
+
+import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { generateRoomCode } from "@/lib/constants";
 
 export default function Home() {
+  const router = useRouter();
+  const [joinCode, setJoinCode] = useState("");
+  const [joinError, setJoinError] = useState("");
+
+  function handleHost() {
+    const code = generateRoomCode();
+    router.push(`/host/${code}`);
+  }
+
+  function handleJoin(e: FormEvent) {
+    e.preventDefault();
+    const code = joinCode.trim().toUpperCase();
+    if (code.length !== 4) {
+      setJoinError("Enter a 4-letter room code");
+      return;
+    }
+    setJoinError("");
+    router.push(`/join/${code}`);
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main
+      className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+      style={{
+        background:
+          "linear-gradient(160deg, var(--color-cream) 0%, color-mix(in srgb, var(--color-sage) 10%, var(--color-warm-white)) 100%)",
+      }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 32 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="w-full max-w-md flex flex-col items-center gap-8"
+      >
+        {/* Logo / title block */}
+        <div className="text-center flex flex-col items-center gap-3">
+          <span
+            className="font-[family-name:var(--font-pixel)] text-[10px] tracking-[0.3em] uppercase text-[#8b5e3c]/70"
+          >
+            500 Acres
+          </span>
+
+          <h1
+            className="font-[family-name:var(--font-display)] text-5xl sm:text-6xl font-bold leading-tight text-charcoal"
+          >
+            Blueprint<br />Telephone
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p
+            className="font-[family-name:var(--font-serif)] text-xl italic text-[#2a2520]/70 leading-snug"
+          >
+            Can Gen Z build with robots?
+          </p>
+
+          <p className="text-sm text-[#2a2520]/50 font-[family-name:var(--font-body)] mt-1">
+            A 500 Acres interactive experience
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Divider */}
+        <div className="w-full flex items-center gap-3">
+          <div className="flex-1 h-px bg-[#8b5e3c]/20" />
+          <span className="font-[family-name:var(--font-pixel)] text-[8px] text-[#8b5e3c]/40 tracking-widest">
+            PLAY
+          </span>
+          <div className="flex-1 h-px bg-[#8b5e3c]/20" />
         </div>
-      </main>
-    </div>
+
+        {/* Host button */}
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={handleHost}
+          className="w-full py-4 rounded-xl bg-[#8b5e3c] text-[#f5f1ea] font-[family-name:var(--font-display)] text-xl font-semibold tracking-wide shadow-md hover:bg-[#7a5234] transition-colors"
+        >
+          Host a Game
+        </motion.button>
+
+        {/* Join form */}
+        <form
+          onSubmit={handleJoin}
+          className="w-full flex flex-col items-center gap-3"
+        >
+          <label
+            htmlFor="join-code"
+            className="font-[family-name:var(--font-pixel)] text-[9px] tracking-widest uppercase text-[#2a2520]/60 self-start"
+          >
+            Room Code
+          </label>
+          <div className="w-full flex gap-2">
+            <input
+              id="join-code"
+              type="text"
+              value={joinCode}
+              onChange={(e) => {
+                setJoinError("");
+                setJoinCode(e.target.value.toUpperCase().slice(0, 4));
+              }}
+              placeholder="ABCD"
+              maxLength={4}
+              autoComplete="off"
+              spellCheck={false}
+              className={[
+                "flex-1 py-3 px-4 rounded-xl border-2 outline-none",
+                "font-[family-name:var(--font-pixel)] text-xl tracking-widest text-center uppercase",
+                "bg-[#f5f1ea] text-charcoal placeholder:text-[#2a2520]/30",
+                "transition-colors",
+                joinError
+                  ? "border-[#c45d3e] focus:border-[#c45d3e]"
+                  : "border-[#8b5e3c]/30 focus:border-[#3d6b4f]",
+              ].join(" ")}
+            />
+            <motion.button
+              type="submit"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="px-6 py-3 rounded-xl bg-[#3d6b4f] text-[#f5f1ea] font-[family-name:var(--font-display)] text-lg font-semibold shadow-md hover:bg-[#365f45] transition-colors"
+            >
+              Join
+            </motion.button>
+          </div>
+          {joinError && (
+            <p className="text-[#c45d3e] text-xs font-[family-name:var(--font-body)] self-start">
+              {joinError}
+            </p>
+          )}
+        </form>
+      </motion.div>
+    </main>
   );
 }
