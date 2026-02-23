@@ -12,42 +12,49 @@ function parseTarget(template: string[]): Grid {
   );
 }
 
-// Round 1: Simple L-shaped house (~39 blocks)
+// Round 1: Cottage — front elevation view (~42 blocks)
+// A peaked-roof house seen from the front: triangle roof, windows, door
 export const ROUND_1_TARGET: Grid = parseTarget([
-  "RRRRR...",
-  "WNWWN...",
-  "WFFFW...",
-  "WDFFW...",
-  "WWWWWRR.",
-  "....WNWW",
-  "....WFFW",
-  "....WWWW",
+  "...RR...",   // peak of roof
+  "..RRRR..",   // roof widens
+  ".RRRRRR.",   // full roof span
+  ".WNFFNW.",   // top windows + interior
+  ".WFFFFW.",   // wall + interior fill
+  ".WFFFFW.",   // wall + interior fill
+  ".WNFDNW.",   // bottom windows + door
+  ".WWWWWW.",   // foundation
 ]);
 
-// Round 2: Two-room house with detail (~51 blocks)
+// Round 2: Barn — front elevation view (~62 blocks)
+// A wide barn with gambrel roof overhang, paired windows, double doors
 export const ROUND_2_TARGET: Grid = parseTarget([
-  ".RRRRRR.",
-  ".NWWNWN.",
-  ".WFFWFFW",
-  ".WFFWFFW",
-  ".WFFDFFW",
-  ".WFFWFFW",
-  ".WDNWWWW",
-  "..RRRR..",
+  ".RRRRRR.",   // roof cap
+  "RRRRRRRR",   // wide roof overhang
+  "WNFFFFNW",   // upper windows + hayloft
+  "WFFFFFFW",   // solid wall section
+  "WNFFFFNW",   // lower windows
+  "WFFFFFFW",   // solid wall section
+  "WFFDDFFR",   // double doors + side lean-to roof
+  "WWWWWWWR",   // foundation + lean-to
 ]);
 
 // Description for AI system prompt
-export const ROUND_1_DESCRIPTION = `An L-shaped single-story house viewed from above on an 8x8 grid.
-Main section (top-left): 5 columns wide (cols 0-4), 5 rows tall (rows 0-4). Roof across row 0 (cols 0-4).
-Walls on the perimeter with windows at (1,1) and (1,4).
-Door at (3,1). Interior floor tiles at cols 1-3 row 2 and cols 2-3 row 3.
-Wing (bottom-right): extends from row 4 downward, columns 4-7, 4 rows tall (rows 4-7).
-Row 4 is a wall row with roofs at (4,5) and (4,6). Window at (5,5). Walls around perimeter. Floor at cols 5-6 rows 6.`;
+export const ROUND_1_DESCRIPTION = `A cozy cottage seen from the front (elevation view) on an 8x8 grid.
+Peaked triangle roof at the top: single peak at row 0 cols 3-4, widening to row 1 cols 2-5, full span row 2 cols 1-6.
+Below the roof is a rectangular house body (rows 3-7, cols 1-6) made of brown walls on the left and right edges.
+Row 3: two gold windows at cols 2 and 5, cream floor fill between them.
+Rows 4-5: plain walls on sides, cream floor interior.
+Row 6: two gold windows at cols 2 and 5, a terracotta door at col 4, cream floor.
+Row 7: solid brown wall foundation across cols 1-6.
+About 42 non-empty blocks total. It clearly looks like a house.`;
 
-export const ROUND_2_DESCRIPTION = `A larger two-room house viewed from above on an 8x8 grid.
-Main rectangular shape spanning columns 1-7, rows 0-7.
-Roof sections at top (row 0, cols 1-6) and bottom (row 7, cols 2-5).
-Interior dividing wall at column 4 (rows 2-3 and 5-6), with a door at (4,4).
-Left room (cols 1-3): walls along col 1, floor tiles at rows 2-5 cols 2-3, window at (1,1), door at (6,2), window at (6,3).
-Right room (cols 4-7): walls along col 7, floor tiles at rows 2-5 cols 5-6, window at (1,4), window at (1,6).
-Bottom wall: row 6 cols 4-7 are all walls. About 51 non-empty blocks total.`;
+export const ROUND_2_DESCRIPTION = `A large barn seen from the front (elevation view) on an 8x8 grid.
+Roof: row 0 has roof tiles at cols 1-6, row 1 is a full-width roof overhang across all 8 columns.
+Main barn body (rows 2-7, cols 0-7): brown walls on left (col 0) and right (col 7) edges.
+Row 2: gold windows at cols 1 and 6, cream floor hayloft between them.
+Row 3: solid walls on sides, cream floor interior.
+Row 4: gold windows at cols 1 and 6, cream floor between.
+Row 5: solid walls on sides, cream floor interior.
+Row 6: double terracotta doors at cols 3-4, cream floor on either side, green roof tile at col 7 (lean-to).
+Row 7: solid brown wall foundation across cols 0-6, green roof tile at col 7 (lean-to continuation).
+About 62 non-empty blocks total. It clearly looks like a barn with a wide roof and double doors.`;
