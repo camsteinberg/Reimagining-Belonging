@@ -10,25 +10,20 @@ const anthropic = new Anthropic({
 
 export async function POST(req: NextRequest) {
   try {
-    const { roomCode, teamId, message, round } = await req.json();
+    const { roomCode, teamId, text, playerId } = await req.json();
 
-    if (!roomCode || !teamId || !message) {
+    if (!roomCode || !teamId || !text) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
-
-    // Only allow AI in round 2
-    if (round !== 2) {
-      return NextResponse.json({ error: "AI not available this round" }, { status: 403 });
     }
 
     const target = ROUND_2_TARGET;
     const systemPrompt = buildSystemPrompt(target, 2);
 
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-6-20250514",
+      model: "claude-sonnet-4-6",
       max_tokens: 500,
       system: systemPrompt,
-      messages: [{ role: "user", content: message }],
+      messages: [{ role: "user", content: text }],
     });
 
     const aiText = response.content
@@ -54,8 +49,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("AI chat error:", error);
-    return NextResponse.json({ error: "AI request failed" }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("AI chat error:", message, error);
+    return NextResponse.json({ error: "AI request failed", detail: message }, { status: 500 });
   }
 }
