@@ -20,7 +20,7 @@ export default function PlayPage() {
   }, []);
 
   const { state, connected, send, onMessage } = usePartySocket(
-    code || null
+    code ? code.toLowerCase() : null
   );
 
   // Send join message once connected and name is available
