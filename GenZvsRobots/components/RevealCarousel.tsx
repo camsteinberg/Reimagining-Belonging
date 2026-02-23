@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Team, Grid } from "@/lib/types";
-import IsometricGrid from "./IsometricGrid";
+import VoxelGrid from "./VoxelGrid";
 import ScoreGauge from "./ScoreGauge";
 
 interface RevealCarouselProps {
@@ -119,7 +119,7 @@ export default function RevealCarousel({
                   Target
                 </span>
                 <div className="w-full aspect-square max-w-[280px]">
-                  <IsometricGrid
+                  <VoxelGrid
                     grid={targetGrid}
                     readOnly
                     className="w-full h-full"
@@ -142,7 +142,7 @@ export default function RevealCarousel({
                   Build
                 </span>
                 <div className="w-full aspect-square max-w-[280px]">
-                  <IsometricGrid
+                  <VoxelGrid
                     grid={displayGrid}
                     readOnly
                     showScoring

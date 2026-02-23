@@ -36,6 +36,25 @@ export function usePartySocket(roomCode: string | null) {
         const msg: ServerMessage = JSON.parse(e.data);
         if (msg.type === "state") {
           setState(msg.state);
+        } else if (msg.type === "gridUpdate") {
+          // Apply individual block placements to local state immediately
+          setState((prev) => {
+            if (!prev) return prev;
+            const team = prev.teams[msg.teamId];
+            if (!team) return prev;
+            const newGrid = team.grid.map((row, r) =>
+              r === msg.row
+                ? row.map((cell, c) => (c === msg.col ? msg.block : cell))
+                : row
+            );
+            return {
+              ...prev,
+              teams: {
+                ...prev.teams,
+                [msg.teamId]: { ...team, grid: newGrid },
+              },
+            };
+          });
         }
         for (const listener of listenersRef.current) {
           listener(msg);

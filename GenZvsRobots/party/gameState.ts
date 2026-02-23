@@ -14,7 +14,7 @@ import {
   GRID_SIZE,
   ROUND_DURATION_MS,
 } from "../lib/constants";
-import { ROUND_1_TARGET, ROUND_2_TARGET } from "../lib/targets";
+import { pickRandomTarget } from "../lib/targets";
 
 export function createRoomState(): RoomState {
   return {
@@ -87,7 +87,8 @@ export function startRound(state: RoomState): void {
   const isRound2 = state.phase === "interstitial";
   state.round = isRound2 ? 2 : 1;
   state.phase = isRound2 ? "round2" : "round1";
-  state.currentTarget = isRound2 ? ROUND_2_TARGET : ROUND_1_TARGET;
+  const { target } = pickRandomTarget(isRound2 ? 2 : 1);
+  state.currentTarget = target;
   state.timerEnd = Date.now() + ROUND_DURATION_MS;
 
   for (const team of Object.values(state.teams)) {

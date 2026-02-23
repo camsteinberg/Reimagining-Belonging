@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import type { Team, Grid } from "@/lib/types";
-import IsometricGrid from "./IsometricGrid";
+import VoxelGrid from "./VoxelGrid";
 import ScoreGauge from "./ScoreGauge";
 
 interface RoundComparisonProps {
@@ -144,7 +144,7 @@ export default function RoundComparison({ team, targetGrid }: RoundComparisonPro
             </span>
             <div className="w-full rounded-lg overflow-hidden border border-white/10 bg-white/5">
               <div className="aspect-square">
-                <IsometricGrid
+                <VoxelGrid
                   grid={round1Grid}
                   readOnly
                   showScoring
@@ -169,7 +169,7 @@ export default function RoundComparison({ team, targetGrid }: RoundComparisonPro
             </span>
             <div className="w-full rounded-lg overflow-hidden border border-gold/20 bg-white/5 ring-1 ring-gold/10">
               <div className="aspect-square">
-                <IsometricGrid
+                <VoxelGrid
                   grid={targetGrid}
                   readOnly
                   className="w-full h-full"
@@ -191,7 +191,7 @@ export default function RoundComparison({ team, targetGrid }: RoundComparisonPro
             </span>
             <div className="w-full rounded-lg overflow-hidden border border-sage/20 bg-white/5">
               <div className="aspect-square">
-                <IsometricGrid
+                <VoxelGrid
                   grid={round2Grid}
                   readOnly
                   showScoring

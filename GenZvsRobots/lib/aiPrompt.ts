@@ -1,9 +1,18 @@
 import type { Grid } from "./types";
 import { GRID_SIZE } from "./constants";
-import { ROUND_1_DESCRIPTION, ROUND_2_DESCRIPTION } from "./targets";
+import {
+  ROUND_1_TARGETS, ROUND_1_DESCRIPTIONS,
+  ROUND_2_TARGETS, ROUND_2_DESCRIPTIONS,
+} from "./targets";
 
 export function buildSystemPrompt(target: Grid, round: 1 | 2): string {
-  const desc = round === 1 ? ROUND_1_DESCRIPTION : ROUND_2_DESCRIPTION;
+  // Match the target grid to its description by finding it in the array
+  const targets = round === 1 ? ROUND_1_TARGETS : ROUND_2_TARGETS;
+  const descriptions = round === 1 ? ROUND_1_DESCRIPTIONS : ROUND_2_DESCRIPTIONS;
+  const idx = targets.findIndex(t =>
+    JSON.stringify(t) === JSON.stringify(target)
+  );
+  const desc = idx >= 0 ? descriptions[idx] : descriptions[0];
   const gridStr = target
     .map((row, r) =>
       row.map((cell, c) => `(${r},${c}):${cell}`).filter(s => !s.endsWith(":empty")).join(" ")

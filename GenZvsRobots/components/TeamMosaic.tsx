@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import type { Team, Player, GamePhase } from "@/lib/types";
-import IsometricGrid from "./IsometricGrid";
+import VoxelGrid from "./VoxelGrid";
 
 interface TeamMosaicProps {
   teams: Record<string, Team>;
@@ -70,7 +70,7 @@ function TeamCard({
 
       {/* Mini isometric grid */}
       <div className="flex-1 p-1 min-h-0">
-        <IsometricGrid
+        <VoxelGrid
           grid={team.grid}
           readOnly
           className="w-full h-full"

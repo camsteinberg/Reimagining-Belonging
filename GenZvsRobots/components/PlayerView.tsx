@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { RoomState, BlockType, ClientMessage, ServerMessage } from "@/lib/types";
-import IsometricGrid from "./IsometricGrid";
+import VoxelGrid from "./VoxelGrid";
 import BlockPalette from "./BlockPalette";
 import ChatPanel, { type ChatMessage } from "./ChatPanel";
 import GameHeader from "./GameHeader";
@@ -193,13 +193,13 @@ export default function PlayerView({
           {/* Grid */}
           <div className="flex-1 min-h-0 flex items-center justify-center">
             {isArchitect && targetGrid ? (
-              <IsometricGrid
+              <VoxelGrid
                 grid={targetGrid}
                 readOnly={true}
                 className="w-full h-full max-h-[45vh] md:max-h-full"
               />
             ) : teamGrid ? (
-              <IsometricGrid
+              <VoxelGrid
                 grid={teamGrid}
                 onCellClick={isBuilder && isPlaying ? handleCellClick : undefined}
                 selectedBlock={selectedBlock}
