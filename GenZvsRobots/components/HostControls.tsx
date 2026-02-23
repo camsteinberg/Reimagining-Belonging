@@ -65,10 +65,7 @@ export default function HostControls({ phase, send }: HostControlsProps) {
       )}
 
       {phase === "reveal1" && (
-        <>
-          <HostButton label="Show Scores" action="nextReveal" send={send} variant="primary" />
-          <HostButton label="Next Phase" action="startRound" send={send} variant="secondary" />
-        </>
+        <HostButton label="Continue" action="nextReveal" send={send} variant="primary" />
       )}
 
       {phase === "interstitial" && (

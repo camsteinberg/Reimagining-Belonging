@@ -32,12 +32,16 @@ export function usePartySocket(roomCode: string | null) {
     socket.addEventListener("close", () => setConnected(false));
 
     socket.addEventListener("message", (e) => {
-      const msg: ServerMessage = JSON.parse(e.data);
-      if (msg.type === "state") {
-        setState(msg.state);
-      }
-      for (const listener of listenersRef.current) {
-        listener(msg);
+      try {
+        const msg: ServerMessage = JSON.parse(e.data);
+        if (msg.type === "state") {
+          setState(msg.state);
+        }
+        for (const listener of listenersRef.current) {
+          listener(msg);
+        }
+      } catch {
+        // Ignore malformed messages
       }
     });
 

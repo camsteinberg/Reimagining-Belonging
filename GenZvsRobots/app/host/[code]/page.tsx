@@ -16,6 +16,8 @@ export default function HostPage() {
 
   const [activityFeed, setActivityFeed] = useState<ActivityItem[]>([]);
   const hasJoined = useRef(false);
+  const stateRef = useRef(state);
+  stateRef.current = state;
 
   // Join as host once connected
   useEffect(() => {
@@ -29,7 +31,9 @@ export default function HostPage() {
   const handleMessage = useCallback(
     (msg: ServerMessage) => {
       if (msg.type === "chat") {
-        const teamName = msg.teamId ? `Team ${msg.teamId}` : msg.senderName;
+        const teamName = msg.teamId
+          ? (stateRef.current?.teams[msg.teamId]?.name ?? msg.teamId)
+          : msg.senderName;
         setActivityFeed((prev) => [
           ...prev,
           {

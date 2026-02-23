@@ -64,6 +64,20 @@ export function removePlayer(state: RoomState, id: string): void {
   const player = state.players[id];
   if (!player) return;
   player.connected = false;
+
+  const team = state.teams[player.teamId];
+  if (team) {
+    team.players = team.players.filter(pid => pid !== id);
+
+    if (player.role === "architect" && team.players.length > 0) {
+      const nextArchitect = team.players.find(pid => state.players[pid]?.connected);
+      if (nextArchitect) {
+        state.players[nextArchitect].role = "architect";
+      }
+    }
+  }
+
+  delete state.players[id];
 }
 
 export function startRound(state: RoomState): void {
@@ -86,8 +100,20 @@ export function startRound(state: RoomState): void {
 
   // Swap all player roles for round 2
   if (isRound2) {
-    for (const player of Object.values(state.players)) {
-      player.role = player.role === "architect" ? "builder" : "architect";
+    for (const team of Object.values(state.teams)) {
+      const connectedPlayers = team.players
+        .map(pid => state.players[pid])
+        .filter(p => p && p.connected);
+
+      for (const p of connectedPlayers) {
+        p.role = p.role === "architect" ? "builder" : "architect";
+      }
+
+      // Ensure exactly one architect per team
+      const hasArchitect = connectedPlayers.some(p => p.role === "architect");
+      if (!hasArchitect && connectedPlayers.length > 0) {
+        connectedPlayers[0].role = "architect";
+      }
     }
   }
 }
@@ -161,7 +187,7 @@ export function calculateAllScores(state: RoomState): void {
     if (state.round === 1) {
       team.round1Score = calculateScore(team.grid, target);
     } else {
-      team.round2Score = calculateScore(team.grid, ROUND_2_TARGET);
+      team.round2Score = calculateScore(team.grid, target);
     }
   }
 }

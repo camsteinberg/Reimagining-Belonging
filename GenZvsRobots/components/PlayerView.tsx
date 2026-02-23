@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { RoomState, BlockType, ClientMessage, ServerMessage } from "@/lib/types";
 import IsometricGrid from "./IsometricGrid";
 import BlockPalette from "./BlockPalette";
@@ -24,6 +24,7 @@ export default function PlayerView({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [aiPlacedCells, setAiPlacedCells] = useState<Set<string>>(new Set());
   const [newCells, setNewCells] = useState<Set<string>>(new Set());
+  const cellTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const player = state.players[playerId];
   const teamId = player?.teamId;
@@ -42,6 +43,15 @@ export default function PlayerView({
     setAiPlacedCells(new Set());
     setNewCells(new Set());
   }, [phase]);
+
+  // Clean up cell timeouts on unmount
+  useEffect(() => {
+    return () => {
+      for (const timer of cellTimeoutsRef.current.values()) {
+        clearTimeout(timer);
+      }
+    };
+  }, []);
 
   // Listen for chat and aiBuilding messages
   useEffect(() => {
@@ -88,14 +98,20 @@ export default function PlayerView({
         next.add(key);
         return next;
       });
+      // Clear any existing timeout for this cell
+      const existing = cellTimeoutsRef.current.get(key);
+      if (existing) clearTimeout(existing);
+
       // Remove new cell highlight after animation
-      setTimeout(() => {
+      const timer = setTimeout(() => {
+        cellTimeoutsRef.current.delete(key);
         setNewCells((prev) => {
           const next = new Set(prev);
           next.delete(key);
           return next;
         });
       }, 600);
+      cellTimeoutsRef.current.set(key, timer);
     },
     [isPlaying, isBuilder, send, selectedBlock]
   );

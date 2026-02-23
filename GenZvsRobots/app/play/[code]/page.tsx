@@ -19,7 +19,7 @@ export default function PlayPage() {
     setPlayerName(name);
   }, []);
 
-  const { state, connected, send, onMessage } = usePartySocket(
+  const { state, connected, send, onMessage, socket } = usePartySocket(
     code ? code.toLowerCase() : null
   );
 
@@ -31,18 +31,14 @@ export default function PlayPage() {
     }
   }, [connected, playerName, send]);
 
-  // Detect own playerId from state once we've joined
-  // The server should reflect our player back in state.players keyed by socket id.
-  // We find ourselves by matching the name we sent (simplest heuristic).
+  // Detect own playerId from socket connection ID
   useEffect(() => {
-    if (!state || !playerName || playerId) return;
-    const match = Object.entries(state.players).find(
-      ([, p]) => p.name === playerName
-    );
-    if (match) {
-      setPlayerId(match[0]);
+    if (!connected || playerId) return;
+    const id = socket.current?.id;
+    if (id && state?.players[id]) {
+      setPlayerId(id);
     }
-  }, [state, playerName, playerId]);
+  }, [connected, state, playerId, socket]);
 
   // Loading / connecting states
   if (!connected) {

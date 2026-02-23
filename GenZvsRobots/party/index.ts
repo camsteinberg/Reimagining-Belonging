@@ -18,6 +18,9 @@ export default class GameRoom implements Party.Server {
 
   constructor(readonly room: Party.Room) {
     this.state = createRoomState();
+    // Use the actual PartyKit room ID as the display code
+    // (not the random one from createRoomState)
+    this.state.code = this.room.id.toUpperCase();
   }
 
   // Send current state to newly connected client
@@ -29,6 +32,7 @@ export default class GameRoom implements Party.Server {
   onClose(conn: Party.Connection) {
     if (conn.id === this.hostId) {
       this.state.hostConnected = false;
+      this.stopTimer();
     }
     removePlayer(this.state, conn.id);
     this.broadcastState();
@@ -157,6 +161,10 @@ export default class GameRoom implements Party.Server {
       return new Response("Not found", { status: 404, headers: this.corsHeaders() });
     }
 
+    if (this.state.phase !== "round2") {
+      return new Response("Round ended", { status: 409, headers: this.corsHeaders() });
+    }
+
     const { teamId, text, actions } = body;
 
     // Apply AI build actions to the team's grid
@@ -248,8 +256,10 @@ export default class GameRoom implements Party.Server {
     this.timerInterval = setInterval(() => {
       if (this.state.timerEnd && Date.now() >= this.state.timerEnd) {
         this.stopTimer();
-        calculateAllScores(this.state);
-        endRound(this.state);
+        if (this.state.phase === "round1" || this.state.phase === "round2") {
+          calculateAllScores(this.state);
+          endRound(this.state);
+        }
         this.broadcastState();
       }
     }, 1000);
