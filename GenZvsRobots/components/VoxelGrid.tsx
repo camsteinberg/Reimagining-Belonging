@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Grid, BlockType } from "@/lib/types";
 import { GRID_SIZE } from "@/lib/constants";
-import { renderVoxelGrid } from "@/lib/voxelRenderer";
+import { renderVoxelGrid, getGridExtent } from "@/lib/voxelRenderer";
 import { screenToGrid, type Rotation } from "@/lib/voxel";
 import { TILE_W, TILE_H, BLOCK_H } from "@/lib/sprites";
 
@@ -30,6 +30,7 @@ interface VoxelGridProps {
 export default function VoxelGrid({
   grid,
   onCellClick,
+  selectedBlock,
   readOnly = false,
   showScoring = false,
   targetGrid,
@@ -42,6 +43,7 @@ export default function VoxelGrid({
   const [rotation, setRotation] = useState<Rotation>(0);
   const [rotationLocked, setRotationLocked] = useState(true);
   const [canvasSize, setCanvasSize] = useState({ w: 400, h: 300 });
+  const [hoverCell, setHoverCell] = useState<{ row: number; col: number } | null>(null);
   const animFrameRef = useRef<number>(0);
   const animStartRef = useRef<number>(0);
   const pointerStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
@@ -65,6 +67,45 @@ export default function VoxelGrid({
     observer.observe(container);
     return () => observer.disconnect();
   }, []);
+
+  // ---- Inverse transform helper (canvas coords -> grid cell) ----
+  const canvasToGrid = useCallback(
+    (clientX: number, clientY: number): { row: number; col: number } | null => {
+      const canvas = canvasRef.current;
+      if (!canvas) return null;
+
+      const rect = canvas.getBoundingClientRect();
+      const scaleXR = (canvasSize.w * dpr) / rect.width;
+      const scaleYR = (canvasSize.h * dpr) / rect.height;
+
+      const canvasX = (clientX - rect.left) * scaleXR;
+      const canvasY = (clientY - rect.top) * scaleYR;
+
+      const { minX, minY, maxX, maxY } = getGridExtent(rotation);
+      const gridW = maxX - minX;
+      const gridH = maxY - minY;
+      const w = canvasSize.w * dpr;
+      const h = canvasSize.h * dpr;
+      const padding = 8;
+      const sx = (w - padding * 2) / gridW;
+      const sy = (h - padding * 2) / gridH;
+      const scale = Math.min(sx, sy);
+      const offsetX = (w - gridW * scale) / 2 - minX * scale;
+      const offsetY = (h - gridH * scale) / 2 - minY * scale;
+
+      const isoX = (canvasX - offsetX) / scale;
+      const isoY = (canvasY - offsetY) / scale;
+
+      // Subtract BLOCK_H to fix click alignment — blocks are visually elevated
+      const { row, col } = screenToGrid(isoX, isoY - BLOCK_H, rotation);
+
+      if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
+        return { row, col };
+      }
+      return null;
+    },
+    [rotation, canvasSize, dpr],
+  );
 
   // ---- Single render function ----
   const render = useCallback(
@@ -92,9 +133,11 @@ export default function VoxelGrid({
         aiPlacedCells,
         newCells,
         animTime: time ?? 0,
+        hoverCell: readOnly ? null : hoverCell,
+        hoverBlock: selectedBlock,
       });
     },
-    [grid, canvasSize, dpr, rotation, showScoring, targetGrid, aiPlacedCells, newCells],
+    [grid, canvasSize, dpr, rotation, showScoring, targetGrid, aiPlacedCells, newCells, hoverCell, selectedBlock, readOnly],
   );
 
   // ---- Animation loop (only when needed) ----
@@ -142,44 +185,33 @@ export default function VoxelGrid({
 
       // Tap to place block (movement < 10px)
       if (dist < 10 && !readOnly && onCellClick) {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = (canvasSize.w * dpr) / rect.width;
-        const scaleY = (canvasSize.h * dpr) / rect.height;
-
-        // Get pixel position in canvas coordinate space
-        const canvasX = (e.clientX - rect.left) * scaleX;
-        const canvasY = (e.clientY - rect.top) * scaleY;
-
-        // Reverse the transform applied in renderVoxelGrid
-        // We need to match the offset/scale used in the renderer
-        const { minX, minY, maxX, maxY } = getGridExtent(rotation);
-        const gridW = maxX - minX;
-        const gridH = maxY - minY;
-        const w = canvasSize.w * dpr;
-        const h = canvasSize.h * dpr;
-        const padding = 8;
-        const sx = (w - padding * 2) / gridW;
-        const sy = (h - padding * 2) / gridH;
-        const scale = Math.min(sx, sy);
-        const offsetX = (w - gridW * scale) / 2 - minX * scale;
-        const offsetY = (h - gridH * scale) / 2 - minY * scale;
-
-        // Inverse transform: canvas coords -> grid iso coords
-        const isoX = (canvasX - offsetX) / scale;
-        const isoY = (canvasY - offsetY) / scale;
-
-        const { row, col } = screenToGrid(isoX, isoY, rotation);
-
-        if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
-          onCellClick(row, col);
+        const cell = canvasToGrid(e.clientX, e.clientY);
+        if (cell) {
+          onCellClick(cell.row, cell.col);
         }
       }
     },
-    [readOnly, onCellClick, rotation, rotationLocked, canvasSize, dpr],
+    [readOnly, onCellClick, rotationLocked, canvasToGrid],
   );
+
+  // ---- Hover tracking ----
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (readOnly) return;
+      const cell = canvasToGrid(e.clientX, e.clientY);
+      setHoverCell((prev) => {
+        if (!cell && !prev) return prev;
+        if (!cell) return null;
+        if (prev && prev.row === cell.row && prev.col === cell.col) return prev;
+        return cell;
+      });
+    },
+    [readOnly, canvasToGrid],
+  );
+
+  const handlePointerLeave = useCallback(() => {
+    setHoverCell(null);
+  }, []);
 
   // ---- Rotate helpers ----
   const rotateLeft = useCallback(() => {
@@ -200,6 +232,8 @@ export default function VoxelGrid({
         ref={canvasRef}
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
         style={{
           width: "100%",
           height: "100%",
@@ -248,24 +282,4 @@ export default function VoxelGrid({
       )}
     </div>
   );
-}
-
-// ---- Duplicated extent calc (kept in sync with voxelRenderer.ts) ----
-// Needed here for click inverse-transform. Importing from renderer would
-// create a clean module boundary but duplicating ~10 lines is simpler.
-
-import { gridToScreen } from "@/lib/voxel";
-
-function getGridExtent(rotation: Rotation) {
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (let r = 0; r < GRID_SIZE; r++) {
-    for (let c = 0; c < GRID_SIZE; c++) {
-      const { x, y } = gridToScreen(r, c, rotation);
-      minX = Math.min(minX, x - TILE_W / 2);
-      maxX = Math.max(maxX, x + TILE_W / 2);
-      minY = Math.min(minY, y);
-      maxY = Math.max(maxY, y + TILE_H + BLOCK_H);
-    }
-  }
-  return { minX, minY, maxX, maxY };
 }

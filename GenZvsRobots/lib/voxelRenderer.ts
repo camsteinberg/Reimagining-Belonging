@@ -1,4 +1,4 @@
-import type { Grid } from "./types";
+import type { Grid, BlockType } from "./types";
 import { GRID_SIZE } from "./constants";
 import { getSpriteAtlas, getSpriteRect, SPRITE_SIZE, TILE_W, TILE_H, BLOCK_H, FLOOR_H } from "./sprites";
 import { gridToScreen, getDrawOrder, type Rotation } from "./voxel";
@@ -13,7 +13,12 @@ export interface RenderOptions {
   aiPlacedCells?: Set<string>;
   newCells?: Set<string>;
   animTime?: number;
+  hoverCell?: { row: number; col: number } | null;
+  hoverBlock?: BlockType;
 }
+
+// Centering offset for sprite positioning
+const OX = (SPRITE_SIZE - TILE_W) / 2; // 8
 
 // Ease-out bounce for drop animation
 function easeOutBounce(t: number): number {
@@ -32,7 +37,7 @@ function easeOutBounce(t: number): number {
 }
 
 // Grid extent in pixel space (for fitting/centering)
-function getGridExtent(rotation: Rotation): { minX: number; minY: number; maxX: number; maxY: number } {
+export function getGridExtent(rotation: Rotation): { minX: number; minY: number; maxX: number; maxY: number } {
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (let r = 0; r < GRID_SIZE; r++) {
     for (let c = 0; c < GRID_SIZE; c++) {
@@ -40,7 +45,8 @@ function getGridExtent(rotation: Rotation): { minX: number; minY: number; maxX: 
       // Tile diamond corners
       minX = Math.min(minX, x - TILE_W / 2);
       maxX = Math.max(maxX, x + TILE_W / 2);
-      minY = Math.min(minY, y);
+      // Account for sprite height (taller than tile)
+      minY = Math.min(minY, y - (SPRITE_SIZE - TILE_H));
       maxY = Math.max(maxY, y + TILE_H + BLOCK_H);
     }
   }
@@ -77,7 +83,7 @@ function drawScoringOverlay(
 ) {
   const yOff = SPRITE_SIZE - TILE_H - h;
   const topY = screenY + yOff;
-  const cx = screenX + TILE_W / 2;
+  const cx = screenX + TILE_W / 2 + OX;
 
   ctx.beginPath();
   ctx.moveTo(cx, topY);
@@ -101,7 +107,7 @@ function drawAIPulse(
 ) {
   const yOff = SPRITE_SIZE - TILE_H - h;
   const topY = screenY + yOff;
-  const cx = screenX + TILE_W / 2;
+  const cx = screenX + TILE_W / 2 + OX;
   const opacity = 0.55 + 0.35 * Math.sin((animTime / 1600) * Math.PI * 2);
 
   ctx.beginPath();
@@ -112,6 +118,41 @@ function drawAIPulse(
   ctx.closePath();
   ctx.fillStyle = `rgba(120, 160, 130, ${opacity})`;
   ctx.fill();
+}
+
+// Draw hover preview (semi-transparent block + diamond outline)
+function drawHoverPreview(
+  ctx: CanvasRenderingContext2D,
+  atlas: HTMLCanvasElement,
+  row: number,
+  col: number,
+  block: BlockType,
+  rotation: Rotation,
+) {
+  const { x, y } = gridToScreen(row, col, rotation);
+
+  // Draw white diamond outline on ground tile
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2);
+  ctx.lineTo(x, y + TILE_H);
+  ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2);
+  ctx.closePath();
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Draw 50%-opacity sprite of the hover block
+  if (block && block !== "empty") {
+    const { sx, sy, sw, sh } = getSpriteRect(block, rotation);
+    const dx = x - TILE_W / 2 - OX;
+    const dy = y - (SPRITE_SIZE - TILE_H);
+
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.drawImage(atlas, sx, sy, sw, sh, dx, dy, SPRITE_SIZE, SPRITE_SIZE);
+    ctx.restore();
+  }
 }
 
 export function renderVoxelGrid(
@@ -128,6 +169,8 @@ export function renderVoxelGrid(
     aiPlacedCells,
     newCells,
     animTime = 0,
+    hoverCell,
+    hoverBlock,
   } = opts;
 
   // Clear
@@ -177,8 +220,8 @@ export function renderVoxelGrid(
     const { sx, sy, sw, sh } = getSpriteRect(block, rotation);
     const h = block === "floor" ? FLOOR_H : BLOCK_H;
 
-    // Sprite screen position: center sprite on tile
-    let dx = x - TILE_W / 2;
+    // Sprite screen position: center sprite on tile (account for OX padding)
+    let dx = x - TILE_W / 2 - OX;
     let dy = y - (SPRITE_SIZE - TILE_H);
 
     // Drop animation for new cells
@@ -226,6 +269,11 @@ export function renderVoxelGrid(
         ctx.fill();
       }
     }
+  }
+
+  // 4. Draw hover preview
+  if (hoverCell && hoverBlock) {
+    drawHoverPreview(ctx, atlas, hoverCell.row, hoverCell.col, hoverBlock, rotation);
   }
 
   ctx.restore();

@@ -1,15 +1,18 @@
 import type { BlockType } from "./types";
 import { BLOCK_COLORS } from "./constants";
 
-const TILE_W = 48;
-const TILE_H = 24;
-const BLOCK_H = 20;
-const FLOOR_H = 4;
-const SPRITE_SIZE = 48;
+export const TILE_W = 48;
+export const TILE_H = 24;
+export const BLOCK_H = 20;
+export const FLOOR_H = 4;
+export const SPRITE_SIZE = 64;
 
 type Rotation = 0 | 1 | 2 | 3;
 
 const BLOCK_TYPES: BlockType[] = ["wall", "floor", "roof", "window", "door", "empty"];
+
+// Centering offset: (SPRITE_SIZE - TILE_W) / 2
+const OX = 8;
 
 // --- Color helpers ---
 
@@ -18,266 +21,265 @@ function hexToRgb(hex: string): [number, number, number] {
   return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
 }
 
-function rgbToHex(r: number, g: number, b: number): string {
-  const clamp = (n: number) => Math.max(0, Math.min(255, Math.round(n)));
-  return `#${((1 << 24) | (clamp(r) << 16) | (clamp(g) << 8) | clamp(b)).toString(16).slice(1)}`;
-}
-
-function adjustBrightness(hex: string, amount: number): string {
-  const [r, g, b] = hexToRgb(hex);
-  return rgbToHex(r + amount, g + amount, b + amount);
-}
-
-// --- Isometric face geometry for a given block height ---
-
-function topFace(h: number): [number, number][] {
+function adjustRgb(rgb: [number, number, number], amount: number): [number, number, number] {
   return [
-    [TILE_W / 2, 0],
-    [TILE_W, TILE_H / 2],
-    [TILE_W / 2, TILE_H],
-    [0, TILE_H / 2],
+    Math.max(0, Math.min(255, rgb[0] + amount)),
+    Math.max(0, Math.min(255, rgb[1] + amount)),
+    Math.max(0, Math.min(255, rgb[2] + amount)),
   ];
 }
 
-function leftFace(h: number): [number, number][] {
-  return [
-    [0, TILE_H / 2],
-    [TILE_W / 2, TILE_H],
-    [TILE_W / 2, TILE_H + h],
-    [0, TILE_H / 2 + h],
-  ];
+// --- Pixel-perfect drawing helpers (no anti-aliasing) ---
+
+function setPixel(img: ImageData, x: number, y: number, r: number, g: number, b: number, a: number = 255): void {
+  const ix = Math.round(x);
+  const iy = Math.round(y);
+  if (ix < 0 || iy < 0 || ix >= img.width || iy >= img.height) return;
+  const i = (iy * img.width + ix) * 4;
+  img.data[i] = r;
+  img.data[i + 1] = g;
+  img.data[i + 2] = b;
+  img.data[i + 3] = a;
 }
 
-function rightFace(h: number): [number, number][] {
-  return [
-    [TILE_W / 2, TILE_H],
-    [TILE_W, TILE_H / 2],
-    [TILE_W, TILE_H / 2 + h],
-    [TILE_W / 2, TILE_H + h],
-  ];
+/** Bresenham's line algorithm — integer-only, no anti-aliasing */
+function drawLine(img: ImageData, x0: number, y0: number, x1: number, y1: number, r: number, g: number, b: number): void {
+  let ix0 = Math.round(x0), iy0 = Math.round(y0);
+  const ix1 = Math.round(x1), iy1 = Math.round(y1);
+  const dx = Math.abs(ix1 - ix0);
+  const dy = -Math.abs(iy1 - iy0);
+  const sx = ix0 < ix1 ? 1 : -1;
+  const sy = iy0 < iy1 ? 1 : -1;
+  let err = dx + dy;
+
+  for (;;) {
+    setPixel(img, ix0, iy0, r, g, b);
+    if (ix0 === ix1 && iy0 === iy1) break;
+    const e2 = 2 * err;
+    if (e2 >= dy) { err += dy; ix0 += sx; }
+    if (e2 <= dx) { err += dx; iy0 += sy; }
+  }
 }
 
-function drawPoly(ctx: CanvasRenderingContext2D, pts: [number, number][], fill: string) {
-  ctx.beginPath();
-  ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  ctx.closePath();
-  ctx.fillStyle = fill;
-  ctx.fill();
-  ctx.strokeStyle = "#1a1a1a";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-}
+/** Scanline polygon fill — integer math, no anti-aliasing */
+function fillPoly(img: ImageData, points: [number, number][], r: number, g: number, b: number): void {
+  if (points.length < 3) return;
 
-// 2x2 checkerboard dithering
-function dither(ctx: CanvasRenderingContext2D, pts: [number, number][], baseColor: string, variation: number) {
-  const [r, g, b] = hexToRgb(baseColor);
-  // Draw base
-  drawPoly(ctx, pts, baseColor);
-  // Overlay dither dots
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  ctx.closePath();
-  ctx.clip();
+  // Find bounding box
+  let minY = Infinity, maxY = -Infinity;
+  for (const [, py] of points) {
+    if (py < minY) minY = py;
+    if (py > maxY) maxY = py;
+  }
+  minY = Math.round(minY);
+  maxY = Math.round(maxY);
 
-  const lighter = rgbToHex(r + variation, g + variation, b + variation);
-  ctx.fillStyle = lighter;
-  // Get bounding box
-  const xs = pts.map(p => p[0]);
-  const ys = pts.map(p => p[1]);
-  const minX = Math.floor(Math.min(...xs));
-  const maxX = Math.ceil(Math.max(...xs));
-  const minY = Math.floor(Math.min(...ys));
-  const maxY = Math.ceil(Math.max(...ys));
-
-  for (let y = minY; y <= maxY; y += 4) {
-    for (let x = minX; x <= maxX; x += 4) {
-      if ((x + y) % 8 === 0) {
-        ctx.fillRect(x, y, 2, 2);
+  for (let y = minY; y <= maxY; y++) {
+    const intersections: number[] = [];
+    for (let i = 0; i < points.length; i++) {
+      const j = (i + 1) % points.length;
+      const [x0, y0] = points[i];
+      const [x1, y1] = points[j];
+      if ((y0 <= y && y1 > y) || (y1 <= y && y0 > y)) {
+        const t = (y - y0) / (y1 - y0);
+        intersections.push(Math.round(x0 + t * (x1 - x0)));
+      }
+    }
+    intersections.sort((a, b) => a - b);
+    for (let k = 0; k < intersections.length - 1; k += 2) {
+      for (let x = intersections[k]; x <= intersections[k + 1]; x++) {
+        setPixel(img, x, y, r, g, b);
       }
     }
   }
-  ctx.restore();
+}
+
+/** 1px Bresenham outline around a polygon */
+function outlinePoly(img: ImageData, points: [number, number][], r: number, g: number, b: number): void {
+  for (let i = 0; i < points.length; i++) {
+    const j = (i + 1) % points.length;
+    drawLine(img, points[i][0], points[i][1], points[j][0], points[j][1], r, g, b);
+  }
+}
+
+// --- Face geometry (integer coordinates centered in 64px sprite) ---
+
+function topFacePoints(yOff: number): [number, number][] {
+  return [
+    [OX + 24, yOff],
+    [OX + 48, yOff + 12],
+    [OX + 24, yOff + 24],
+    [OX, yOff + 12],
+  ];
+}
+
+function leftFacePoints(yOff: number, h: number): [number, number][] {
+  return [
+    [OX, yOff + 12],
+    [OX + 24, yOff + 24],
+    [OX + 24, yOff + 24 + h],
+    [OX, yOff + 12 + h],
+  ];
+}
+
+function rightFacePoints(yOff: number, h: number): [number, number][] {
+  return [
+    [OX + 24, yOff + 24],
+    [OX + 48, yOff + 12],
+    [OX + 48, yOff + 12 + h],
+    [OX + 24, yOff + 24 + h],
+  ];
 }
 
 // --- Block-specific decorations ---
 
-function drawBrickPattern(ctx: CanvasRenderingContext2D, pts: [number, number][], color: string) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  ctx.closePath();
-  ctx.clip();
-
-  ctx.strokeStyle = adjustBrightness(color, -20);
-  ctx.lineWidth = 1;
-  const ys = pts.map(p => p[1]);
-  const xs = pts.map(p => p[0]);
-  const minY = Math.floor(Math.min(...ys));
-  const maxY = Math.ceil(Math.max(...ys));
-  const minX = Math.floor(Math.min(...xs));
-  const maxX = Math.ceil(Math.max(...xs));
-
-  for (let y = minY; y <= maxY; y += 4) {
-    ctx.beginPath();
-    ctx.moveTo(minX, y);
-    ctx.lineTo(maxX, y);
-    ctx.stroke();
+function drawWallDecorations(img: ImageData, yOff: number, h: number, leftRgb: [number, number, number], rightRgb: [number, number, number]): void {
+  // Horizontal mortar lines on left face every 5px
+  const mortarLeft = adjustRgb(leftRgb, -15);
+  for (let dy = 5; dy < h; dy += 5) {
+    const y = yOff + 24 + dy;
+    // Left face spans from (OX, yOff+12+dy) to (OX+24, yOff+24+dy)
+    // Interpolate across the face at this height
+    const t = dy / h;
+    const leftX0 = OX;
+    const leftX1 = OX + 24;
+    const leftY = Math.round(yOff + 12 + dy + t * 0); // horizontal line at fixed y
+    // Draw a line across the left face at this scanline
+    drawLine(img, leftX0 + 1, Math.round(yOff + 12 + dy), leftX1 - 1, y, mortarLeft[0], mortarLeft[1], mortarLeft[2]);
   }
-  ctx.restore();
-}
 
-function drawWindowInset(ctx: CanvasRenderingContext2D, facePts: [number, number][]) {
-  // Draw a glass panel inset on the face
-  const cx = facePts.reduce((s, p) => s + p[0], 0) / facePts.length;
-  const cy = facePts.reduce((s, p) => s + p[1], 0) / facePts.length;
-  const scale = 0.5;
-
-  const inset = facePts.map(p => [
-    cx + (p[0] - cx) * scale,
-    cy + (p[1] - cy) * scale,
-  ] as [number, number]);
-
-  ctx.beginPath();
-  ctx.moveTo(inset[0][0], inset[0][1]);
-  for (let i = 1; i < inset.length; i++) ctx.lineTo(inset[i][0], inset[i][1]);
-  ctx.closePath();
-  ctx.fillStyle = "#a8d8ea";
-  ctx.fill();
-  ctx.strokeStyle = "#5a4a3a";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-}
-
-function drawDoorPanel(ctx: CanvasRenderingContext2D, facePts: [number, number][]) {
-  const cx = facePts.reduce((s, p) => s + p[0], 0) / facePts.length;
-  const cy = facePts.reduce((s, p) => s + p[1], 0) / facePts.length;
-
-  const inset = facePts.map(p => [
-    cx + (p[0] - cx) * 0.55,
-    cy + (p[1] - cy) * 0.65,
-  ] as [number, number]);
-
-  ctx.beginPath();
-  ctx.moveTo(inset[0][0], inset[0][1]);
-  for (let i = 1; i < inset.length; i++) ctx.lineTo(inset[i][0], inset[i][1]);
-  ctx.closePath();
-  ctx.fillStyle = "#3d2b1f";
-  ctx.fill();
-  ctx.strokeStyle = "#2a1a10";
-  ctx.lineWidth = 1;
-  ctx.stroke();
-
-  // Door knob
-  ctx.beginPath();
-  ctx.arc(cx + 3, cy, 1.5, 0, Math.PI * 2);
-  ctx.fillStyle = "#c0a050";
-  ctx.fill();
-}
-
-function drawRoofTexture(ctx: CanvasRenderingContext2D, pts: [number, number][], color: string) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  ctx.closePath();
-  ctx.clip();
-
-  // Angled shingle lines
-  ctx.strokeStyle = adjustBrightness(color, -15);
-  ctx.lineWidth = 1;
-  const ys = pts.map(p => p[1]);
-  const xs = pts.map(p => p[0]);
-  const minY = Math.floor(Math.min(...ys));
-  const maxY = Math.ceil(Math.max(...ys));
-  const minX = Math.floor(Math.min(...xs));
-  const maxX = Math.ceil(Math.max(...xs));
-
-  for (let y = minY; y <= maxY; y += 3) {
-    ctx.beginPath();
-    ctx.moveTo(minX, y);
-    ctx.lineTo(maxX, y + 4);
-    ctx.stroke();
+  // Horizontal mortar lines on right face every 5px
+  const mortarRight = adjustRgb(rightRgb, -15);
+  for (let dy = 5; dy < h; dy += 5) {
+    const y = yOff + 24 + dy;
+    drawLine(img, OX + 24 + 1, y, OX + 48 - 1, Math.round(yOff + 12 + dy), mortarRight[0], mortarRight[1], mortarRight[2]);
   }
-  ctx.restore();
 }
 
-function drawFloorGrid(ctx: CanvasRenderingContext2D, pts: [number, number][]) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  ctx.closePath();
-  ctx.clip();
+function drawWindowDecorations(img: ImageData, yOff: number, h: number): void {
+  const glassR = 0xa8, glassG = 0xd8, glassB = 0xea;
+  const frameR = 0x3a, frameG = 0x3a, frameB = 0x4a;
 
-  ctx.strokeStyle = "rgba(0,0,0,0.1)";
-  ctx.lineWidth = 0.5;
-  // Diamond grid lines
-  const cx = TILE_W / 2;
-  const cy = TILE_H / 2;
-  for (let i = -2; i <= 2; i++) {
-    ctx.beginPath();
-    ctx.moveTo(cx + i * 6, 0);
-    ctx.lineTo(cx + i * 6, TILE_H);
-    ctx.stroke();
+  // Window on left face: 3x4 rectangle centered
+  const lCx = OX + 12;
+  const lCy = yOff + 18 + Math.floor(h / 2);
+  for (let dy = 0; dy < 4; dy++) {
+    for (let dx = 0; dx < 3; dx++) {
+      setPixel(img, lCx - 1 + dx, lCy - 2 + dy, glassR, glassG, glassB);
+    }
   }
-  ctx.restore();
+  // 1px dark frame around window
+  for (let dx = -1; dx <= 3; dx++) {
+    setPixel(img, lCx - 1 + dx, lCy - 3, frameR, frameG, frameB);
+    setPixel(img, lCx - 1 + dx, lCy + 2, frameR, frameG, frameB);
+  }
+  for (let dy = -2; dy <= 2; dy++) {
+    setPixel(img, lCx - 2, lCy + dy, frameR, frameG, frameB);
+    setPixel(img, lCx + 3, lCy + dy, frameR, frameG, frameB);
+  }
+
+  // Window on right face: 3x4 rectangle centered
+  const rCx = OX + 36;
+  const rCy = yOff + 18 + Math.floor(h / 2);
+  for (let dy = 0; dy < 4; dy++) {
+    for (let dx = 0; dx < 3; dx++) {
+      setPixel(img, rCx - 1 + dx, rCy - 2 + dy, glassR, glassG, glassB);
+    }
+  }
+  // 1px dark frame
+  for (let dx = -1; dx <= 3; dx++) {
+    setPixel(img, rCx - 1 + dx, rCy - 3, frameR, frameG, frameB);
+    setPixel(img, rCx - 1 + dx, rCy + 2, frameR, frameG, frameB);
+  }
+  for (let dy = -2; dy <= 2; dy++) {
+    setPixel(img, rCx - 2, rCy + dy, frameR, frameG, frameB);
+    setPixel(img, rCx + 3, rCy + dy, frameR, frameG, frameB);
+  }
 }
 
-// --- Sprite rendering ---
+function drawDoorDecoration(img: ImageData, yOff: number, h: number): void {
+  const doorR = 0x3d, doorG = 0x2b, doorB = 0x1f;
+  const knobR = 0xc0, knobG = 0xa0, knobB = 0x50;
 
-function drawBlock(
-  ctx: CanvasRenderingContext2D,
-  block: BlockType,
-  _rotation: Rotation,
-) {
-  if (block === "empty") return;
+  // Door on right face: 3x5 rectangle near bottom
+  const dCx = OX + 36;
+  const dCy = yOff + 24 + h - 7;
+  for (let dy = 0; dy < 5; dy++) {
+    for (let dx = 0; dx < 3; dx++) {
+      setPixel(img, dCx - 1 + dx, dCy + dy, doorR, doorG, doorB);
+    }
+  }
+  // 1px gold knob pixel
+  setPixel(img, dCx + 1, dCy + 2, knobR, knobG, knobB);
+}
+
+function drawRoofDecoration(img: ImageData, yOff: number, topRgb: [number, number, number]): void {
+  // 1px lighter ridge line across top face center
+  const ridge = adjustRgb(topRgb, 20);
+  // Ridge runs from center-left to center-right of diamond
+  drawLine(img, OX + 12, yOff + 12, OX + 36, yOff + 12, ridge[0], ridge[1], ridge[2]);
+}
+
+function drawFloorDecoration(img: ImageData, yOff: number, topRgb: [number, number, number]): void {
+  // Two subtle 1px cross lines on top face diamond
+  const crossColor = adjustRgb(topRgb, -10);
+  // Diagonal cross within the diamond
+  drawLine(img, OX + 12, yOff + 6, OX + 36, yOff + 18, crossColor[0], crossColor[1], crossColor[2]);
+  drawLine(img, OX + 36, yOff + 6, OX + 12, yOff + 18, crossColor[0], crossColor[1], crossColor[2]);
+}
+
+// --- Main sprite drawing ---
+
+function drawBlockToImageData(block: BlockType): ImageData {
+  const img = new ImageData(SPRITE_SIZE, SPRITE_SIZE);
+
+  if (block === "empty") return img;
 
   const baseColor = BLOCK_COLORS[block];
+  const baseRgb = hexToRgb(baseColor);
   const h = block === "floor" ? FLOOR_H : BLOCK_H;
-  const topColor = baseColor;
-  const leftColor = adjustBrightness(baseColor, -25);
-  const rightColor = adjustBrightness(baseColor, -12);
 
-  const top = topFace(h);
-  const left = leftFace(h);
-  const right = rightFace(h);
-
-  // Offset so block sits within sprite with top face visible
+  // yOff positions the block so it sits at the bottom of the sprite
   const yOff = SPRITE_SIZE - TILE_H - h;
-  ctx.save();
-  ctx.translate(0, yOff);
 
-  // Draw faces with dithering
-  dither(ctx, left, leftColor, 8);
-  dither(ctx, right, rightColor, 8);
-  dither(ctx, top, topColor, 10);
+  const topRgb = baseRgb;
+  const rightRgb = adjustRgb(baseRgb, -12);
+  const leftRgb = adjustRgb(baseRgb, -25);
+
+  const top = topFacePoints(yOff);
+  const left = leftFacePoints(yOff, h);
+  const right = rightFacePoints(yOff, h);
+
+  // Fill faces (back-to-front: left, right, top)
+  fillPoly(img, left, leftRgb[0], leftRgb[1], leftRgb[2]);
+  fillPoly(img, right, rightRgb[0], rightRgb[1], rightRgb[2]);
+  fillPoly(img, top, topRgb[0], topRgb[1], topRgb[2]);
 
   // Block-specific decorations
   switch (block) {
     case "wall":
-      drawBrickPattern(ctx, left, leftColor);
-      drawBrickPattern(ctx, right, rightColor);
+      drawWallDecorations(img, yOff, h, leftRgb, rightRgb);
       break;
     case "window":
-      drawWindowInset(ctx, right);
-      drawWindowInset(ctx, left);
+      drawWindowDecorations(img, yOff, h);
       break;
     case "door":
-      drawDoorPanel(ctx, right);
+      drawDoorDecoration(img, yOff, h);
       break;
     case "roof":
-      drawRoofTexture(ctx, top, topColor);
+      drawRoofDecoration(img, yOff, topRgb);
       break;
     case "floor":
-      drawFloorGrid(ctx, top);
+      drawFloorDecoration(img, yOff, topRgb);
       break;
   }
 
-  ctx.restore();
+  // 1px black outlines on all block edges
+  outlinePoly(img, top, 0, 0, 0);
+  outlinePoly(img, left, 0, 0, 0);
+  outlinePoly(img, right, 0, 0, 0);
+
+  return img;
 }
 
 // --- Atlas generation (singleton) ---
@@ -294,12 +296,10 @@ export function getSpriteAtlas(): HTMLCanvasElement {
   const ctx = canvas.getContext("2d")!;
 
   for (let ti = 0; ti < BLOCK_TYPES.length; ti++) {
+    const imgData = drawBlockToImageData(BLOCK_TYPES[ti]);
     for (let ri = 0; ri < 4; ri++) {
       const x = (ti * 4 + ri) * SPRITE_SIZE;
-      ctx.save();
-      ctx.translate(x, 0);
-      drawBlock(ctx, BLOCK_TYPES[ti], ri as Rotation);
-      ctx.restore();
+      ctx.putImageData(imgData, x, 0);
     }
   }
 
@@ -316,5 +316,3 @@ export function getSpriteRect(block: BlockType, rotation: Rotation): { sx: numbe
     sh: SPRITE_SIZE,
   };
 }
-
-export { SPRITE_SIZE, TILE_W, TILE_H, BLOCK_H, FLOOR_H };
