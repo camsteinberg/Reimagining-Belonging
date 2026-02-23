@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #e8e0d0;
+  --color-warm-white: #f5f1ea;
+  --color-rust: #8b5e3c;
+  --color-gold: #b89f65;
+  --color-charcoal: #2a2520;
+  --color-forest: #3d6b4f;
+  --color-navy: #3a5a6e;
+  --color-sage: #6b8f71;
+  --color-moss: #365f45;
+  --color-clay: #b8755d;
+  --color-amber: #d4a84b;
+  --color-ember: #c45d3e;
+  --color-bark: #4a3728;
+
+  --font-display: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
+  --font-serif: "EB Garamond", serif;
+  --font-pixel: "Press Start 2P", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-cream text-charcoal font-body antialiased;
+  }
+}

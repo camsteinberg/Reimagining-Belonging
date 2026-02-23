@@ -1,0 +1,13 @@
+import type * as Party from "partykit/server";
+
+export default class GameRoom implements Party.Server {
+  constructor(readonly room: Party.Room) {}
+
+  onConnect(conn: Party.Connection) {
+    conn.send(JSON.stringify({ type: "connected" }));
+  }
+
+  onMessage(message: string, sender: Party.Connection) {
+    this.room.broadcast(message);
+  }
+}
