@@ -34,7 +34,10 @@ export async function POST(req: NextRequest) {
     const parsed = parseAIResponse(aiText);
 
     // Push AI response into the Partykit room via HTTP
-    const partyHost = process.env.NEXT_PUBLIC_PARTYKIT_HOST || "127.0.0.1:1999";
+    const partyHost =
+      process.env.PARTYKIT_HOST ||
+      process.env.NEXT_PUBLIC_PARTYKIT_HOST ||
+      "blueprint-telephone.camsteinberg.partykit.dev";
     const partyProtocol = partyHost.startsWith("localhost") || partyHost.startsWith("127.") ? "http" : "https";
 
     await fetch(`${partyProtocol}://${partyHost}/party/${roomCode.toLowerCase()}`, {

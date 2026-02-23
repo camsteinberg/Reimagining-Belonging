@@ -1,19 +1,17 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { generateRoomCode } from "@/lib/constants";
 import TerrainBackground from "@/components/TerrainBackground";
 
 export default function Home() {
-  const router = useRouter();
   const [joinCode, setJoinCode] = useState("");
   const [joinError, setJoinError] = useState("");
 
   function handleHost() {
     const code = generateRoomCode();
-    router.push(`/host/${code}`);
+    window.location.href = `/host/${code}`;
   }
 
   function handleJoin(e: FormEvent) {
@@ -24,7 +22,7 @@ export default function Home() {
       return;
     }
     setJoinError("");
-    router.push(`/join/${code}`);
+    window.location.href = `/join/${code}`;
   }
 
   return (
@@ -46,7 +44,7 @@ export default function Home() {
         className="w-full max-w-md flex flex-col items-center gap-8"
       >
         {/* Logo / title block */}
-        <div className="text-center flex flex-col items-center gap-3">
+        <div className="text-center flex flex-col items-center gap-4">
           <span
             className="font-[family-name:var(--font-pixel)] text-[10px] tracking-[0.3em] uppercase text-[#8b5e3c]/70"
           >
@@ -54,18 +52,18 @@ export default function Home() {
           </span>
 
           <h1
-            className="font-[family-name:var(--font-display)] text-5xl sm:text-6xl font-bold leading-tight text-charcoal"
+            className="font-[family-name:var(--font-pixel)] text-2xl sm:text-3xl leading-relaxed text-charcoal"
           >
             Blueprint<br />Telephone
           </h1>
 
           <p
-            className="font-[family-name:var(--font-serif)] text-xl italic text-[#2a2520]/70 leading-snug"
+            className="font-[family-name:var(--font-pixel)] text-[10px] text-[#2a2520]/70 leading-relaxed"
           >
             Can Gen Z build with robots?
           </p>
 
-          <p className="text-sm text-[#2a2520]/50 font-[family-name:var(--font-body)] mt-1">
+          <p className="font-[family-name:var(--font-pixel)] text-[8px] text-[#2a2520]/50 mt-1">
             A 500 Acres interactive experience
           </p>
         </div>
@@ -81,10 +79,11 @@ export default function Home() {
 
         {/* Host button */}
         <motion.button
+          type="button"
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={handleHost}
-          className="w-full py-4 rounded-xl bg-[#8b5e3c] text-[#f5f1ea] font-[family-name:var(--font-display)] text-xl font-semibold tracking-wide shadow-md hover:bg-[#7a5234] transition-colors"
+          className="w-full py-4 rounded-xl bg-[#8b5e3c] text-[#f5f1ea] font-[family-name:var(--font-pixel)] text-sm tracking-wide shadow-md hover:bg-[#7a5234] transition-colors"
         >
           Host a Game
         </motion.button>
@@ -127,13 +126,13 @@ export default function Home() {
               type="submit"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="px-6 py-3 rounded-xl bg-[#3d6b4f] text-[#f5f1ea] font-[family-name:var(--font-display)] text-lg font-semibold shadow-md hover:bg-[#365f45] transition-colors"
+              className="px-6 py-3 rounded-xl bg-[#3d6b4f] text-[#f5f1ea] font-[family-name:var(--font-pixel)] text-[10px] shadow-md hover:bg-[#365f45] transition-colors"
             >
               Join
             </motion.button>
           </div>
           {joinError && (
-            <p className="text-[#c45d3e] text-xs font-[family-name:var(--font-body)] self-start">
+            <p className="text-[#c45d3e] text-[8px] font-[family-name:var(--font-pixel)] self-start">
               {joinError}
             </p>
           )}

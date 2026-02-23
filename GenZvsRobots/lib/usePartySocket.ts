@@ -13,9 +13,14 @@ export function usePartySocket(roomCode: string | null) {
   useEffect(() => {
     if (!roomCode) return;
 
-    const host = process.env.NEXT_PUBLIC_PARTYKIT_HOST || "127.0.0.1:1999";
-    const protocol =
-      host.startsWith("localhost") || host.startsWith("127.") ? "ws" : "wss";
+    const isLocal =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1");
+    const host = isLocal
+      ? "127.0.0.1:1999"
+      : "blueprint-telephone.camsteinberg.partykit.dev";
+    const protocol = isLocal ? "ws" : "wss";
 
     const socket = new PartySocket({
       host,
