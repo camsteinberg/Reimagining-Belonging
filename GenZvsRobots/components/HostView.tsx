@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { RoomState, ClientMessage, Player } from "@/lib/types";
+import { ROUND_1_TARGET, ROUND_2_TARGET } from "@/lib/targets";
 import HostControls from "./HostControls";
 import TeamMosaic from "./TeamMosaic";
-import IsometricGrid from "./IsometricGrid";
 import Timer from "./Timer";
+import RevealCarousel from "./RevealCarousel";
+import RoundComparison from "./RoundComparison";
+import FinalSummary from "./FinalSummary";
+import RoundTransition from "./RoundTransition";
+import Confetti from "./Confetti";
 
 // ---------------------------------------------------------------------------
 // Activity feed item
@@ -285,7 +290,7 @@ function ActivityTicker({
 }
 
 // ---------------------------------------------------------------------------
-// Reveal view (reveal1 / finalReveal)
+// Reveal view (reveal1 phase) — uses RevealCarousel
 // ---------------------------------------------------------------------------
 function RevealView({
   state,
@@ -295,93 +300,149 @@ function RevealView({
   send: (msg: ClientMessage) => void;
 }) {
   const teams = Object.values(state.teams);
+  const targetGrid = state.currentTarget ?? ROUND_1_TARGET;
 
   return (
     <div className="flex flex-col h-full bg-[#110f0d] text-cream overflow-hidden">
-      {/* Cinematic header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-        <div>
-          <p className="font-[family-name:var(--font-pixel)] text-[9px] text-gold/60 uppercase tracking-widest">
-            {state.phase === "finalReveal" ? "Final Results" : "Round 1 Results"}
-          </p>
-          <h1 className="font-[family-name:var(--font-display)] text-2xl text-gold mt-0.5">
-            How did each team do?
-          </h1>
-        </div>
-        <HostControls phase={state.phase} send={send} />
-      </div>
-
-      {/* Team grids */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {teams.map((team, i) => {
-            const displayGrid =
-              state.phase === "finalReveal" ? team.grid : team.round1Grid ?? team.grid;
-            const score =
-              state.phase === "finalReveal" ? team.round2Score : team.round1Score;
-
-            return (
-              <motion.div
-                key={team.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.1, ease: "easeOut" }}
-                className="flex flex-col rounded-xl border border-white/10 overflow-hidden bg-white/5"
-              >
-                {/* Team header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-bark/20">
-                  <span className="font-[family-name:var(--font-pixel)] text-[10px] text-gold uppercase tracking-wider">
-                    {team.name}
-                  </span>
-                  {score != null && (
-                    <span className="font-[family-name:var(--font-pixel)] text-[12px] text-amber">
-                      {score}%
-                    </span>
-                  )}
-                </div>
-
-                {/* Grids side-by-side */}
-                <div className="grid grid-cols-2 gap-2 p-3">
-                  <div>
-                    <p className="font-[family-name:var(--font-pixel)] text-[7px] text-cream/40 uppercase tracking-widest mb-1 text-center">
-                      Target
-                    </p>
-                    {state.currentTarget ? (
-                      <IsometricGrid
-                        grid={state.currentTarget}
-                        readOnly
-                        className="w-full h-full"
-                      />
-                    ) : (
-                      <div className="aspect-square flex items-center justify-center text-cream/20 text-xs">
-                        No target
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-[family-name:var(--font-pixel)] text-[7px] text-cream/40 uppercase tracking-widest mb-1 text-center">
-                      Built
-                    </p>
-                    <IsometricGrid
-                      grid={displayGrid}
-                      readOnly
-                      showScoring={state.currentTarget != null}
-                      targetGrid={state.currentTarget ?? undefined}
-                      className="w-full h-full"
-                    />
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+      <div className="flex-1 min-h-0">
+        <RevealCarousel
+          teams={teams}
+          targetGrid={targetGrid}
+          round={1}
+          onComplete={() => send({ type: "hostAction", action: "nextReveal" })}
+        />
       </div>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Interstitial view
+// Final reveal view (finalReveal phase) — RoundComparison carousel
+// ---------------------------------------------------------------------------
+function FinalRevealView({
+  state,
+  send,
+}: {
+  state: RoomState;
+  send: (msg: ClientMessage) => void;
+}) {
+  const teams = Object.values(state.teams).filter((t) => t != null);
+  const [[index, direction], setIndexDir] = useState<[number, number]>([0, 0]);
+  const targetGrid = state.currentTarget ?? ROUND_2_TARGET;
+
+  if (teams.length === 0) {
+    return (
+      <div className="flex flex-col h-full bg-[#110f0d] text-cream items-center justify-center">
+        <p className="text-cream/40">No teams to show.</p>
+        <div className="mt-4">
+          <HostControls phase={state.phase} send={send} />
+        </div>
+      </div>
+    );
+  }
+
+  const clampedIndex = Math.min(index, teams.length - 1);
+  const currentTeam = teams[clampedIndex];
+  const isLast = clampedIndex >= teams.length - 1;
+
+  function paginate(dir: number) {
+    const next = clampedIndex + dir;
+    if (next < 0 || next >= teams.length) return;
+    setIndexDir([next, dir]);
+  }
+
+  function handleNext() {
+    if (isLast) {
+      send({ type: "hostAction", action: "nextReveal" });
+    } else {
+      paginate(1);
+    }
+  }
+
+  const slideVariants = {
+    enter: (d: number) => ({ x: d > 0 ? "100%" : "-100%", opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (d: number) => ({ x: d < 0 ? "100%" : "-100%", opacity: 0 }),
+  };
+
+  return (
+    <div className="flex flex-col h-full bg-[#110f0d] text-cream overflow-hidden">
+      {/* Header strip */}
+      <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 shrink-0">
+        <span className="font-[family-name:var(--font-pixel)] text-[9px] text-gold/60 uppercase tracking-widest">
+          Final Results
+        </span>
+        <span className="font-[family-name:var(--font-pixel)] text-[9px] text-cream/30 uppercase tracking-widest">
+          {clampedIndex + 1} of {teams.length}
+        </span>
+      </div>
+
+      {/* Comparison slide area */}
+      <div className="flex-1 min-h-0 relative overflow-hidden">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={currentTeam.id}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            className="absolute inset-0"
+          >
+            <RoundComparison team={currentTeam} targetGrid={targetGrid} />
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Navigation */}
+      <div className="flex items-center justify-between px-6 py-4 border-t border-white/10 shrink-0 gap-4">
+        <button
+          onClick={() => paginate(-1)}
+          disabled={clampedIndex === 0}
+          className="font-[family-name:var(--font-pixel)] text-[9px] text-cream/60 uppercase tracking-widest px-4 py-2 rounded border border-white/10 hover:border-white/30 hover:text-cream transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+
+        {/* Dot indicators */}
+        <div className="flex items-center gap-2">
+          {teams.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIndexDir([i, i > clampedIndex ? 1 : -1])}
+              className={[
+                "w-2 h-2 rounded-full transition-all duration-300",
+                i === clampedIndex
+                  ? "bg-gold w-4"
+                  : "bg-white/20 hover:bg-white/40",
+              ].join(" ")}
+              aria-label={`Go to team ${i + 1}`}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={handleNext}
+          className={[
+            "font-[family-name:var(--font-pixel)] text-[9px] uppercase tracking-widest px-4 py-2 rounded border transition-colors",
+            isLast
+              ? "border-gold/60 text-gold hover:bg-gold/10"
+              : "border-white/10 text-cream/60 hover:border-white/30 hover:text-cream",
+          ].join(" ")}
+        >
+          {isLast ? "Done" : "Next"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Interstitial view — uses RoundTransition
 // ---------------------------------------------------------------------------
 function InterstitialView({
   state,
@@ -391,33 +452,20 @@ function InterstitialView({
   send: (msg: ClientMessage) => void;
 }) {
   return (
-    <div className="flex flex-col h-full bg-charcoal text-cream items-center justify-center gap-8">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: "backOut" }}
-        className="text-center"
-      >
-        <p className="font-[family-name:var(--font-pixel)] text-[10px] text-gold/50 uppercase tracking-widest mb-4">
-          Next up
-        </p>
-        <h2 className="font-[family-name:var(--font-display)] text-5xl text-gold leading-tight">
-          Round 2
-        </h2>
-        <p className="mt-3 font-[family-name:var(--font-pixel)] text-[11px] text-sage uppercase tracking-widest">
-          With Robots
-        </p>
-        <p className="mt-6 font-[family-name:var(--font-serif)] text-lg text-cream/60 max-w-md">
-          This time, your AI scout will help rebuild. Can human and machine do better together?
-        </p>
-      </motion.div>
-      <HostControls phase={state.phase} send={send} />
+    <div className="flex flex-col h-full bg-charcoal text-cream">
+      {/* RoundTransition is fixed-position overlay — renders on top */}
+      <RoundTransition onComplete={() => send({ type: "hostAction", action: "startRound" })} />
+
+      {/* Fallback controls behind the overlay */}
+      <div className="flex-1 flex items-center justify-center">
+        <HostControls phase={state.phase} send={send} />
+      </div>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Summary view
+// Summary view — uses FinalSummary
 // ---------------------------------------------------------------------------
 function SummaryView({
   state,
@@ -426,91 +474,16 @@ function SummaryView({
   state: RoomState;
   send: (msg: ClientMessage) => void;
 }) {
-  const teams = Object.values(state.teams).sort((a, b) => {
-    const bTotal = (b.round1Score ?? 0) + (b.round2Score ?? 0);
-    const aTotal = (a.round1Score ?? 0) + (a.round2Score ?? 0);
-    return bTotal - aTotal;
-  });
+  const teams = Object.values(state.teams);
 
   return (
     <div className="flex flex-col h-full bg-charcoal text-cream overflow-hidden">
-      {/* Header */}
-      <div className="flex flex-col items-center pt-10 pb-6 border-b border-white/10">
-        <p className="font-[family-name:var(--font-pixel)] text-[9px] text-gold/50 uppercase tracking-widest mb-2">
-          Blueprint Telephone
-        </p>
-        <h1 className="font-[family-name:var(--font-display)] text-5xl text-gold">
-          Final Scores
-        </h1>
-        <p className="font-[family-name:var(--font-serif)] text-base text-cream/50 mt-2 italic">
-          presented by 500 Acres
-        </p>
-      </div>
-
-      {/* Leaderboard */}
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-xl mx-auto flex flex-col gap-3">
-          {teams.map((team, i) => {
-            const r1 = team.round1Score ?? 0;
-            const r2 = team.round2Score ?? 0;
-            const improvement = r2 - r1;
-            return (
-              <motion.div
-                key={team.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.35, delay: i * 0.08 }}
-                className="flex items-center gap-4 rounded-lg border border-white/10 bg-white/5 px-5 py-4"
-              >
-                <span className="font-[family-name:var(--font-pixel)] text-2xl text-gold/40 w-6 shrink-0">
-                  {i + 1}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="font-[family-name:var(--font-pixel)] text-[10px] text-gold uppercase tracking-wider">
-                    {team.name}
-                  </p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="font-[family-name:var(--font-body)] text-xs text-cream/50">
-                      R1: {r1}%
-                    </span>
-                    <span className="text-cream/20 text-xs">→</span>
-                    <span className="font-[family-name:var(--font-body)] text-xs text-cream/50">
-                      R2: {r2}%
-                    </span>
-                    {improvement > 0 && (
-                      <span className="text-xs text-sage font-semibold">
-                        +{improvement}%
-                      </span>
-                    )}
-                    {improvement < 0 && (
-                      <span className="text-xs text-ember font-semibold">
-                        {improvement}%
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <span className="font-[family-name:var(--font-pixel)] text-lg text-amber shrink-0">
-                  {r1 + r2}
-                </span>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Closing statement */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: teams.length * 0.08 + 0.3 }}
-          className="font-[family-name:var(--font-serif)] text-center text-cream/40 italic text-base mt-10 max-w-lg mx-auto leading-relaxed"
-        >
-          Thank you for playing Blueprint Telephone — a project by 500 Acres exploring how
-          communities reimagine belonging through play and collective design.
-        </motion.p>
+      <div className="flex-1 min-h-0 overflow-y-auto relative">
+        <FinalSummary teams={teams} />
       </div>
 
       {/* Controls */}
-      <div className="px-6 py-4 border-t border-white/10 flex justify-center">
+      <div className="px-6 py-4 border-t border-white/10 flex justify-center shrink-0">
         <HostControls phase={state.phase} send={send} />
       </div>
     </div>
@@ -527,33 +500,42 @@ export default function HostView({
   activityFeed,
 }: HostViewProps) {
   const { phase } = state;
+  const showConfetti = phase === "finalReveal";
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={phase}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.25 }}
-        className="h-screen w-screen overflow-hidden"
-      >
-        {phase === "lobby" && (
-          <LobbyView state={state} send={send} connected={connected} />
-        )}
-        {(phase === "round1" || phase === "round2") && (
-          <ActiveRoundView state={state} send={send} activityFeed={activityFeed} />
-        )}
-        {(phase === "reveal1" || phase === "finalReveal") && (
-          <RevealView state={state} send={send} />
-        )}
-        {phase === "interstitial" && (
-          <InterstitialView state={state} send={send} />
-        )}
-        {phase === "summary" && (
-          <SummaryView state={state} send={send} />
-        )}
-      </motion.div>
-    </AnimatePresence>
+    <>
+      {/* Confetti overlay for finalReveal */}
+      <Confetti active={showConfetti} />
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={phase}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          className="h-screen w-screen overflow-hidden"
+        >
+          {phase === "lobby" && (
+            <LobbyView state={state} send={send} connected={connected} />
+          )}
+          {(phase === "round1" || phase === "round2") && (
+            <ActiveRoundView state={state} send={send} activityFeed={activityFeed} />
+          )}
+          {phase === "reveal1" && (
+            <RevealView state={state} send={send} />
+          )}
+          {phase === "finalReveal" && (
+            <FinalRevealView state={state} send={send} />
+          )}
+          {phase === "interstitial" && (
+            <InterstitialView state={state} send={send} />
+          )}
+          {phase === "summary" && (
+            <SummaryView state={state} send={send} />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { generateRoomCode } from "@/lib/constants";
+import TerrainBackground from "@/components/TerrainBackground";
 
 export default function Home() {
   const router = useRouter();
@@ -28,13 +29,17 @@ export default function Home() {
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center justify-center px-6 py-12"
+      className="relative min-h-screen flex flex-col items-center justify-center px-6 py-12"
       style={{
         background:
           "linear-gradient(160deg, var(--color-cream) 0%, color-mix(in srgb, var(--color-sage) 10%, var(--color-warm-white)) 100%)",
       }}
     >
+      {/* Terrain SVG backdrop — sits behind content */}
+      <TerrainBackground />
+
       <motion.div
+        style={{ position: "relative", zIndex: 1 }}
         initial={{ opacity: 0, y: 32 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
