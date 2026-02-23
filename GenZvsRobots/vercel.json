@@ -1,7 +1,4 @@
 {
-  "rewrites": [
-    { "source": "/((?!api|_next|favicon).*)", "destination": "/" }
-  ],
   "headers": [
     {
       "source": "/(.*)",
