@@ -118,13 +118,13 @@ export default function Home() {
             />
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl bg-[#3d6b4f] text-[#f5f1ea] font-[family-name:var(--font-pixel)] text-[10px] shadow-md hover:bg-[#365f45] active:scale-[0.97] hover:scale-[1.03] transition-all"
+              className="px-6 min-h-[48px] py-3 rounded-xl bg-[#3d6b4f] text-[#f5f1ea] font-[family-name:var(--font-pixel)] text-[10px] shadow-md hover:bg-[#365f45] active:scale-[0.97] hover:scale-[1.03] transition-all focus-ring"
             >
               Join
             </button>
           </div>
           {joinError && (
-            <p className="text-[#c45d3e] text-[8px] font-[family-name:var(--font-pixel)] self-start">
+            <p className="text-[#c45d3e] text-[8px] font-[family-name:var(--font-pixel)] self-start" role="alert">
               {joinError}
             </p>
           )}

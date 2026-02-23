@@ -175,8 +175,9 @@ export default function ChatPanel({
         <button
           type="submit"
           disabled={disabled || !inputValue.trim()}
+          aria-label="Send message"
           className={[
-            "shrink-0 px-3 py-1.5 rounded text-xs font-semibold transition-opacity",
+            "shrink-0 px-3 min-h-[44px] min-w-[44px] py-1.5 rounded text-xs font-semibold transition-opacity focus-ring",
             "disabled:opacity-40 disabled:cursor-not-allowed",
             isRound2
               ? "bg-[#6b8f71] text-[#f5f1ea] hover:bg-[#3d6b4f]"

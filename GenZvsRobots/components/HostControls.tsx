@@ -32,8 +32,8 @@ function HostButton({
     <motion.button
       onClick={() => send({ type: "hostAction", action })}
       className={[
-        "px-6 py-3 rounded font-[family-name:var(--font-pixel)] text-[10px] tracking-wide uppercase",
-        "transition-colors duration-150 cursor-pointer select-none",
+        "px-6 min-h-[48px] py-3 rounded font-[family-name:var(--font-pixel)] text-[10px] tracking-wide uppercase",
+        "transition-colors duration-150 cursor-pointer select-none focus-ring",
         variantClasses[variant],
       ].join(" ")}
       whileHover={{ scale: 1.04 }}

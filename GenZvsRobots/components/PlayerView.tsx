@@ -194,7 +194,7 @@ export default function PlayerView({
               />
             ) : (
               <div
-                className={`text-sm font-[family-name:var(--font-pixel)] text-[10px] ${
+                className={`font-[family-name:var(--font-pixel)] text-[10px] ${
                   isRound2 ? "text-[#e8e0d0]/40" : "text-[#2a2520]/40"
                 }`}
               >

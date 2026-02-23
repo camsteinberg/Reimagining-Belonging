@@ -176,32 +176,36 @@ export default function RevealCarousel({
         <button
           onClick={() => paginate(-1)}
           disabled={clampedIndex === 0}
-          className="font-[family-name:var(--font-pixel)] text-[9px] text-cream/60 uppercase tracking-widest px-4 py-2 rounded border border-white/10 hover:border-white/30 hover:text-cream transition-colors disabled:opacity-20 disabled:cursor-not-allowed"
+          className="font-[family-name:var(--font-pixel)] text-[9px] text-cream/60 uppercase tracking-widest px-4 min-h-[44px] py-2 rounded border border-white/10 hover:border-white/30 hover:text-cream transition-colors disabled:opacity-20 disabled:cursor-not-allowed focus-ring"
         >
           Previous
         </button>
 
         {/* Dot indicators */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {validTeams.map((_, i) => (
             <button
               key={i}
               onClick={() => setIndexDir([i, i > clampedIndex ? 1 : -1])}
-              className={[
-                "w-2 h-2 rounded-full transition-all duration-300",
-                i === clampedIndex
-                  ? "bg-gold w-4"
-                  : "bg-white/20 hover:bg-white/40",
-              ].join(" ")}
+              className="flex items-center justify-center w-8 h-8 focus-ring rounded-full"
               aria-label={`Go to team ${i + 1}`}
-            />
+            >
+              <span
+                className={[
+                  "rounded-full transition-all duration-300",
+                  i === clampedIndex
+                    ? "bg-gold w-4 h-2"
+                    : "bg-white/20 hover:bg-white/40 w-2 h-2",
+                ].join(" ")}
+              />
+            </button>
           ))}
         </div>
 
         <button
           onClick={handleNext}
           className={[
-            "font-[family-name:var(--font-pixel)] text-[9px] uppercase tracking-widest px-4 py-2 rounded border transition-colors",
+            "font-[family-name:var(--font-pixel)] text-[9px] uppercase tracking-widest px-4 min-h-[44px] py-2 rounded border transition-colors focus-ring",
             isLast
               ? "border-gold/60 text-gold hover:bg-gold/10"
               : "border-white/10 text-cream/60 hover:border-white/30 hover:text-cream",

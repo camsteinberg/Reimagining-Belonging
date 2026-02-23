@@ -250,7 +250,7 @@ export default function FinalSummary({ teams }: FinalSummaryProps) {
             href="https://500acres.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-[family-name:var(--font-pixel)] text-[9px] text-gold/50 hover:text-gold transition-colors uppercase tracking-widest mt-1"
+            className="font-[family-name:var(--font-pixel)] text-[9px] text-gold/50 hover:text-gold transition-colors uppercase tracking-widest mt-1 inline-flex items-center min-h-[44px] px-3 focus-ring rounded"
           >
             500acres.org
           </a>

@@ -101,11 +101,15 @@ function AnimatedNumber({
   delay,
   color,
   fontSize,
+  cx,
+  cy,
 }: {
   value: number;
   delay: number;
   color: string;
   fontSize: number;
+  cx: number;
+  cy: number;
 }) {
   const displayed = useMotionValue(0);
   const rounded = useTransform(displayed, (v) => Math.round(v));
@@ -134,6 +138,8 @@ function AnimatedNumber({
   return (
     <text
       ref={displayRef}
+      x={cx}
+      y={cy}
       fill={color}
       fontSize={fontSize}
       fontFamily="var(--font-pixel), monospace"
@@ -201,6 +207,8 @@ export default function ScoreGauge({
           delay={delay}
           color={textColor}
           fontSize={fontSize}
+          cx={cx}
+          cy={cy}
         />
 
         {/* Percent sign */}

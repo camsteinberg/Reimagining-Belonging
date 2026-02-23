@@ -28,7 +28,7 @@ export default function Timer({ endTime, className = "" }: TimerProps) {
   return (
     <div
       className={`font-[family-name:var(--font-pixel)] text-center ${
-        isLow ? "text-ember animate-pulse" : "text-charcoal"
+        isLow ? "text-ember animate-pulse" : ""
       } ${className}`}
     >
       <span className="text-3xl tabular-nums">
