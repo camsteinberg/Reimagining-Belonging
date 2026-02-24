@@ -13,8 +13,8 @@ export const MAX_HEIGHT = 4;
 export const BLOCK_COLORS: Record<BlockType, string> = {
   wall: "#8b5e3c",
   floor: "#e8e0d0",
-  roof: "#3d6b4f",
-  window: "#b89f65",
+  roof: "#5a8a68",
+  window: "#7eb8cc",
   door: "#b8755d",
   plant: "#4a8c3f",
   table: "#c4956a",

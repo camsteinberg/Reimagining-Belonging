@@ -133,6 +133,24 @@ function rightFacePoints(yOff: number, h: number): [number, number][] {
   ];
 }
 
+// --- Inset face helpers for large decorations ---
+
+/** Inset a face parallelogram by `inset` pixels on each side */
+function insetFace(pts: [number, number][], inset: number): [number, number][] {
+  // Compute centroid
+  let cx = 0, cy = 0;
+  for (const [px, py] of pts) { cx += px; cy += py; }
+  cx /= pts.length; cy /= pts.length;
+  // Shrink each point toward centroid
+  return pts.map(([px, py]) => {
+    const dx = px - cx, dy = py - cy;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 0.01) return [px, py] as [number, number];
+    const scale = Math.max(0, (len - inset) / len);
+    return [Math.round(cx + dx * scale), Math.round(cy + dy * scale)] as [number, number];
+  });
+}
+
 // --- Block-specific decorations ---
 
 function drawWallDecorations(img: ImageData, yOff: number, h: number, leftRgb: [number, number, number], rightRgb: [number, number, number]): void {
@@ -154,107 +172,96 @@ function drawWallDecorations(img: ImageData, yOff: number, h: number, leftRgb: [
 }
 
 function drawWindowDecorations(img: ImageData, yOff: number, h: number): void {
-  const glassR = 0xa8, glassG = 0xd8, glassB = 0xea;
-  const frameR = 0x3a, frameG = 0x3a, frameB = 0x4a;
+  // Fill BOTH faces almost entirely with bright glass, leaving a thin frame
+  const glassR = 0xb0, glassG = 0xdd, glassB = 0xf0;
+  const divR = 0x55, divG = 0x80, divB = 0x90;
 
-  // --- Left face: semi-transparent glass pane with cross pattern ---
-  const lCx = OX + 12;
-  const lCy = yOff + 18 + Math.floor(h / 2);
-  // Glass fill with alpha for semi-transparency (Minecraft-style)
-  for (let dy = 0; dy < 4; dy++) {
-    for (let dx = 0; dx < 3; dx++) {
-      setPixel(img, lCx - 1 + dx, lCy - 2 + dy, glassR, glassG, glassB, 150);
-    }
-  }
-  // Cross dividers at 50% opacity
-  const crossR = 0x70, crossG = 0x90, crossB = 0xa0;
-  // Horizontal divider across middle
-  for (let dx = 0; dx < 3; dx++) {
-    setPixel(img, lCx - 1 + dx, lCy, crossR, crossG, crossB, 128);
-  }
-  // Vertical divider down center
-  for (let dy = 0; dy < 4; dy++) {
-    setPixel(img, lCx, lCy - 2 + dy, crossR, crossG, crossB, 128);
-  }
-  // 1px dark frame around window
-  for (let dx = -1; dx <= 3; dx++) {
-    setPixel(img, lCx - 1 + dx, lCy - 3, frameR, frameG, frameB);
-    setPixel(img, lCx - 1 + dx, lCy + 2, frameR, frameG, frameB);
-  }
-  for (let dy = -2; dy <= 2; dy++) {
-    setPixel(img, lCx - 2, lCy + dy, frameR, frameG, frameB);
-    setPixel(img, lCx + 3, lCy + dy, frameR, frameG, frameB);
-  }
+  // Left face — fill inset glass area
+  const leftPts = leftFacePoints(yOff, h);
+  const leftGlass = insetFace(leftPts, 3);
+  fillPoly(img, leftGlass, glassR, glassG, glassB, 180);
+  // Cross dividers — horizontal through middle, vertical through center
+  const lCx = Math.round((leftPts[0][0] + leftPts[1][0]) / 2);
+  const lMidY = Math.round((leftPts[0][1] + leftPts[3][1]) / 2 + 6);
+  // Horizontal divider
+  drawLine(img, leftGlass[0][0] + 1, lMidY, leftGlass[1][0] - 1, lMidY, divR, divG, divB);
+  // Vertical divider
+  const lVx = lCx;
+  drawLine(img, lVx, leftGlass[0][1] + 1, lVx, leftGlass[3][1] - 1, divR, divG, divB);
 
-  // --- Right face: semi-transparent glass pane with cross pattern ---
-  const rCx = OX + 36;
-  const rCy = yOff + 18 + Math.floor(h / 2);
-  for (let dy = 0; dy < 4; dy++) {
-    for (let dx = 0; dx < 3; dx++) {
-      setPixel(img, rCx - 1 + dx, rCy - 2 + dy, glassR, glassG, glassB, 150);
-    }
-  }
+  // Right face — fill inset glass area
+  const rightPts = rightFacePoints(yOff, h);
+  const rightGlass = insetFace(rightPts, 3);
+  fillPoly(img, rightGlass, glassR, glassG, glassB, 180);
   // Cross dividers
-  for (let dx = 0; dx < 3; dx++) {
-    setPixel(img, rCx - 1 + dx, rCy, crossR, crossG, crossB, 128);
-  }
-  for (let dy = 0; dy < 4; dy++) {
-    setPixel(img, rCx, rCy - 2 + dy, crossR, crossG, crossB, 128);
-  }
-  // 1px dark frame
-  for (let dx = -1; dx <= 3; dx++) {
-    setPixel(img, rCx - 1 + dx, rCy - 3, frameR, frameG, frameB);
-    setPixel(img, rCx - 1 + dx, rCy + 2, frameR, frameG, frameB);
-  }
-  for (let dy = -2; dy <= 2; dy++) {
-    setPixel(img, rCx - 2, rCy + dy, frameR, frameG, frameB);
-    setPixel(img, rCx + 3, rCy + dy, frameR, frameG, frameB);
-  }
+  const rCx = Math.round((rightPts[0][0] + rightPts[1][0]) / 2);
+  const rMidY = Math.round((rightPts[1][1] + rightPts[2][1]) / 2 + 6);
+  drawLine(img, rightGlass[0][0] + 1, rMidY, rightGlass[1][0] - 1, rMidY, divR, divG, divB);
+  const rVx = rCx;
+  drawLine(img, rVx, rightGlass[0][1] + 1, rVx, rightGlass[3][1] - 1, divR, divG, divB);
 }
 
 function drawDoorDecoration(img: ImageData, yOff: number, h: number): void {
-  const doorR = 0x3d, doorG = 0x2b, doorB = 0x1f;
-  const knobR = 0xc0, knobG = 0xa0, knobB = 0x50;
+  const panelR = 0x5c, panelG = 0x3a, panelB = 0x28;
+  const knobR = 0xe0, knobG = 0xc0, knobB = 0x50;
 
-  // Door on right face: 4x6 panel near bottom (larger than before)
-  const dCx = OX + 36;
-  const dCy = yOff + 24 + h - 8;
-  for (let dy = 0; dy < 6; dy++) {
-    for (let dx = 0; dx < 4; dx++) {
-      setPixel(img, dCx - 2 + dx, dCy + dy, doorR, doorG, doorB);
-    }
-  }
-  // Rounded top corners — darken corners for arch effect
-  const darkR = 0x2a, darkG = 0x1c, darkB = 0x14;
-  setPixel(img, dCx - 2, dCy, darkR, darkG, darkB);
-  setPixel(img, dCx + 1, dCy, darkR, darkG, darkB);
-  // Larger handle dot (2px)
-  setPixel(img, dCx + 1, dCy + 3, knobR, knobG, knobB);
-  setPixel(img, dCx + 1, dCy + 4, knobR, knobG, knobB);
+  // Fill BOTH faces with dark door panel, inset by 2px for frame effect
+  const leftPts = leftFacePoints(yOff, h);
+  const leftPanel = insetFace(leftPts, 2);
+  fillPoly(img, leftPanel, panelR, panelG, panelB);
+
+  const rightPts = rightFacePoints(yOff, h);
+  const rightPanel = insetFace(rightPts, 2);
+  fillPoly(img, rightPanel, panelR, panelG, panelB);
+
+  // Gold handle dots on right face (2x2 near center-right)
+  const rCx = Math.round((rightPts[0][0] + rightPts[1][0]) / 2) + 3;
+  const rCy = Math.round((rightPts[0][1] + rightPts[3][1]) / 2) + 6;
+  setPixel(img, rCx, rCy, knobR, knobG, knobB);
+  setPixel(img, rCx, rCy + 1, knobR, knobG, knobB);
+  setPixel(img, rCx + 1, rCy, knobR, knobG, knobB);
+  setPixel(img, rCx + 1, rCy + 1, knobR, knobG, knobB);
+
+  // Handle on left face too
+  const lCx = Math.round((leftPts[0][0] + leftPts[1][0]) / 2) + 3;
+  const lCy = Math.round((leftPts[0][1] + leftPts[3][1]) / 2) + 6;
+  setPixel(img, lCx, lCy, knobR, knobG, knobB);
+  setPixel(img, lCx, lCy + 1, knobR, knobG, knobB);
 }
 
 function drawDoorTopDecorations(img: ImageData, yOff: number, h: number): void {
-  // Upper half of 2-high door: transom window on right face
-  const glassR = 0xa8, glassG = 0xd8, glassB = 0xea;
-  const frameR = 0x3a, frameG = 0x3a, frameB = 0x4a;
+  // Upper half of 2-high door — dark panel with transom glass window
+  const panelR = 0x5c, panelG = 0x3a, panelB = 0x28;
+  const glassR = 0xb0, glassG = 0xdd, glassB = 0xf0;
 
-  // Small transom window: 3x2 glass rectangle centered on right face
-  const rCx = OX + 36;
-  const rCy = yOff + 18 + Math.floor(h / 2);
-  for (let dy = 0; dy < 2; dy++) {
-    for (let dx = 0; dx < 3; dx++) {
-      setPixel(img, rCx - 1 + dx, rCy - 1 + dy, glassR, glassG, glassB, 150);
-    }
-  }
-  // 1px frame around transom
-  for (let dx = -1; dx <= 3; dx++) {
-    setPixel(img, rCx - 1 + dx, rCy - 2, frameR, frameG, frameB);
-    setPixel(img, rCx - 1 + dx, rCy + 1, frameR, frameG, frameB);
-  }
-  for (let dy = -1; dy <= 1; dy++) {
-    setPixel(img, rCx - 2, rCy + dy, frameR, frameG, frameB);
-    setPixel(img, rCx + 2, rCy + dy, frameR, frameG, frameB);
-  }
+  // Fill both faces with dark door panel
+  const leftPts = leftFacePoints(yOff, h);
+  const leftPanel = insetFace(leftPts, 2);
+  fillPoly(img, leftPanel, panelR, panelG, panelB);
+
+  const rightPts = rightFacePoints(yOff, h);
+  const rightPanel = insetFace(rightPts, 2);
+  fillPoly(img, rightPanel, panelR, panelG, panelB);
+
+  // Transom glass window in upper half of each face
+  const leftInner = insetFace(leftPts, 5);
+  // Only fill top half for transom
+  const leftTransom: [number, number][] = [
+    leftInner[0],
+    leftInner[1],
+    [Math.round((leftInner[1][0] + leftInner[2][0]) / 2), Math.round((leftInner[1][1] + leftInner[2][1]) / 2)],
+    [Math.round((leftInner[0][0] + leftInner[3][0]) / 2), Math.round((leftInner[0][1] + leftInner[3][1]) / 2)],
+  ];
+  fillPoly(img, leftTransom, glassR, glassG, glassB, 180);
+
+  const rightInner = insetFace(rightPts, 5);
+  const rightTransom: [number, number][] = [
+    rightInner[0],
+    rightInner[1],
+    [Math.round((rightInner[1][0] + rightInner[2][0]) / 2), Math.round((rightInner[1][1] + rightInner[2][1]) / 2)],
+    [Math.round((rightInner[0][0] + rightInner[3][0]) / 2), Math.round((rightInner[0][1] + rightInner[3][1]) / 2)],
+  ];
+  fillPoly(img, rightTransom, glassR, glassG, glassB, 180);
 }
 
 function drawRoofDecoration(img: ImageData, yOff: number, topRgb: [number, number, number], leftRgb: [number, number, number]): void {
@@ -282,77 +289,92 @@ function drawFloorDecoration(img: ImageData, yOff: number, topRgb: [number, numb
 }
 
 function drawPlantDecorations(img: ImageData, yOff: number, topRgb: [number, number, number]): void {
-  // Top face: small darker green leaf blobs
-  const leafDark = adjustRgb(topRgb, -30);
-  const leafLight = adjustRgb(topRgb, 20);
+  const leafDark = adjustRgb(topRgb, -35);
+  const leafLight = adjustRgb(topRgb, 25);
+  const stemColor: [number, number, number] = [0x5a, 0x3e, 0x28];
 
-  // Cluster of leaf blobs offset from center on top face
+  // Top face: scattered dark/light leaf blobs covering most of the diamond
   const cx = OX + 24;
   const cy = yOff + 12;
-  // Blob 1 (top-left area)
-  setPixel(img, cx - 4, cy - 1, leafDark[0], leafDark[1], leafDark[2]);
-  setPixel(img, cx - 3, cy - 2, leafDark[0], leafDark[1], leafDark[2]);
-  setPixel(img, cx - 3, cy - 1, leafDark[0], leafDark[1], leafDark[2]);
-  // Blob 2 (top-right area)
-  setPixel(img, cx + 3, cy - 1, leafDark[0], leafDark[1], leafDark[2]);
-  setPixel(img, cx + 4, cy, leafDark[0], leafDark[1], leafDark[2]);
-  setPixel(img, cx + 3, cy, leafDark[0], leafDark[1], leafDark[2]);
-  // Blob 3 (bottom area)
-  setPixel(img, cx, cy + 3, leafDark[0], leafDark[1], leafDark[2]);
-  setPixel(img, cx + 1, cy + 3, leafDark[0], leafDark[1], leafDark[2]);
-  setPixel(img, cx - 1, cy + 2, leafDark[0], leafDark[1], leafDark[2]);
-  // Light highlight spots
-  setPixel(img, cx - 2, cy, leafLight[0], leafLight[1], leafLight[2]);
-  setPixel(img, cx + 2, cy + 1, leafLight[0], leafLight[1], leafLight[2]);
+  // Large scattered blobs across the top face
+  const leafPositions = [
+    [-6, 0], [-4, -2], [-3, -1], [-2, 1], [-1, -3],
+    [0, 2], [1, -2], [2, 0], [3, -1], [4, 1],
+    [5, 0], [-3, 3], [0, -1], [2, 3], [-1, 2],
+  ];
+  for (const [dx, dy] of leafPositions) {
+    setPixel(img, cx + dx, cy + dy, leafDark[0], leafDark[1], leafDark[2]);
+  }
+  // Bright highlight spots
+  const lightPositions = [[-2, -1], [1, 1], [3, -2], [-4, 1], [0, 3]];
+  for (const [dx, dy] of lightPositions) {
+    setPixel(img, cx + dx, cy + dy, leafLight[0], leafLight[1], leafLight[2]);
+  }
 
-  // Front faces: small leaf/stem accent details
-  const stemColor = adjustRgb(topRgb, -40);
-  // Left face: tiny stem
-  const lCx = OX + 12;
-  const lCy = yOff + 22;
-  setPixel(img, lCx, lCy, stemColor[0], stemColor[1], stemColor[2]);
-  setPixel(img, lCx, lCy + 1, stemColor[0], stemColor[1], stemColor[2]);
-  setPixel(img, lCx - 1, lCy - 1, leafDark[0], leafDark[1], leafDark[2]);
-  setPixel(img, lCx + 1, lCy - 1, leafDark[0], leafDark[1], leafDark[2]);
+  // Left face: bushy leaf texture + brown stem
+  const leftPts = leftFacePoints(yOff, BLOCK_H);
+  const lMidX = Math.round((leftPts[0][0] + leftPts[1][0]) / 2);
+  const lMidY = Math.round((leftPts[0][1] + leftPts[3][1]) / 2) + 6;
+  // Stem
+  drawLine(img, lMidX, lMidY - 2, lMidX, lMidY + 6, stemColor[0], stemColor[1], stemColor[2]);
+  // Leaf clusters around stem top
+  for (const [dx, dy] of [[-2, -2], [-1, -3], [0, -4], [1, -3], [2, -2], [-3, 0], [3, 0]]) {
+    setPixel(img, lMidX + dx, lMidY + dy, leafDark[0], leafDark[1], leafDark[2]);
+  }
 
-  // Right face: tiny leaf accent
-  const rCx = OX + 36;
-  const rCy = yOff + 20;
-  setPixel(img, rCx, rCy, stemColor[0], stemColor[1], stemColor[2]);
-  setPixel(img, rCx, rCy + 1, stemColor[0], stemColor[1], stemColor[2]);
-  setPixel(img, rCx - 1, rCy - 1, leafDark[0], leafDark[1], leafDark[2]);
-  setPixel(img, rCx + 1, rCy - 1, leafDark[0], leafDark[1], leafDark[2]);
+  // Right face: similar bushy texture
+  const rightPts = rightFacePoints(yOff, BLOCK_H);
+  const rMidX = Math.round((rightPts[0][0] + rightPts[1][0]) / 2);
+  const rMidY = Math.round((rightPts[1][1] + rightPts[2][1]) / 2) + 6;
+  drawLine(img, rMidX, rMidY - 2, rMidX, rMidY + 6, stemColor[0], stemColor[1], stemColor[2]);
+  for (const [dx, dy] of [[-2, -2], [-1, -3], [0, -4], [1, -3], [2, -2], [-3, 0], [3, 0]]) {
+    setPixel(img, rMidX + dx, rMidY + dy, leafDark[0], leafDark[1], leafDark[2]);
+  }
 }
 
 function drawTableDecorations(img: ImageData, yOff: number, topRgb: [number, number, number]): void {
-  // Top face: horizontal wood grain lines (slightly darker)
-  const grain = adjustRgb(topRgb, -18);
-  drawLine(img, OX + 14, yOff + 8, OX + 34, yOff + 8, grain[0], grain[1], grain[2]);
-  drawLine(img, OX + 10, yOff + 12, OX + 38, yOff + 12, grain[0], grain[1], grain[2]);
-  drawLine(img, OX + 14, yOff + 16, OX + 34, yOff + 16, grain[0], grain[1], grain[2]);
+  // Top face: multiple wood grain lines (darker) for visible texture
+  const grain = adjustRgb(topRgb, -20);
+  const grainLight = adjustRgb(topRgb, 12);
+  // Several grain lines across the diamond following isometric angles
+  drawLine(img, OX + 14, yOff + 6, OX + 34, yOff + 6, grain[0], grain[1], grain[2]);
+  drawLine(img, OX + 10, yOff + 10, OX + 38, yOff + 10, grainLight[0], grainLight[1], grainLight[2]);
+  drawLine(img, OX + 12, yOff + 14, OX + 36, yOff + 14, grain[0], grain[1], grain[2]);
+  drawLine(img, OX + 14, yOff + 18, OX + 34, yOff + 18, grainLight[0], grainLight[1], grainLight[2]);
 
-  // Front faces: thin dark vertical leg shapes near edges
-  const legColor = adjustRgb(topRgb, -45);
-  // Left face legs
-  const lBase = yOff + 24;
-  // Near-left leg
-  setPixel(img, OX + 4, lBase + 2, legColor[0], legColor[1], legColor[2]);
-  setPixel(img, OX + 4, lBase + 4, legColor[0], legColor[1], legColor[2]);
-  setPixel(img, OX + 4, lBase + 6, legColor[0], legColor[1], legColor[2]);
-  // Near-right leg on left face
-  setPixel(img, OX + 20, lBase + 2, legColor[0], legColor[1], legColor[2]);
-  setPixel(img, OX + 20, lBase + 4, legColor[0], legColor[1], legColor[2]);
-  setPixel(img, OX + 20, lBase + 6, legColor[0], legColor[1], legColor[2]);
+  // Both faces: dark legs as thick 2px vertical lines near edges
+  const legColor = adjustRgb(topRgb, -55);
+
+  // Left face legs — 2px wide, full height of face
+  const leftPts = leftFacePoints(yOff, BLOCK_H);
+  // Left leg near left edge
+  for (let dy = 2; dy < BLOCK_H - 1; dy++) {
+    const t = dy / BLOCK_H;
+    const lx = Math.round(leftPts[0][0] + 3 + t * 0);
+    setPixel(img, lx, leftPts[0][1] + dy, legColor[0], legColor[1], legColor[2]);
+    setPixel(img, lx + 1, leftPts[0][1] + dy, legColor[0], legColor[1], legColor[2]);
+  }
+  // Right leg near right edge of left face
+  for (let dy = 2; dy < BLOCK_H - 1; dy++) {
+    const lx = Math.round(leftPts[1][0] - 4);
+    setPixel(img, lx, leftPts[1][1] + dy, legColor[0], legColor[1], legColor[2]);
+    setPixel(img, lx + 1, leftPts[1][1] + dy, legColor[0], legColor[1], legColor[2]);
+  }
 
   // Right face legs
-  // Near-left leg on right face
-  setPixel(img, OX + 28, lBase + 2, legColor[0], legColor[1], legColor[2]);
-  setPixel(img, OX + 28, lBase + 4, legColor[0], legColor[1], legColor[2]);
-  setPixel(img, OX + 28, lBase + 6, legColor[0], legColor[1], legColor[2]);
-  // Near-right leg on right face
-  setPixel(img, OX + 44, lBase + 2, legColor[0], legColor[1], legColor[2]);
-  setPixel(img, OX + 44, lBase + 4, legColor[0], legColor[1], legColor[2]);
-  setPixel(img, OX + 44, lBase + 6, legColor[0], legColor[1], legColor[2]);
+  const rightPts = rightFacePoints(yOff, BLOCK_H);
+  // Left leg near left edge of right face
+  for (let dy = 2; dy < BLOCK_H - 1; dy++) {
+    const rx = Math.round(rightPts[0][0] + 3);
+    setPixel(img, rx, rightPts[0][1] + dy, legColor[0], legColor[1], legColor[2]);
+    setPixel(img, rx + 1, rightPts[0][1] + dy, legColor[0], legColor[1], legColor[2]);
+  }
+  // Right leg near right edge of right face
+  for (let dy = 2; dy < BLOCK_H - 1; dy++) {
+    const rx = Math.round(rightPts[1][0] - 4);
+    setPixel(img, rx, rightPts[1][1] + dy, legColor[0], legColor[1], legColor[2]);
+    setPixel(img, rx + 1, rightPts[1][1] + dy, legColor[0], legColor[1], legColor[2]);
+  }
 }
 
 // --- Main sprite drawing ---
