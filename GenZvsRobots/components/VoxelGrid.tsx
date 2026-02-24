@@ -290,22 +290,28 @@ export default function VoxelGrid({
       {/* Rotation controls — only for interactive (non-readOnly) grids */}
       {!readOnly && (
         <>
-          {/* Lock / unlock toggle */}
+          {/* Rotate toggle — prominent labeled button */}
           <button
             onClick={() => setRotationLocked((l) => !l)}
-            className="absolute top-1 right-1 bg-black/40 hover:bg-black/60 text-white rounded px-1.5 py-0.5 text-xs font-mono transition-colors"
-            title={rotationLocked ? "Unlock rotation" : "Lock rotation"}
+            className={[
+              "absolute top-2 right-2 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-[family-name:var(--font-pixel)] transition-all duration-200 shadow-md",
+              rotationLocked
+                ? "bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] ring-1 ring-[#b89f65]/40 animate-[pulse_3s_ease-in-out_2]"
+                : "bg-[#b89f65]/90 hover:bg-[#b89f65] text-[#2a2520] ring-1 ring-[#b89f65]",
+            ].join(" ")}
+            title={rotationLocked ? "Unlock to rotate the building view" : "Lock rotation"}
             type="button"
           >
-            {rotationLocked ? "🔒" : "🔓"}
+            <span className="text-sm">{rotationLocked ? "🔒" : "🔓"}</span>
+            <span>{rotationLocked ? "Rotate" : "Lock"}</span>
           </button>
 
-          {/* Rotation arrows (hidden when locked) */}
+          {/* Rotation arrows — visible when unlocked */}
           {!rotationLocked && (
             <>
               <button
                 onClick={rotateLeft}
-                className="absolute bottom-1 left-1 bg-black/40 hover:bg-black/60 text-white rounded px-2 py-1 text-sm font-mono transition-colors"
+                className="absolute bottom-2 left-2 bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] rounded-lg px-3 py-2 text-base font-mono transition-colors shadow-md ring-1 ring-[#b89f65]/30"
                 title="Rotate left"
                 type="button"
               >
@@ -313,7 +319,7 @@ export default function VoxelGrid({
               </button>
               <button
                 onClick={rotateRight}
-                className="absolute bottom-1 right-1 bg-black/40 hover:bg-black/60 text-white rounded px-2 py-1 text-sm font-mono transition-colors"
+                className="absolute bottom-2 right-2 bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] rounded-lg px-3 py-2 text-base font-mono transition-colors shadow-md ring-1 ring-[#b89f65]/30"
                 title="Rotate right"
                 type="button"
               >
