@@ -287,8 +287,8 @@ export default function VoxelGrid({
         aria-hidden="true"
       />
 
-      {/* Rotation controls — only for interactive (non-readOnly) grids */}
-      {!readOnly && (
+      {/* Rotation controls — available on all grids (architects need to rotate too) */}
+      {(
         <>
           {/* Rotate toggle — prominent labeled button */}
           <button
