@@ -37,7 +37,8 @@ export function createEmptyGrid(): Grid {
 }
 
 export function getStackHeight(grid: Grid, row: number, col: number): number {
-  const stack = grid[row][col];
+  const stack = grid[row]?.[col];
+  if (!Array.isArray(stack)) return 0;
   for (let h = 0; h < MAX_HEIGHT; h++) {
     if (stack[h] === "empty") return h;
   }
@@ -45,7 +46,8 @@ export function getStackHeight(grid: Grid, row: number, col: number): number {
 }
 
 export function getTopBlockHeight(grid: Grid, row: number, col: number): number {
-  const stack = grid[row][col];
+  const stack = grid[row]?.[col];
+  if (!Array.isArray(stack)) return -1;
   for (let h = MAX_HEIGHT - 1; h >= 0; h--) {
     if (stack[h] !== "empty") return h;
   }

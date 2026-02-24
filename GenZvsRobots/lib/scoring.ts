@@ -16,8 +16,8 @@ export function calculateDetailedScore(build: Grid, target: Grid): DetailedScore
   for (let r = 0; r < GRID_SIZE; r++) {
     for (let c = 0; c < GRID_SIZE; c++) {
       for (let h = 0; h < MAX_HEIGHT; h++) {
-        const expected = target[r][c][h];
-        const actual = build[r][c][h];
+        const expected = target[r]?.[c]?.[h] ?? "empty";
+        const actual = build[r]?.[c]?.[h] ?? "empty";
 
         if (expected !== "empty") {
           total++;

@@ -5,7 +5,7 @@ import type { Grid, BlockType } from "@/lib/types";
 import { GRID_SIZE } from "@/lib/constants";
 import { renderVoxelGrid, getGridExtent } from "@/lib/voxelRenderer";
 import { screenToGrid, type Rotation } from "@/lib/voxel";
-import { TILE_W, TILE_H, BLOCK_H } from "@/lib/sprites";
+import { TILE_W, TILE_H } from "@/lib/sprites";
 
 // ---------------------------------------------------------------------------
 // Props — identical to IsometricGrid for drop-in swap
@@ -97,8 +97,7 @@ export default function VoxelGrid({
       const isoX = (canvasX - offsetX) / scale;
       const isoY = (canvasY - offsetY) / scale;
 
-      // Subtract BLOCK_H to fix click alignment — blocks are visually elevated
-      const { row, col } = screenToGrid(isoX, isoY - BLOCK_H, rotation);
+      const { row, col } = screenToGrid(isoX, isoY, rotation);
 
       if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
         return { row, col };

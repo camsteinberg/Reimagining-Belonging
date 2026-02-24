@@ -44,11 +44,15 @@ export function usePartySocket(roomCode: string | null) {
             if (!prev) return prev;
             const team = prev.teams[msg.teamId];
             if (!team) return prev;
+            const stack = team.grid[msg.row]?.[msg.col];
+            if (!Array.isArray(stack)) return prev;
             const newGrid = team.grid.map((row, r) =>
               r === msg.row
                 ? row.map((col, c) =>
                     c === msg.col
-                      ? col.map((cell, h) => (h === msg.height ? msg.block : cell))
+                      ? Array.isArray(col)
+                        ? col.map((cell, h) => (h === msg.height ? msg.block : cell))
+                        : col
                       : col
                   )
                 : row
