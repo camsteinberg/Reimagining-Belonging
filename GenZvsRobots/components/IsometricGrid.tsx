@@ -159,8 +159,14 @@ export default function IsometricGrid({
       <g aria-label="blocks">
         {Array.from({ length: GRID_SIZE }, (_, row) =>
           Array.from({ length: GRID_SIZE }, (_, col) => {
-            const block = grid[row]?.[col];
-            if (!block || block === "empty") return null;
+            const stack = grid[row]?.[col];
+            if (!stack) return null;
+            // Find topmost non-empty block in stack
+            let block: BlockType = "empty";
+            for (let h = stack.length - 1; h >= 0; h--) {
+              if (stack[h] !== "empty") { block = stack[h]; break; }
+            }
+            if (block === "empty") return null;
 
             const cellKey = `${row},${col}`;
             const isNew = newCells?.has(cellKey) ?? false;
@@ -168,7 +174,14 @@ export default function IsometricGrid({
 
             let isCorrect: boolean | null = null;
             if (showScoring && targetGrid) {
-              const expected = targetGrid[row]?.[col] ?? "empty";
+              const targetStack = targetGrid[row]?.[col];
+              // Compare top block of target
+              let expected: BlockType = "empty";
+              if (targetStack) {
+                for (let h = targetStack.length - 1; h >= 0; h--) {
+                  if (targetStack[h] !== "empty") { expected = targetStack[h]; break; }
+                }
+              }
               isCorrect = block === expected;
             }
 

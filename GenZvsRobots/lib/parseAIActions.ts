@@ -24,6 +24,7 @@ export function parseAIResponse(text: string): AIResponse {
               row: item.row,
               col: item.col,
               block: item.block as BlockType,
+              height: typeof item.height === "number" ? item.height : undefined,
             });
           }
         }

@@ -3,7 +3,7 @@ export type BlockType = "wall" | "floor" | "roof" | "window" | "door" | "empty";
 
 // === Grid ===
 export type Cell = BlockType;
-export type Grid = Cell[][]; // 8x8, grid[row][col]
+export type Grid = Cell[][][]; // 8x8xMAX_HEIGHT, grid[row][col][height]
 
 // === Players ===
 export type Role = "architect" | "builder";
@@ -14,6 +14,7 @@ export interface Player {
   teamId: string;
   role: Role;
   connected: boolean;
+  reconnectToken?: string;
 }
 
 // === Teams ===
@@ -30,6 +31,7 @@ export interface Team {
 // === Game Phases ===
 export type GamePhase =
   | "lobby"
+  | "demo"
   | "round1"
   | "reveal1"
   | "interstitial"
@@ -51,7 +53,7 @@ export interface RoomState {
 
 // === WebSocket Messages ===
 export type ClientMessage =
-  | { type: "join"; name: string; isHost?: boolean }
+  | { type: "join"; name: string; isHost?: boolean; reconnectToken?: string }
   | { type: "placeBlock"; row: number; col: number; block: BlockType }
   | { type: "chat"; text: string }
   | { type: "hostAction"; action: HostAction }
@@ -64,23 +66,27 @@ export type HostAction =
   | "skipToReveal"
   | "nextReveal"
   | "prevReveal"
-  | "endGame";
+  | "endGame"
+  | "startDemo"
+  | "endDemo";
 
 export type ServerMessage =
   | { type: "state"; state: RoomState }
-  | { type: "gridUpdate"; teamId: string; row: number; col: number; block: BlockType }
+  | { type: "gridUpdate"; teamId: string; row: number; col: number; height: number; block: BlockType }
   | { type: "chat"; teamId: string; senderId: string; senderName: string; text: string; isAI?: boolean }
   | { type: "aiBuilding"; teamId: string; actions: BuildAction[] }
   | { type: "timer"; timerEnd: number }
   | { type: "phaseChange"; phase: GamePhase }
   | { type: "error"; message: string }
   | { type: "playerJoined"; player: Player }
+  | { type: "reconnected"; player: Player }
   | { type: "scores"; teams: { teamId: string; teamName: string; score: number; round: 1 | 2 }[] };
 
 export interface BuildAction {
   row: number;
   col: number;
   block: BlockType;
+  height?: number;
 }
 
 // === AI Response (parsed from Claude) ===
@@ -93,6 +99,7 @@ export interface AIResponse {
 export interface CellResult {
   row: number;
   col: number;
+  height: number;
   expected: BlockType;
   actual: BlockType;
   correct: boolean;

@@ -71,3 +71,17 @@
   outline: 2px solid var(--color-sage);
   outline-offset: 2px;
 }
+
+/* ── Shake animation for celebration moments ─────────────────────────────── */
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+.shake { animation: shake 0.15s ease-in-out 3; }
+
+/* ── Scrollbar-none utility ──────────────────────────────────────────────── */
+
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { scrollbar-width: none; }

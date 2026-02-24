@@ -44,6 +44,7 @@ export default function VoxelGrid({
   const [rotationLocked, setRotationLocked] = useState(true);
   const [canvasSize, setCanvasSize] = useState({ w: 400, h: 300 });
   const [hoverCell, setHoverCell] = useState<{ row: number; col: number } | null>(null);
+  const [keyboardCursor, setKeyboardCursor] = useState<{ row: number; col: number } | null>(null);
   const animFrameRef = useRef<number>(0);
   const animStartRef = useRef<number>(0);
   const pointerStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
@@ -133,11 +134,11 @@ export default function VoxelGrid({
         aiPlacedCells,
         newCells,
         animTime: time ?? 0,
-        hoverCell: readOnly ? null : hoverCell,
+        hoverCell: readOnly ? null : (keyboardCursor ?? hoverCell),
         hoverBlock: selectedBlock,
       });
     },
-    [grid, canvasSize, dpr, rotation, showScoring, targetGrid, aiPlacedCells, newCells, hoverCell, selectedBlock, readOnly],
+    [grid, canvasSize, dpr, rotation, showScoring, targetGrid, aiPlacedCells, newCells, hoverCell, keyboardCursor, selectedBlock, readOnly],
   );
 
   // ---- Animation loop (only when needed) ----
@@ -198,6 +199,7 @@ export default function VoxelGrid({
   const handlePointerMove = useCallback(
     (e: React.PointerEvent) => {
       if (readOnly) return;
+      setKeyboardCursor(null);
       const cell = canvasToGrid(e.clientX, e.clientY);
       setHoverCell((prev) => {
         if (!cell && !prev) return prev;
@@ -213,6 +215,41 @@ export default function VoxelGrid({
     setHoverCell(null);
   }, []);
 
+  // ---- Keyboard navigation ----
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (readOnly) return;
+
+      const cur = keyboardCursor ?? { row: 0, col: 0 };
+      let { row, col } = cur;
+
+      switch (e.key) {
+        case "ArrowUp":
+          row = Math.max(0, row - 1);
+          break;
+        case "ArrowDown":
+          row = Math.min(GRID_SIZE - 1, row + 1);
+          break;
+        case "ArrowLeft":
+          col = Math.max(0, col - 1);
+          break;
+        case "ArrowRight":
+          col = Math.min(GRID_SIZE - 1, col + 1);
+          break;
+        case "Enter":
+        case " ":
+          if (onCellClick) onCellClick(cur.row, cur.col);
+          e.preventDefault();
+          return;
+        default:
+          return;
+      }
+      e.preventDefault();
+      setKeyboardCursor({ row, col });
+    },
+    [readOnly, keyboardCursor, onCellClick],
+  );
+
   // ---- Rotate helpers ----
   const rotateLeft = useCallback(() => {
     setRotation((r) => ((r + 3) % 4) as Rotation);
@@ -227,6 +264,10 @@ export default function VoxelGrid({
       ref={containerRef}
       className={className ?? "w-full h-full max-h-[50vh]"}
       style={{ position: "relative", touchAction: "none" }}
+      tabIndex={readOnly ? undefined : 0}
+      onKeyDown={readOnly ? undefined : handleKeyDown}
+      role="application"
+      aria-label="Building grid"
     >
       <canvas
         ref={canvasRef}
@@ -241,7 +282,7 @@ export default function VoxelGrid({
           cursor: readOnly ? "default" : "pointer",
           display: "block",
         }}
-        aria-label="Voxel building grid"
+        aria-hidden="true"
       />
 
       {/* Rotation controls — only for interactive (non-readOnly) grids */}

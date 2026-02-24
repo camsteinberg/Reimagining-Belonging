@@ -19,7 +19,7 @@ export function usePartySocket(roomCode: string | null) {
         window.location.hostname === "127.0.0.1");
     const host = isLocal
       ? "127.0.0.1:1999"
-      : "blueprint-telephone.camsteinberg.partykit.dev";
+      : (process.env.NEXT_PUBLIC_PARTYKIT_HOST || "blueprint-telephone.camsteinberg.partykit.dev");
     const protocol = isLocal ? "ws" : "wss";
 
     const socket = new PartySocket({
@@ -36,6 +36,8 @@ export function usePartySocket(roomCode: string | null) {
         const msg: ServerMessage = JSON.parse(e.data);
         if (msg.type === "state") {
           setState(msg.state);
+        } else if (msg.type === "reconnected") {
+          // No local state update needed — a full state broadcast follows
         } else if (msg.type === "gridUpdate") {
           // Apply individual block placements to local state immediately
           setState((prev) => {
@@ -44,7 +46,11 @@ export function usePartySocket(roomCode: string | null) {
             if (!team) return prev;
             const newGrid = team.grid.map((row, r) =>
               r === msg.row
-                ? row.map((cell, c) => (c === msg.col ? msg.block : cell))
+                ? row.map((col, c) =>
+                    c === msg.col
+                      ? col.map((cell, h) => (h === msg.height ? msg.block : cell))
+                      : col
+                  )
                 : row
             );
             return {

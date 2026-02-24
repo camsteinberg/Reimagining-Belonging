@@ -13,6 +13,9 @@ import {
   MAX_TEAM_SIZE,
   GRID_SIZE,
   ROUND_DURATION_MS,
+  MAX_HEIGHT,
+  getStackHeight,
+  getTopBlockHeight,
 } from "../lib/constants";
 import { pickRandomTarget } from "../lib/targets";
 
@@ -53,7 +56,8 @@ export function addPlayer(state: RoomState, id: string, name: string): Player {
   const team = state.teams[teamId];
   const role: Role = team.players.length === 0 ? "architect" : "builder";
 
-  const player: Player = { id, name, teamId, role, connected: true };
+  const reconnectToken = Math.random().toString(36).slice(2, 10);
+  const player: Player = { id, name, teamId, role, connected: true, reconnectToken };
   state.players[id] = player;
   team.players.push(id);
 
@@ -77,12 +81,46 @@ export function removePlayer(state: RoomState, id: string): void {
     }
   }
 
-  delete state.players[id];
+  // Keep player in state.players (marked disconnected) so reconnection can find them.
+  // Only delete if they have no reconnect token (shouldn't happen, but defensive).
+  if (!player.reconnectToken) {
+    delete state.players[id];
+  }
 }
 
-export function startRound(state: RoomState): void {
+export function reconnectPlayer(
+  state: RoomState,
+  newId: string,
+  reconnectToken: string
+): Player | null {
+  // Find a disconnected player matching this reconnect token
+  const oldPlayer = Object.values(state.players).find(
+    (p) => p.reconnectToken === reconnectToken && !p.connected
+  );
+  if (!oldPlayer) return null;
+
+  // Transfer to new connection ID in the team's players array
+  const team = state.teams[oldPlayer.teamId];
+  if (team) {
+    team.players = team.players.map((pid) =>
+      pid === oldPlayer.id ? newId : pid
+    );
+  }
+
+  // Move player record to new ID
+  delete state.players[oldPlayer.id];
+  const newPlayer: Player = { ...oldPlayer, id: newId, connected: true };
+  state.players[newId] = newPlayer;
+
+  return newPlayer;
+}
+
+export function startRound(state: RoomState): boolean {
   const validStartPhases: GamePhase[] = ["lobby", "reveal1", "interstitial"];
-  if (!validStartPhases.includes(state.phase)) return;
+  if (!validStartPhases.includes(state.phase)) return false;
+
+  const playerCount = Object.values(state.players).filter((p) => p.connected).length;
+  if (playerCount === 0) return false;
 
   const isRound2 = state.phase === "interstitial";
   state.round = isRound2 ? 2 : 1;
@@ -94,7 +132,7 @@ export function startRound(state: RoomState): void {
   for (const team of Object.values(state.teams)) {
     if (isRound2) {
       // Snapshot round 1 grid before resetting
-      team.round1Grid = team.grid.map((row) => [...row]);
+      team.round1Grid = team.grid.map(row => row.map(col => [...col]));
     }
     team.grid = createEmptyGrid();
   }
@@ -117,6 +155,19 @@ export function startRound(state: RoomState): void {
       }
     }
   }
+
+  // Solo architect fix: if a team has exactly 1 connected player, force them to architect
+  for (const team of Object.values(state.teams)) {
+    const connectedPlayers = team.players
+      .map((pid) => state.players[pid])
+      .filter((p) => p && p.connected);
+
+    if (connectedPlayers.length === 1) {
+      connectedPlayers[0].role = "architect";
+    }
+  }
+
+  return true;
 }
 
 export function endRound(state: RoomState): void {
@@ -139,20 +190,53 @@ export function advancePhase(state: RoomState): void {
   if (next) state.phase = next;
 }
 
+export function startDemo(state: RoomState): void {
+  if (state.phase !== "lobby") return;
+  state.phase = "demo";
+  state.timerEnd = Date.now() + 60_000; // 60 seconds
+
+  // Reset all grids for free-build
+  for (const team of Object.values(state.teams)) {
+    team.grid = createEmptyGrid();
+  }
+}
+
+export function endDemo(state: RoomState): void {
+  if (state.phase !== "demo") return;
+  state.phase = "lobby";
+  state.timerEnd = null;
+
+  // Clear demo builds
+  for (const team of Object.values(state.teams)) {
+    team.grid = createEmptyGrid();
+  }
+}
+
 export function placeBlock(
   state: RoomState,
   teamId: string,
   row: number,
   col: number,
   block: BlockType
-): boolean {
+): { placed: boolean; height: number } {
   const team = state.teams[teamId];
-  if (!team) return false;
-  if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return false;
-  if (state.phase !== "round1" && state.phase !== "round2") return false;
+  if (!team) return { placed: false, height: -1 };
+  if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return { placed: false, height: -1 };
+  if (state.phase !== "round1" && state.phase !== "round2" && state.phase !== "demo") return { placed: false, height: -1 };
 
-  team.grid[row][col] = block;
-  return true;
+  if (block === "empty") {
+    // Erase topmost block
+    const topH = getTopBlockHeight(team.grid, row, col);
+    if (topH < 0) return { placed: false, height: -1 };
+    team.grid[row][col][topH] = "empty";
+    return { placed: true, height: topH };
+  } else {
+    // Place at next available height
+    const nextH = getStackHeight(team.grid, row, col);
+    if (nextH >= MAX_HEIGHT) return { placed: false, height: -1 };
+    team.grid[row][col][nextH] = block;
+    return { placed: true, height: nextH };
+  }
 }
 
 export function calculateScore(build: Grid, target: Grid): number {
@@ -161,18 +245,18 @@ export function calculateScore(build: Grid, target: Grid): number {
 
   for (let r = 0; r < GRID_SIZE; r++) {
     for (let c = 0; c < GRID_SIZE; c++) {
-      const expected = target[r][c];
-      const actual = build[r][c];
+      for (let h = 0; h < MAX_HEIGHT; h++) {
+        const expected = target[r][c][h];
+        const actual = build[r][c][h];
 
-      if (expected !== "empty") {
-        total++;
-        if (actual === expected) correct++;
-      }
+        if (expected !== "empty") {
+          total++;
+          if (actual === expected) correct++;
+        }
 
-      // Penalize extra blocks placed where target is empty
-      if (expected === "empty" && actual !== "empty") {
-        total++;
-        // correct stays the same — this cell is wrong
+        if (expected === "empty" && actual !== "empty") {
+          total++;
+        }
       }
     }
   }

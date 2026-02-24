@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
-import { buildSystemPrompt } from "@/lib/aiPrompt";
+import { buildSystemPrompt, buildProgressContext } from "@/lib/aiPrompt";
 import { parseAIResponse } from "@/lib/parseAIActions";
 import { ROUND_2_TARGET } from "@/lib/targets";
 
+// C3: In-memory rate limiter per team
+const teamCooldowns = new Map<string, number>();
+const COOLDOWN_MS = 3000;
+
 export async function POST(req: NextRequest) {
   try {
-    const { roomCode, teamId, text, playerId, history } = await req.json();
+    const { roomCode, teamId, text, playerId, history, teamGrid } = await req.json();
 
     if (!roomCode || !teamId || !text) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    }
+
+    // C3: Rate limit check
+    const cooldownKey = `${roomCode}-${teamId}`;
+    const lastCall = teamCooldowns.get(cooldownKey) || 0;
+    if (Date.now() - lastCall < COOLDOWN_MS) {
+      return NextResponse.json(
+        { error: "Scout is busy — try again in a moment" },
+        { status: 429 }
+      );
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -19,7 +33,13 @@ export async function POST(req: NextRequest) {
     const anthropic = new Anthropic({ apiKey });
 
     const target = ROUND_2_TARGET;
-    const systemPrompt = buildSystemPrompt(target, 2);
+    let systemPrompt = buildSystemPrompt(target, 2);
+
+    // C2: Append grid progress context if teamGrid provided
+    const progressCtx = buildProgressContext(teamGrid ?? null, target);
+    if (progressCtx) {
+      systemPrompt += progressCtx;
+    }
 
     const messages: { role: "user" | "assistant"; content: string }[] = [];
 
@@ -37,6 +57,9 @@ export async function POST(req: NextRequest) {
 
     // Add current message
     messages.push({ role: "user", content: text });
+
+    // C3: Update cooldown timestamp before calling API
+    teamCooldowns.set(cooldownKey, Date.now());
 
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
@@ -61,7 +84,10 @@ export async function POST(req: NextRequest) {
 
     await fetch(`${partyProtocol}://${partyHost}/party/${roomCode.toLowerCase()}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-party-secret": process.env.PARTY_SECRET || "dev-secret",
+      },
       body: JSON.stringify({
         type: "aiResponse",
         teamId,

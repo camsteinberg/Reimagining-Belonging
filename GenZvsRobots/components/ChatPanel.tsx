@@ -12,12 +12,15 @@ export interface ChatMessage {
   timestamp: number;
 }
 
+const QUICK_REACTIONS = ["\u{1F44D}", "\u2753", "\u{1F389}", "\u{1F449}", "\u{1F916}"];
+
 interface ChatPanelProps {
   messages: ChatMessage[];
   onSend: (text: string) => void;
   isRound2: boolean;
   disabled?: boolean;
   teamName?: string;
+  isAIThinking?: boolean;
 }
 
 export default function ChatPanel({
@@ -26,13 +29,14 @@ export default function ChatPanel({
   isRound2,
   disabled = false,
   teamName,
+  isAIThinking,
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isAIThinking]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -145,8 +149,66 @@ export default function ChatPanel({
             </motion.div>
           ))}
         </AnimatePresence>
+
+        {/* AI Typing Indicator */}
+        {isAIThinking && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center gap-2 px-1 py-1"
+          >
+            <div className="h-6 w-6 rounded-full shrink-0 flex items-center justify-center text-[10px] font-bold leading-none bg-[#6b8f71] text-[#f5f1ea]">
+              S
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span
+                className="font-[family-name:var(--font-pixel)] text-[7px] tracking-wider"
+                style={{ color: "#6b8f71" }}
+              >
+                Scout is thinking
+              </span>
+              <span className="flex gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#6b8f71] animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#6b8f71] animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#6b8f71] animate-bounce" style={{ animationDelay: "300ms" }} />
+              </span>
+            </div>
+          </motion.div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Emoji Quick Reactions */}
+      {!disabled && (
+        <div
+          className={[
+            "flex items-center justify-center gap-1 px-3 py-1.5 border-t shrink-0",
+            isRound2
+              ? "border-[#6b8f71]/20"
+              : "border-[#8b5e3c]/10",
+          ].join(" ")}
+        >
+          {QUICK_REACTIONS.map((emoji) => (
+            <button
+              key={emoji}
+              type="button"
+              onClick={() => onSend(emoji)}
+              className={[
+                "min-h-[32px] min-w-[32px] px-2 py-1 rounded-lg text-base transition-colors",
+                isRound2
+                  ? "hover:bg-[#6b8f71]/20 active:bg-[#6b8f71]/30"
+                  : "hover:bg-[#8b5e3c]/10 active:bg-[#8b5e3c]/20",
+              ].join(" ")}
+              aria-label={`Send ${emoji}`}
+            >
+              {emoji}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Input Form */}
       <form

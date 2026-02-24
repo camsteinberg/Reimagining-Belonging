@@ -4,11 +4,14 @@ import {
   createRoomState,
   addPlayer,
   removePlayer,
+  reconnectPlayer,
   startRound,
   endRound,
   advancePhase,
   placeBlock,
   calculateAllScores,
+  startDemo,
+  endDemo,
 } from "./gameState";
 
 export default class GameRoom implements Party.Server {
@@ -51,6 +54,16 @@ export default class GameRoom implements Party.Server {
         if (msg.isHost) {
           this.hostId = sender.id;
           this.state.hostConnected = true;
+        } else if (msg.reconnectToken) {
+          const reconnected = reconnectPlayer(this.state, sender.id, msg.reconnectToken);
+          if (reconnected) {
+            this.send(sender, { type: "reconnected", player: reconnected });
+            this.broadcastState();
+            break;
+          }
+          // Token didn't match — fall through to normal join
+          const player = addPlayer(this.state, sender.id, msg.name);
+          this.broadcast({ type: "playerJoined", player });
         } else {
           const player = addPlayer(this.state, sender.id, msg.name);
           this.broadcast({ type: "playerJoined", player });
@@ -61,9 +74,11 @@ export default class GameRoom implements Party.Server {
 
       case "placeBlock": {
         const player = this.state.players[sender.id];
-        if (!player || player.role !== "builder") return;
+        if (!player) return;
+        // During demo, all players can place blocks; otherwise only builders
+        if (this.state.phase !== "demo" && player.role !== "builder") return;
 
-        const placed = placeBlock(
+        const { placed, height } = placeBlock(
           this.state,
           player.teamId,
           msg.row,
@@ -76,6 +91,7 @@ export default class GameRoom implements Party.Server {
             teamId: player.teamId,
             row: msg.row,
             col: msg.col,
+            height,
             block: msg.block,
           });
         }
@@ -129,7 +145,7 @@ export default class GameRoom implements Party.Server {
     return {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, x-party-secret",
     };
   }
 
@@ -142,6 +158,13 @@ export default class GameRoom implements Party.Server {
 
     if (req.method !== "POST") {
       return new Response("Not found", { status: 404, headers: this.corsHeaders() });
+    }
+
+    // Verify shared secret for HTTP API auth
+    const secret = req.headers.get("x-party-secret");
+    const expectedSecret = process.env.PARTY_SECRET || "dev-secret";
+    if (secret !== expectedSecret) {
+      return new Response("Unauthorized", { status: 401, headers: this.corsHeaders() });
     }
 
     let body: {
@@ -208,7 +231,11 @@ export default class GameRoom implements Party.Server {
   handleHostAction(action: string) {
     switch (action) {
       case "startRound": {
-        startRound(this.state);
+        const started = startRound(this.state);
+        if (!started) {
+          this.broadcastState();
+          return;
+        }
         this.startTimer();
         break;
       }
@@ -229,8 +256,10 @@ export default class GameRoom implements Party.Server {
       case "nextReveal": {
         if (this.state.phase === "interstitial") {
           // Start round 2 directly — startRound handles the phase transition
-          startRound(this.state);
-          this.startTimer();
+          const started = startRound(this.state);
+          if (started) {
+            this.startTimer();
+          }
         } else {
           advancePhase(this.state);
         }
@@ -238,6 +267,16 @@ export default class GameRoom implements Party.Server {
       }
       case "prevReveal": {
         // No-op for now — the host can always skip forward
+        break;
+      }
+      case "startDemo": {
+        startDemo(this.state);
+        this.startTimer();
+        break;
+      }
+      case "endDemo": {
+        this.stopTimer();
+        endDemo(this.state);
         break;
       }
       case "endGame": {
@@ -256,7 +295,9 @@ export default class GameRoom implements Party.Server {
     this.timerInterval = setInterval(() => {
       if (this.state.timerEnd && Date.now() >= this.state.timerEnd) {
         this.stopTimer();
-        if (this.state.phase === "round1" || this.state.phase === "round2") {
+        if (this.state.phase === "demo") {
+          endDemo(this.state);
+        } else if (this.state.phase === "round1" || this.state.phase === "round2") {
           calculateAllScores(this.state);
           endRound(this.state);
         }

@@ -23,8 +23,10 @@ export default function JoinPage() {
       return;
     }
     setError("");
+    const token = Math.random().toString(36).slice(2, 10);
     sessionStorage.setItem("playerName", trimmed);
     sessionStorage.setItem("roomCode", code);
+    sessionStorage.setItem("reconnectToken", token);
     window.location.href = `/play/${code}`;
   }
 

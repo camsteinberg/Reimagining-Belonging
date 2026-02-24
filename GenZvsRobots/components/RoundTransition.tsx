@@ -47,36 +47,45 @@ function generateParticles(count: number): ParticleDef[] {
 
 const LINES = [
   {
-    text: "ROUND 2",
+    text: "Same challenge.",
     font: "var(--font-pixel)",
-    size: "clamp(2.5rem, 8vw, 5rem)",
+    size: "clamp(1.4rem, 4vw, 2.25rem)",
+    color: "#b89f65",
+    weight: "400",
+    letterSpacing: "0.08em",
+  },
+  {
+    text: "New tools.",
+    font: "var(--font-pixel)",
+    size: "clamp(1.4rem, 4vw, 2.25rem)",
     color: "#6b8f71",
     weight: "400",
     letterSpacing: "0.08em",
   },
   {
-    text: "WITH ROBOTS",
+    text: "ROUND 2 \u2014 WITH ROBOTS",
     font: "var(--font-pixel)",
-    size: "clamp(1.2rem, 4vw, 2.25rem)",
-    color: "#b89f65",
+    size: "clamp(2.2rem, 7vw, 4.5rem)",
+    color: "#6b8f71",
     weight: "400",
-    letterSpacing: "0.12em",
+    letterSpacing: "0.08em",
   },
   {
-    text: "In 2026, 500 Acres is training Gen Z to build real homes using CNC-cut Skylark 250 blocks.",
+    text: "This round, every team gets Scout \u2014 an AI that can describe the target, give instructions, and place blocks for you.",
     font: "var(--font-serif)",
-    size: "clamp(1rem, 2.2vw, 1.35rem)",
+    size: "clamp(0.9rem, 2vw, 1.2rem)",
     color: "#e8e0d0",
     weight: "400",
     letterSpacing: "0.01em",
   },
   {
-    text: "Now let\u2019s see what happens when you add robots.",
+    text: "500 Acres is training Gen Z to build real homes using CNC-cut Skylark 250 blocks \u2014 on beautiful land near national parks.",
     font: "var(--font-serif)",
-    size: "clamp(0.9rem, 2vw, 1.2rem)",
-    color: "rgba(232, 224, 208, 0.7)",
+    size: "clamp(0.85rem, 1.8vw, 1.1rem)",
+    color: "rgba(232, 224, 208, 0.6)",
     weight: "400",
     letterSpacing: "0.01em",
+    italic: true,
   },
 ];
 
@@ -86,8 +95,17 @@ const LINES = [
 
 export default function RoundTransition({ onComplete }: RoundTransitionProps) {
   const [visible, setVisible] = useState(true);
+  const [viewHeight, setViewHeight] = useState(900);
   const particles = useRef<ParticleDef[]>(generateParticles(28));
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // SSR-safe viewport height
+  useEffect(() => {
+    setViewHeight(window.innerHeight);
+    const handleResize = () => setViewHeight(window.innerHeight);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Auto-dismiss after 5 s
   useEffect(() => {
@@ -167,7 +185,7 @@ export default function RoundTransition({ onComplete }: RoundTransitionProps) {
                 opacity: 0,
               }}
               animate={{
-                y: [0, -(window?.innerHeight ?? 900) - 40],
+                y: [0, -viewHeight - 40],
                 x: [0, p.drift],
                 opacity: [0, 0.7, 0.7, 0],
               }}
@@ -217,7 +235,7 @@ export default function RoundTransition({ onComplete }: RoundTransitionProps) {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{
-                  delay: 0.4 + i * 0.35,
+                  delay: 0.4 + i * 0.3,
                   duration: 0.7,
                   ease: [0.16, 1, 0.3, 1],
                 }}
@@ -227,12 +245,13 @@ export default function RoundTransition({ onComplete }: RoundTransitionProps) {
                   color: line.color,
                   fontWeight: line.weight,
                   letterSpacing: line.letterSpacing,
-                  lineHeight: i < 2 ? 1.1 : 1.6,
+                  lineHeight: i < 3 ? 1.1 : 1.6,
                   margin: 0,
+                  fontStyle: ("italic" in line && line.italic) ? "italic" : "normal",
                   textShadow:
-                    i === 0
+                    i === 2
                       ? "0 0 40px rgba(107, 143, 113, 0.6), 0 0 80px rgba(107, 143, 113, 0.3)"
-                      : i === 1
+                      : i === 0
                       ? "0 0 30px rgba(184, 159, 101, 0.5)"
                       : "none",
                 }}

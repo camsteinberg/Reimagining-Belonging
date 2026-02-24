@@ -1,13 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Team, Player, GamePhase } from "@/lib/types";
+import type { Team, Player, GamePhase, Grid } from "@/lib/types";
+import { calculateDetailedScore } from "@/lib/scoring";
 import VoxelGrid from "./VoxelGrid";
 
 interface TeamMosaicProps {
   teams: Record<string, Team>;
   players: Record<string, Player>;
   phase: GamePhase;
+  targetGrid?: Grid | null;
 }
 
 function TeamCard({
@@ -15,11 +17,13 @@ function TeamCard({
   players,
   index,
   phase,
+  targetGrid,
 }: {
   team: Team;
   players: Record<string, Player>;
   index: number;
   phase: GamePhase;
+  targetGrid?: Grid | null;
 }) {
   const teamPlayers = team.players
     .map((id) => players[id])
@@ -77,6 +81,15 @@ function TeamCard({
         />
       </div>
 
+      {/* Live score */}
+      {targetGrid && (
+        <div className="flex items-center justify-center px-3 py-1">
+          <span className="font-[family-name:var(--font-pixel)] text-[8px] text-gold/60">
+            {calculateDetailedScore(team.grid, targetGrid).percentage}%
+          </span>
+        </div>
+      )}
+
       {/* Role indicators */}
       <div className="flex items-center gap-2 px-3 py-1.5 border-t border-white/5">
         {architects.map((p) => (
@@ -117,7 +130,7 @@ function TeamCard({
   );
 }
 
-export default function TeamMosaic({ teams, players, phase }: TeamMosaicProps) {
+export default function TeamMosaic({ teams, players, phase, targetGrid }: TeamMosaicProps) {
   const teamList = Object.values(teams);
 
   if (teamList.length === 0) {
@@ -146,6 +159,7 @@ export default function TeamMosaic({ teams, players, phase }: TeamMosaicProps) {
           players={players}
           index={i}
           phase={phase}
+          targetGrid={targetGrid}
         />
       ))}
     </div>

@@ -15,14 +15,12 @@ export default function HostPage() {
   );
 
   const [activityFeed, setActivityFeed] = useState<ActivityItem[]>([]);
-  const hasJoined = useRef(false);
   const stateRef = useRef(state);
   stateRef.current = state;
 
-  // Join as host once connected
+  // Join as host whenever connected (supports reconnection)
   useEffect(() => {
-    if (connected && !hasJoined.current) {
-      hasJoined.current = true;
+    if (connected) {
       send({ type: "join", name: "Host", isHost: true });
     }
   }, [connected, send]);

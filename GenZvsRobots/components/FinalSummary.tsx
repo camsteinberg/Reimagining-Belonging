@@ -198,9 +198,18 @@ export default function FinalSummary({ teams }: FinalSummaryProps) {
 
         {/* Aggregate stats */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.5 + ranked.length * 0.1 }}
+          initial={{ opacity: 0, y: 16, scale: 0.97 }}
+          animate={{ opacity: 1, y: 0, scale: [0.97, 1.02, 1] }}
+          transition={{
+            duration: 0.5,
+            delay: 0.5 + ranked.length * 0.1,
+            scale: {
+              duration: 0.8,
+              delay: 0.5 + ranked.length * 0.1,
+              times: [0, 0.6, 1],
+              ease: "easeOut",
+            },
+          }}
           className="w-full max-w-xl rounded-xl border border-white/10 bg-white/5 px-6 py-5 flex flex-col gap-4"
         >
           <p className="font-[family-name:var(--font-pixel)] text-[8px] text-cream/30 uppercase tracking-widest text-center">
@@ -254,6 +263,16 @@ export default function FinalSummary({ teams }: FinalSummaryProps) {
           >
             500acres.org
           </a>
+          <div className="mt-4 p-3 bg-white rounded-lg inline-block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://500acres.org&bgcolor=ffffff&color=2a2520"
+              alt="QR code to 500acres.org"
+              width={120}
+              height={120}
+              className="block"
+            />
+          </div>
         </motion.div>
       </div>
     </div>

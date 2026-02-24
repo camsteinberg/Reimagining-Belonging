@@ -1,5 +1,5 @@
 import type { Grid, BlockType } from "./types";
-import { GRID_SIZE } from "./constants";
+import { GRID_SIZE, MAX_HEIGHT, getStackHeight, getTopBlockHeight } from "./constants";
 import { getSpriteAtlas, getSpriteRect, SPRITE_SIZE, TILE_W, TILE_H, BLOCK_H, FLOOR_H } from "./sprites";
 import { gridToScreen, getDrawOrder, type Rotation } from "./voxel";
 
@@ -45,8 +45,9 @@ export function getGridExtent(rotation: Rotation): { minX: number; minY: number;
       // Tile diamond corners
       minX = Math.min(minX, x - TILE_W / 2);
       maxX = Math.max(maxX, x + TILE_W / 2);
-      // Account for sprite height (taller than tile)
-      minY = Math.min(minY, y - (SPRITE_SIZE - TILE_H));
+      // Account for sprite height (taller than tile) + max stack
+      const maxStackPixels = MAX_HEIGHT * BLOCK_H;
+      minY = Math.min(minY, y - (SPRITE_SIZE - TILE_H) - maxStackPixels);
       maxY = Math.max(maxY, y + TILE_H + BLOCK_H);
     }
   }
@@ -128,15 +129,40 @@ function drawHoverPreview(
   col: number,
   block: BlockType,
   rotation: Rotation,
+  grid: Grid,
 ) {
   const { x, y } = gridToScreen(row, col, rotation);
 
-  // Draw white diamond outline on ground tile
+  // Calculate height offset for stacking
+  let heightOffset = 0;
+  const stack = grid[row]?.[col];
+  if (stack) {
+    if (block === "empty") {
+      // Erasing: show at top block height
+      const topH = getTopBlockHeight(grid, row, col);
+      for (let below = 0; below <= topH && below >= 0; below++) {
+        heightOffset += (stack[below] === "floor" ? FLOOR_H : BLOCK_H);
+      }
+      // Adjust back to top of the topmost block
+      if (topH >= 0) {
+        heightOffset -= (stack[topH] === "floor" ? FLOOR_H : BLOCK_H);
+      }
+    } else {
+      // Placing: show at next available height
+      const nextH = getStackHeight(grid, row, col);
+      for (let below = 0; below < nextH; below++) {
+        heightOffset += (stack[below] === "floor" ? FLOOR_H : BLOCK_H);
+      }
+    }
+  }
+
+  // Draw white diamond outline on ground tile (at height)
+  const hoverY = y - heightOffset;
   ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(x + TILE_W / 2, y + TILE_H / 2);
-  ctx.lineTo(x, y + TILE_H);
-  ctx.lineTo(x - TILE_W / 2, y + TILE_H / 2);
+  ctx.moveTo(x, hoverY);
+  ctx.lineTo(x + TILE_W / 2, hoverY + TILE_H / 2);
+  ctx.lineTo(x, hoverY + TILE_H);
+  ctx.lineTo(x - TILE_W / 2, hoverY + TILE_H / 2);
   ctx.closePath();
   ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
   ctx.lineWidth = 1.5;
@@ -146,7 +172,7 @@ function drawHoverPreview(
   if (block && block !== "empty") {
     const { sx, sy, sw, sh } = getSpriteRect(block, rotation);
     const dx = x - TILE_W / 2 - OX;
-    const dy = y - (SPRITE_SIZE - TILE_H);
+    const dy = y - (SPRITE_SIZE - TILE_H) - heightOffset;
 
     ctx.save();
     ctx.globalAlpha = 0.5;
@@ -213,67 +239,84 @@ export function renderVoxelGrid(
   }
 
   for (const [row, col] of drawOrder) {
-    const block = grid[row]?.[col];
-    if (!block || block === "empty") continue;
+    const stack = grid[row]?.[col];
+    if (!stack) continue;
 
-    const { x, y } = gridToScreen(row, col, rotation);
-    const { sx, sy, sw, sh } = getSpriteRect(block, rotation);
-    const h = block === "floor" ? FLOOR_H : BLOCK_H;
+    for (let h = 0; h < MAX_HEIGHT; h++) {
+      const block = stack[h];
+      if (!block || block === "empty") continue;
 
-    // Sprite screen position: center sprite on tile (account for OX padding)
-    let dx = x - TILE_W / 2 - OX;
-    let dy = y - (SPRITE_SIZE - TILE_H);
+      const { x, y } = gridToScreen(row, col, rotation);
+      const { sx, sy, sw, sh } = getSpriteRect(block, rotation);
+      const blockH = block === "floor" ? FLOOR_H : BLOCK_H;
 
-    // Drop animation for new cells
-    const key = `${row},${col}`;
-    if (newCells?.has(key)) {
-      const elapsed = animTime;
-      const progress = Math.min(1, elapsed / 400);
-      const bounce = easeOutBounce(progress);
-      dy -= 30 * (1 - bounce);
-    }
-
-    ctx.drawImage(atlas, sx, sy, sw, sh, dx, dy, SPRITE_SIZE, SPRITE_SIZE);
-
-    // Scoring overlay
-    if (showScoring && targetGrid) {
-      const expected = targetGrid[row]?.[col];
-      const actual = block;
-      if (expected && expected !== "empty") {
-        drawScoringOverlay(ctx, dx, dy, actual === expected, h);
-      } else if (expected === "empty") {
-        // Block placed where target is empty = incorrect
-        drawScoringOverlay(ctx, dx, dy, false, h);
+      // Calculate cumulative height offset from blocks below
+      let heightOffset = 0;
+      for (let below = 0; below < h; below++) {
+        heightOffset += (stack[below] === "floor" ? FLOOR_H : BLOCK_H);
       }
-    }
 
-    // AI pulse overlay
-    if (aiPlacedCells?.has(key)) {
-      drawAIPulse(ctx, dx, dy, h, animTime);
+      let dx = x - TILE_W / 2 - OX;
+      let dy = y - (SPRITE_SIZE - TILE_H) - heightOffset;
+
+      // Drop animation for new cells
+      const key = `${row},${col},${h}`;
+      if (newCells?.has(key)) {
+        const elapsed = animTime;
+        const progress = Math.min(1, elapsed / 400);
+        const bounce = easeOutBounce(progress);
+        dy -= 30 * (1 - bounce);
+      }
+
+      ctx.drawImage(atlas, sx, sy, sw, sh, dx, dy, SPRITE_SIZE, SPRITE_SIZE);
+
+      // Scoring overlay
+      if (showScoring && targetGrid) {
+        const expected = targetGrid[row]?.[col]?.[h];
+        const actual = block;
+        if (expected && expected !== "empty") {
+          drawScoringOverlay(ctx, dx, dy, actual === expected, blockH);
+        } else if (expected === "empty") {
+          drawScoringOverlay(ctx, dx, dy, false, blockH);
+        }
+      }
+
+      // AI pulse overlay
+      if (aiPlacedCells?.has(`${row},${col}`)) {
+        drawAIPulse(ctx, dx, dy, blockH, animTime);
+      }
     }
   }
 
   // 3. Draw scoring overlay for empty cells that should have blocks
   if (showScoring && targetGrid) {
     for (const [row, col] of drawOrder) {
-      const expected = targetGrid[row]?.[col];
-      const actual = grid[row]?.[col];
-      if (expected && expected !== "empty" && (!actual || actual === "empty")) {
-        const { x, y } = gridToScreen(row, col, rotation);
-        // Draw a small red marker on the ground tile
-        const cx = x;
-        const cy = y + TILE_H / 2;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(239, 68, 68, 0.5)";
-        ctx.fill();
+      for (let h = 0; h < MAX_HEIGHT; h++) {
+        const expected = targetGrid[row]?.[col]?.[h];
+        const actual = grid[row]?.[col]?.[h];
+        if (expected && expected !== "empty" && (!actual || actual === "empty")) {
+          const { x, y } = gridToScreen(row, col, rotation);
+          let heightOffset = 0;
+          const stack = grid[row]?.[col];
+          if (stack) {
+            for (let below = 0; below < h; below++) {
+              heightOffset += (stack[below] === "floor" ? FLOOR_H : BLOCK_H);
+            }
+          }
+          const cx = x;
+          const cy = y + TILE_H / 2 - heightOffset;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(239, 68, 68, 0.5)";
+          ctx.fill();
+        }
       }
     }
   }
 
   // 4. Draw hover preview
   if (hoverCell && hoverBlock) {
-    drawHoverPreview(ctx, atlas, hoverCell.row, hoverCell.col, hoverBlock, rotation);
+    drawHoverPreview(ctx, atlas, hoverCell.row, hoverCell.col, hoverBlock, rotation, grid);
   }
 
   ctx.restore();

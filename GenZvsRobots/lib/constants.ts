@@ -8,6 +8,7 @@ export const TEAM_NAMES = [
 ];
 export const MAX_TEAM_SIZE = 3;
 export const MIN_TEAM_SIZE = 2;
+export const MAX_HEIGHT = 4;
 
 export const BLOCK_COLORS: Record<BlockType, string> = {
   wall: "#8b5e3c",
@@ -29,8 +30,26 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
 
 export function createEmptyGrid(): Grid {
   return Array.from({ length: GRID_SIZE }, () =>
-    Array.from({ length: GRID_SIZE }, () => "empty" as BlockType)
+    Array.from({ length: GRID_SIZE }, () =>
+      Array.from({ length: MAX_HEIGHT }, () => "empty" as BlockType)
+    )
   );
+}
+
+export function getStackHeight(grid: Grid, row: number, col: number): number {
+  const stack = grid[row][col];
+  for (let h = 0; h < MAX_HEIGHT; h++) {
+    if (stack[h] === "empty") return h;
+  }
+  return MAX_HEIGHT;
+}
+
+export function getTopBlockHeight(grid: Grid, row: number, col: number): number {
+  const stack = grid[row][col];
+  for (let h = MAX_HEIGHT - 1; h >= 0; h--) {
+    if (stack[h] !== "empty") return h;
+  }
+  return -1;
 }
 
 export function generateRoomCode(): string {

@@ -3,9 +3,9 @@ import { createEmptyGrid } from "../lib/constants";
 import type { Grid } from "../lib/types";
 
 // Helper to set a specific cell in a grid copy
-function setCell(grid: Grid, row: number, col: number, block: Grid[0][0]): Grid {
-  const copy = grid.map((r) => [...r]) as Grid;
-  copy[row][col] = block;
+function setCell(grid: Grid, row: number, col: number, block: Grid[0][0][0], height: number = 0): Grid {
+  const copy = grid.map(r => r.map(c => [...c])) as Grid;
+  copy[row][col][height] = block;
   return copy;
 }
 
@@ -194,6 +194,19 @@ describe("calculateDetailedScore", () => {
     expect(cell.expected).toBe("empty");
     expect(cell.actual).toBe("door");
     expect(cell.correct).toBe(false);
+  });
+
+  it("scores multi-layer targets correctly", () => {
+    const target = createEmptyGrid();
+    target[0][0][0] = "wall";
+    target[0][0][1] = "roof";
+    const build = createEmptyGrid();
+    build[0][0][0] = "wall";
+    build[0][0][1] = "roof";
+    const result = calculateDetailedScore(build, target);
+    expect(result.percentage).toBe(100);
+    expect(result.correct).toBe(2);
+    expect(result.total).toBe(2);
   });
 
   // Additional: percentage rounds correctly

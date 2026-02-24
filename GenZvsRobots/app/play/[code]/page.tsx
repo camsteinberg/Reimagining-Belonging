@@ -27,9 +27,20 @@ export default function PlayPage() {
   useEffect(() => {
     if (connected && playerName && !joinSentRef.current) {
       joinSentRef.current = true;
-      send({ type: "join", name: playerName });
+      const token = sessionStorage.getItem("reconnectToken") || undefined;
+      send({ type: "join", name: playerName, reconnectToken: token });
     }
   }, [connected, playerName, send]);
+
+  // Handle "reconnected" server message to set playerId
+  useEffect(() => {
+    const unsubscribe = onMessage((msg) => {
+      if (msg.type === "reconnected") {
+        setPlayerId(msg.player.id);
+      }
+    });
+    return unsubscribe;
+  }, [onMessage]);
 
   // Detect own playerId from socket connection ID
   useEffect(() => {

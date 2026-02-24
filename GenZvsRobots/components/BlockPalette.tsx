@@ -168,6 +168,7 @@ export default function BlockPalette({ selected, onSelect }: BlockPaletteProps) 
               whileTap={{ scale: 0.9 }}
               aria-label={`Select ${label} block`}
               aria-pressed={isSelected}
+              style={{ touchAction: "manipulation" }}
               className={[
                 "flex flex-col items-center justify-center gap-0.5",
                 "rounded-lg px-2 py-1.5 min-w-[48px] min-h-[48px]",

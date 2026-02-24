@@ -54,7 +54,14 @@ export default function HostControls({ phase, send }: HostControlsProps) {
       className="flex flex-wrap items-center justify-center gap-3"
     >
       {phase === "lobby" && (
-        <HostButton label="Start Game" action="startRound" send={send} variant="primary" />
+        <>
+          <HostButton label="Practice Round" action="startDemo" send={send} variant="secondary" />
+          <HostButton label="Start Game" action="startRound" send={send} variant="primary" />
+        </>
+      )}
+
+      {phase === "demo" && (
+        <HostButton label="End Practice" action="endDemo" send={send} variant="secondary" />
       )}
 
       {(phase === "round1" || phase === "round2") && (

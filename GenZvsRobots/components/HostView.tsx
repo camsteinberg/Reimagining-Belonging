@@ -35,6 +35,7 @@ interface HostViewProps {
 // ---------------------------------------------------------------------------
 const PHASE_LABELS: Record<string, string> = {
   lobby: "Lobby",
+  demo: "PRACTICE ROUND",
   round1: "ROUND 1 — OLD SCHOOL",
   reveal1: "Round 1 Results",
   interstitial: "Get Ready...",
@@ -213,6 +214,7 @@ function ActiveRoundView({
           teams={state.teams}
           players={state.players}
           phase={state.phase}
+          targetGrid={state.currentTarget}
         />
       </div>
 
@@ -522,6 +524,9 @@ export default function HostView({
         >
           {phase === "lobby" && (
             <LobbyView state={state} send={send} connected={connected} />
+          )}
+          {phase === "demo" && (
+            <ActiveRoundView state={state} send={send} activityFeed={activityFeed} />
           )}
           {(phase === "round1" || phase === "round2") && (
             <ActiveRoundView state={state} send={send} activityFeed={activityFeed} />

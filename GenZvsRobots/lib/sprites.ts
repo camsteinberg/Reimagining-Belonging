@@ -274,10 +274,13 @@ function drawBlockToImageData(block: BlockType): ImageData {
       break;
   }
 
-  // 1px black outlines on all block edges
-  outlinePoly(img, top, 0, 0, 0);
-  outlinePoly(img, left, 0, 0, 0);
-  outlinePoly(img, right, 0, 0, 0);
+  // Color-matched outlines for seamless pixel-art look
+  const outTop = adjustRgb(topRgb, -40);
+  const outLeft = adjustRgb(leftRgb, -30);
+  const outRight = adjustRgb(rightRgb, -30);
+  outlinePoly(img, top, outTop[0], outTop[1], outTop[2]);
+  outlinePoly(img, left, outLeft[0], outLeft[1], outLeft[2]);
+  outlinePoly(img, right, outRight[0], outRight[1], outRight[2]);
 
   return img;
 }
