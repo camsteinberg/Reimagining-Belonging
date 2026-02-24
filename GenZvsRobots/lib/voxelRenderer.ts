@@ -169,7 +169,7 @@ function drawHoverPreview(
   ctx.stroke();
 
   // Draw 50%-opacity sprite of the hover block
-  if (block && block !== "empty") {
+  if (block && block !== "empty" && block !== "air") {
     // When hovering a door on top of another door, show door_top sprite
     let hoverSprite: SpriteType = block as SpriteType;
     if (block === "door" && stack) {
@@ -252,7 +252,7 @@ export function renderVoxelGrid(
 
     for (let h = 0; h < MAX_HEIGHT; h++) {
       const block = stack[h];
-      if (!block || block === "empty") continue;
+      if (!block || block === "empty" || block === "air") continue;
 
       const { x, y } = gridToScreen(row, col, rotation);
       // Detect door-on-door stacking: upper door renders as door_top
@@ -308,7 +308,7 @@ export function renderVoxelGrid(
       for (let h = 0; h < MAX_HEIGHT; h++) {
         const expected = targetGrid[row]?.[col]?.[h];
         const actual = grid[row]?.[col]?.[h];
-        if (expected && expected !== "empty" && (!actual || actual === "empty")) {
+        if (expected && expected !== "empty" && expected !== "air" && (!actual || actual === "empty" || actual === "air")) {
           const { x, y } = gridToScreen(row, col, rotation);
           let heightOffset = 0;
           const stack = grid[row]?.[col];

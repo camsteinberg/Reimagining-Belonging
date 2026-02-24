@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { RoomState, ClientMessage, Player } from "@/lib/types";
-import { ROUND_1_TARGET, ROUND_2_TARGET } from "@/lib/targets";
 import HostControls from "./HostControls";
 import TeamMosaic from "./TeamMosaic";
 import Timer from "./Timer";
@@ -35,6 +34,7 @@ interface HostViewProps {
 // ---------------------------------------------------------------------------
 const PHASE_LABELS: Record<string, string> = {
   lobby: "Lobby",
+  design: "DESIGN YOUR BUILDING",
   demo: "PRACTICE ROUND",
   round1: "ROUND 1 — OLD SCHOOL",
   reveal1: "Round 1 Results",
@@ -214,7 +214,6 @@ function ActiveRoundView({
           teams={state.teams}
           players={state.players}
           phase={state.phase}
-          targetGrid={state.currentTarget}
         />
       </div>
 
@@ -302,14 +301,12 @@ function RevealView({
   send: (msg: ClientMessage) => void;
 }) {
   const teams = Object.values(state.teams);
-  const targetGrid = state.currentTarget ?? ROUND_1_TARGET;
 
   return (
     <div className="flex flex-col h-full bg-[#110f0d] text-cream overflow-hidden">
       <div className="flex-1 min-h-0">
         <RevealCarousel
           teams={teams}
-          targetGrid={targetGrid}
           round={1}
           onComplete={() => send({ type: "hostAction", action: "nextReveal" })}
         />
@@ -330,7 +327,6 @@ function FinalRevealView({
 }) {
   const teams = Object.values(state.teams).filter((t) => t != null);
   const [[index, direction], setIndexDir] = useState<[number, number]>([0, 0]);
-  const targetGrid = state.currentTarget ?? ROUND_2_TARGET;
 
   if (teams.length === 0) {
     return (
@@ -395,7 +391,7 @@ function FinalRevealView({
             }}
             className="absolute inset-0"
           >
-            <RoundComparison team={currentTeam} targetGrid={targetGrid} />
+            <RoundComparison team={currentTeam} />
           </motion.div>
         </AnimatePresence>
       </div>
@@ -525,7 +521,7 @@ export default function HostView({
           {phase === "lobby" && (
             <LobbyView state={state} send={send} connected={connected} />
           )}
-          {phase === "demo" && (
+          {(phase === "demo" || phase === "design") && (
             <ActiveRoundView state={state} send={send} activityFeed={activityFeed} />
           )}
           {(phase === "round1" || phase === "round2") && (

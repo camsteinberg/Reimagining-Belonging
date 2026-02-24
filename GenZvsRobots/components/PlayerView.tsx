@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { RoomState, BlockType, ClientMessage, ServerMessage, Team } from "@/lib/types";
+import type { RoomState, BlockType, ClientMessage, ServerMessage, Team, Player } from "@/lib/types";
 import VoxelGrid from "./VoxelGrid";
 import BlockPalette from "./BlockPalette";
 import ChatPanel, { type ChatMessage } from "./ChatPanel";
@@ -110,6 +110,90 @@ function WaitingSummary() {
       >
         500acres.org
       </a>
+    </div>
+  );
+}
+
+// --- Player Lobby View ---
+
+function PlayerLobbyView({
+  team,
+  player,
+  allPlayers,
+  send,
+}: {
+  team: Team;
+  player: Player;
+  allPlayers: Record<string, Player>;
+  send: (msg: ClientMessage) => void;
+}) {
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState(team.name);
+
+  const teammates = team.players
+    .map(pid => allPlayers[pid])
+    .filter(Boolean);
+
+  const handleNameSubmit = () => {
+    if (nameInput.trim()) {
+      send({ type: "setTeamName", name: nameInput.trim() });
+    }
+    setEditingName(false);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center flex-1 gap-6 px-6 text-center">
+      {/* Team name (tap to edit) */}
+      {editingName ? (
+        <input
+          value={nameInput}
+          onChange={(e) => setNameInput(e.target.value)}
+          onBlur={handleNameSubmit}
+          onKeyDown={(e) => { if (e.key === "Enter") handleNameSubmit(); }}
+          autoFocus
+          maxLength={24}
+          className="font-[family-name:var(--font-pixel)] text-2xl text-center bg-white/80 border-2 border-[#b89f65] rounded px-4 py-2 text-[#2a2520] outline-none focus:border-[#8b5e3c] w-64"
+        />
+      ) : (
+        <button onClick={() => { setNameInput(team.name); setEditingName(true); }} className="group cursor-pointer">
+          <h2 className="font-[family-name:var(--font-pixel)] text-2xl text-[#8b5e3c]">
+            {team.name}
+          </h2>
+          <span className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#8b5e3c]/40 group-hover:text-[#8b5e3c]/70 transition-colors">
+            Tap to rename
+          </span>
+        </button>
+      )}
+
+      {/* Teammates */}
+      <div className="w-full max-w-xs">
+        <p className="font-[family-name:var(--font-pixel)] text-[9px] tracking-wider uppercase text-[#2a2520]/40 mb-3">
+          Your Team
+        </p>
+        <div className="flex flex-col gap-2">
+          {teammates.map(p => (
+            <div
+              key={p.id}
+              className="flex items-center justify-between px-4 py-2 rounded bg-[#8b5e3c]/10"
+            >
+              <span className="font-[family-name:var(--font-body)] text-sm text-[#2a2520]">
+                {p.name}
+                {p.id === player.id && (
+                  <span className="ml-1 text-[#8b5e3c]/60 text-xs">(You)</span>
+                )}
+              </span>
+              <span className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#b89f65]">
+                {p.role === "architect" ? "Architect" : "Builder"}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Waiting message */}
+      <p className="font-[family-name:var(--font-pixel)] text-[9px] tracking-wider uppercase text-[#2a2520]/30 animate-pulse">
+        Waiting for host to start...
+      </p>
     </div>
   );
 }
@@ -226,10 +310,12 @@ export default function PlayerView({
     return unsubscribe;
   }, [onMessage, teamId]);
 
+  const isDesign = phase === "design";
+
   const handleCellClick = useCallback(
     (row: number, col: number) => {
-      // Allow placement in demo (all players) or during play (builders only)
-      if (isDemo) {
+      // Allow placement in demo or design (all players) or during play (builders only)
+      if (isDemo || isDesign) {
         navigator.vibrate?.(10);
         send({ type: "placeBlock", row, col, block: selectedBlock });
         return;
@@ -238,7 +324,7 @@ export default function PlayerView({
       navigator.vibrate?.(10);
       send({ type: "placeBlock", row, col, block: selectedBlock });
     },
-    [isPlaying, isDemo, isBuilder, send, selectedBlock]
+    [isPlaying, isDemo, isDesign, isBuilder, send, selectedBlock]
   );
 
   const handleSendChat = useCallback(
@@ -257,6 +343,7 @@ export default function PlayerView({
             roomCode: state.code,
             teamId,
             playerId,
+            targetGrid: team?.roundTarget ?? state.currentTarget,
           }),
         }).catch(() => {
           setAiThinking(false);
@@ -267,7 +354,7 @@ export default function PlayerView({
   );
 
   const teamGrid = team?.grid ?? null;
-  const targetGrid = state.currentTarget;
+  const targetGrid = team?.roundTarget ?? state.currentTarget;
   const teamName = team?.name;
 
   const showChat = phase === "round1" || phase === "round2";
@@ -305,6 +392,55 @@ export default function PlayerView({
       <div className="flex flex-col h-screen overflow-hidden bg-[#1a1510]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
         <WaitingSummary />
+      </div>
+    );
+  }
+
+  // --- Lobby phase: show team info ---
+  if (phase === "lobby") {
+    return (
+      <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
+        <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        {team && player ? (
+          <PlayerLobbyView team={team} player={player} allPlayers={state.players} send={send} />
+        ) : (
+          <div className="flex flex-col items-center justify-center flex-1 text-[#2a2520]/40 font-[family-name:var(--font-pixel)] text-[10px]">
+            Joining game...
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // --- Design phase: all players build their team's structure ---
+  if (isDesign) {
+    return (
+      <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
+        <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        <div className="flex flex-col flex-1 min-h-0 p-3 gap-2">
+          <div className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-center py-1 px-2 rounded text-[#8b5e3c]/70 bg-[#8b5e3c]/10">
+            Design your building! Another team will try to recreate it.
+          </div>
+          <div className="flex-1 min-h-0 flex items-center justify-center">
+            {teamGrid ? (
+              <VoxelGrid
+                grid={teamGrid}
+                onCellClick={handleCellClick}
+                selectedBlock={selectedBlock}
+                readOnly={false}
+                newCells={newCells}
+                className="w-full h-full max-h-[45vh] md:max-h-full"
+              />
+            ) : (
+              <div className="font-[family-name:var(--font-pixel)] text-[10px] text-[#2a2520]/40">
+                Loading...
+              </div>
+            )}
+          </div>
+          <div className="shrink-0">
+            <BlockPalette selected={selectedBlock} onSelect={setSelectedBlock} />
+          </div>
+        </div>
       </div>
     );
   }
@@ -447,6 +583,7 @@ export default function PlayerView({
               disabled={!isPlaying}
               teamName={teamName}
               isAIThinking={aiThinking}
+              role={role}
             />
           </div>
         )}

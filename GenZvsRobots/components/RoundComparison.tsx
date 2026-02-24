@@ -2,13 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
-import type { Team, Grid } from "@/lib/types";
+import type { Team } from "@/lib/types";
 import VoxelGrid from "./VoxelGrid";
 import ScoreGauge from "./ScoreGauge";
 
 interface RoundComparisonProps {
   team: Team;
-  targetGrid: Grid;
 }
 
 // Animated delta counter using motion value
@@ -104,7 +103,8 @@ const panelVariants = {
   }),
 };
 
-export default function RoundComparison({ team, targetGrid }: RoundComparisonProps) {
+export default function RoundComparison({ team }: RoundComparisonProps) {
+  const targetGrid = team.roundTarget!;
   const r1 = team.round1Score ?? 0;
   const r2 = team.round2Score ?? 0;
   const round1Grid = team.round1Grid ?? team.grid;

@@ -137,9 +137,38 @@ function EraserIcon() {
   );
 }
 
+// ─── air icon ───────────────────────────────────────────────────────────────
+
+function AirIcon() {
+  return (
+    <svg
+      width="28"
+      height="28"
+      viewBox="0 0 28 28"
+      aria-hidden="true"
+      className="block"
+    >
+      {/* Dashed isometric cube outline to suggest invisible space */}
+      <polygon
+        points="14,4 26,11 14,18 2,11"
+        fill="none"
+        stroke="#e8e0d0"
+        strokeWidth="1.5"
+        strokeDasharray="3 2"
+        opacity="0.5"
+      />
+      <line x1="2" y1="11" x2="2" y2="18" stroke="#e8e0d0" strokeWidth="1.5" strokeDasharray="3 2" opacity="0.35" />
+      <line x1="26" y1="11" x2="26" y2="18" stroke="#e8e0d0" strokeWidth="1.5" strokeDasharray="3 2" opacity="0.35" />
+      <line x1="14" y1="18" x2="14" y2="25" stroke="#e8e0d0" strokeWidth="1.5" strokeDasharray="3 2" opacity="0.35" />
+      <line x1="2" y1="18" x2="14" y2="25" stroke="#e8e0d0" strokeWidth="1.5" strokeDasharray="3 2" opacity="0.35" />
+      <line x1="26" y1="18" x2="14" y2="25" stroke="#e8e0d0" strokeWidth="1.5" strokeDasharray="3 2" opacity="0.35" />
+    </svg>
+  );
+}
+
 // ─── block order ────────────────────────────────────────────────────────────
 
-const BLOCK_ORDER: BlockType[] = ["wall", "floor", "roof", "window", "door", "plant", "table", "empty"];
+const BLOCK_ORDER: BlockType[] = ["wall", "floor", "roof", "window", "door", "plant", "table", "air", "empty"];
 
 // ─── main component ──────────────────────────────────────────────────────────
 
@@ -182,6 +211,8 @@ export default function BlockPalette({ selected, onSelect }: BlockPaletteProps) 
               <div className="w-7 h-7 flex items-center justify-center">
                 {blockType === "empty" ? (
                   <EraserIcon />
+                ) : blockType === "air" ? (
+                  <AirIcon />
                 ) : (
                   <MiniBlock color={color} />
                 )}

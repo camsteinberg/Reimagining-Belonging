@@ -10,7 +10,7 @@ const COOLDOWN_MS = 3000;
 
 export async function POST(req: NextRequest) {
   try {
-    const { roomCode, teamId, text, playerId, history, teamGrid } = await req.json();
+    const { roomCode, teamId, text, playerId, history, teamGrid, targetGrid: clientTarget } = await req.json();
 
     if (!roomCode || !teamId || !text) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
     const anthropic = new Anthropic({ apiKey });
 
-    const target = ROUND_2_TARGET;
+    const target = clientTarget ?? ROUND_2_TARGET;
     let systemPrompt = buildSystemPrompt(target, 2);
 
     // C2: Append grid progress context if teamGrid provided

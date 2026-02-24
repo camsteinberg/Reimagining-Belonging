@@ -12,6 +12,7 @@ interface GameHeaderProps {
 
 const PHASE_LABELS: Record<GamePhase, string> = {
   lobby: "Waiting for host...",
+  design: "DESIGN YOUR BUILDING",
   demo: "PRACTICE MODE",
   round1: "ROUND 1: OLD SCHOOL",
   reveal1: "Results",
@@ -33,7 +34,7 @@ export default function GameHeader({
   timerEnd,
 }: GameHeaderProps) {
   const isRound2 = phase === "round2";
-  const isPlaying = phase === "round1" || phase === "round2" || phase === "demo";
+  const isPlaying = phase === "round1" || phase === "round2" || phase === "demo" || phase === "design";
 
   const bgClass = isRound2
     ? "bg-[#2a2520] border-[#3d6b4f]/40"

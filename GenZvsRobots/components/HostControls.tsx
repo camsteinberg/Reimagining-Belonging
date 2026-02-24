@@ -56,8 +56,12 @@ export default function HostControls({ phase, send }: HostControlsProps) {
       {phase === "lobby" && (
         <>
           <HostButton label="Practice Round" action="startDemo" send={send} variant="secondary" />
-          <HostButton label="Start Game" action="startRound" send={send} variant="primary" />
+          <HostButton label="Start Design Phase" action="startDesign" send={send} variant="primary" />
         </>
+      )}
+
+      {phase === "design" && (
+        <HostButton label="End Design & Start Game" action="endDesign" send={send} variant="primary" />
       )}
 
       {phase === "demo" && (
@@ -84,7 +88,7 @@ export default function HostControls({ phase, send }: HostControlsProps) {
       )}
 
       {phase === "summary" && (
-        <HostButton label="End Game" action="endGame" send={send} variant="danger" />
+        <HostButton label="Play Again" action="endGame" send={send} variant="primary" />
       )}
     </motion.div>
   );

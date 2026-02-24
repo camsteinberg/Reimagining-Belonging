@@ -16,8 +16,11 @@ export function calculateDetailedScore(build: Grid, target: Grid): DetailedScore
   for (let r = 0; r < GRID_SIZE; r++) {
     for (let c = 0; c < GRID_SIZE; c++) {
       for (let h = 0; h < MAX_HEIGHT; h++) {
-        const expected = target[r]?.[c]?.[h] ?? "empty";
-        const actual = build[r]?.[c]?.[h] ?? "empty";
+        const rawExpected = target[r]?.[c]?.[h] ?? "empty";
+        const rawActual = build[r]?.[c]?.[h] ?? "empty";
+        // Treat air as empty for scoring — it's invisible scaffolding
+        const expected = rawExpected === "air" ? "empty" : rawExpected;
+        const actual = rawActual === "air" ? "empty" : rawActual;
 
         if (expected !== "empty") {
           total++;

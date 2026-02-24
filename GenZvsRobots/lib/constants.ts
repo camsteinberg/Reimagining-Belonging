@@ -2,6 +2,7 @@ import type { BlockType, Grid } from "./types";
 
 export const GRID_SIZE = 8;
 export const ROUND_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+export const DESIGN_DURATION_MS = 3 * 60 * 1000; // 3 minutes
 export const TEAM_NAMES = [
   "Cabin Crew", "The Framers", "Block Party", "Roof Raisers",
   "Team Timber", "The Builders", "CNC Squad", "Pod People",
@@ -18,6 +19,7 @@ export const BLOCK_COLORS: Record<BlockType, string> = {
   door: "#b8755d",
   plant: "#4a8c3f",
   table: "#c4956a",
+  air: "transparent",
   empty: "transparent",
 };
 
@@ -29,6 +31,7 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   door: "Door",
   plant: "Plant",
   table: "Table",
+  air: "Air",
   empty: "Erase",
 };
 

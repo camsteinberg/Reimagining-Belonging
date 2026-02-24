@@ -10,7 +10,7 @@ export const SPRITE_SIZE = 64;
 type Rotation = 0 | 1 | 2 | 3;
 
 // Sprite types include all block types plus the non-user-placeable door_top variant
-export const SPRITE_TYPES = ["wall", "floor", "roof", "window", "door", "door_top", "plant", "table", "empty"] as const;
+export const SPRITE_TYPES = ["wall", "floor", "roof", "window", "door", "door_top", "plant", "table", "air", "empty"] as const;
 export type SpriteType = (typeof SPRITE_TYPES)[number];
 
 // Centering offset: (SPRITE_SIZE - TILE_W) / 2
@@ -382,7 +382,7 @@ function drawTableDecorations(img: ImageData, yOff: number, topRgb: [number, num
 function drawSpriteToImageData(sprite: SpriteType): ImageData {
   const img = new ImageData(SPRITE_SIZE, SPRITE_SIZE);
 
-  if (sprite === "empty") return img;
+  if (sprite === "empty" || sprite === "air") return img;
 
   // door_top uses the same base color as door
   const colorKey: BlockType = sprite === "door_top" ? "door" : sprite as BlockType;

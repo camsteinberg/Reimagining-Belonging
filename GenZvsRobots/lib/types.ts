@@ -1,5 +1,5 @@
 // === Block Types ===
-export type BlockType = "wall" | "floor" | "roof" | "window" | "door" | "plant" | "table" | "empty";
+export type BlockType = "wall" | "floor" | "roof" | "window" | "door" | "plant" | "table" | "air" | "empty";
 
 // === Grid ===
 export type Cell = BlockType;
@@ -26,11 +26,14 @@ export interface Team {
   round1Grid: Grid | null; // snapshot after round 1
   round1Score: number | null;
   round2Score: number | null;
+  designGrid: Grid | null; // saved from design phase
+  roundTarget: Grid | null; // the target this team must recreate
 }
 
 // === Game Phases ===
 export type GamePhase =
   | "lobby"
+  | "design"
   | "demo"
   | "round1"
   | "reveal1"
@@ -57,7 +60,8 @@ export type ClientMessage =
   | { type: "placeBlock"; row: number; col: number; block: BlockType }
   | { type: "chat"; text: string }
   | { type: "hostAction"; action: HostAction }
-  | { type: "aiChat"; text: string };
+  | { type: "aiChat"; text: string }
+  | { type: "setTeamName"; name: string };
 
 export type HostAction =
   | "startRound"
@@ -68,7 +72,9 @@ export type HostAction =
   | "prevReveal"
   | "endGame"
   | "startDemo"
-  | "endDemo";
+  | "endDemo"
+  | "startDesign"
+  | "endDesign";
 
 export type ServerMessage =
   | { type: "state"; state: RoomState }

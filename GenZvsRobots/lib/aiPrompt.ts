@@ -34,7 +34,9 @@ export function buildSystemPrompt(target: Grid, round: 1 | 2): string {
   const idx = targets.findIndex(t =>
     JSON.stringify(t) === JSON.stringify(target)
   );
-  const desc = idx >= 0 ? descriptions[idx] : descriptions[0];
+  const desc = idx >= 0
+    ? descriptions[idx]
+    : "This is a custom player-designed structure. Study the grid data below to understand its layout and guide the team in recreating it accurately.";
   let gridStr = "";
   for (let h = 0; h < MAX_HEIGHT; h++) {
     const layerCells: string[] = [];
@@ -67,6 +69,7 @@ ${gridStr}
 - door: Reddish door — auto-stacks 2 blocks high (building entrances). One door action creates both blocks.
 - plant: Green leafy plant (gardens, landscaping)
 - table: Oak wooden table (interior furniture)
+- air: Invisible scaffolding — takes up space in the stack but doesn't render or affect score. Use to elevate blocks (e.g. place air then roof on top without filling the column)
 - empty: Removes topmost block
 
 ## Your Capabilities

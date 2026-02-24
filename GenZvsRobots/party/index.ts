@@ -12,6 +12,10 @@ import {
   calculateAllScores,
   startDemo,
   endDemo,
+  startDesign,
+  endDesign,
+  resetToLobby,
+  setTeamName,
 } from "./gameState";
 
 export default class GameRoom implements Party.Server {
@@ -75,8 +79,8 @@ export default class GameRoom implements Party.Server {
       case "placeBlock": {
         const player = this.state.players[sender.id];
         if (!player) return;
-        // During demo, all players can place blocks; otherwise only builders
-        if (this.state.phase !== "demo" && player.role !== "builder") return;
+        // During demo or design, all players can place blocks; otherwise only builders
+        if (this.state.phase !== "demo" && this.state.phase !== "design" && player.role !== "builder") return;
 
         const { placed, height, secondHeight } = placeBlock(
           this.state,
@@ -146,6 +150,15 @@ export default class GameRoom implements Party.Server {
       case "aiChat": {
         // aiChat messages from players are handled by the Next.js API route,
         // which calls back into this room via HTTP POST. Nothing to do here.
+        break;
+      }
+
+      case "setTeamName": {
+        const namePlayer = this.state.players[sender.id];
+        if (!namePlayer) return;
+        if (this.state.phase !== "lobby") return;
+        setTeamName(this.state, namePlayer.teamId, msg.name);
+        this.broadcastState();
         break;
       }
     }
@@ -290,9 +303,23 @@ export default class GameRoom implements Party.Server {
         endDemo(this.state);
         break;
       }
+      case "startDesign": {
+        startDesign(this.state);
+        this.startTimer();
+        break;
+      }
+      case "endDesign": {
+        this.stopTimer();
+        const saved = endDesign(this.state);
+        if (saved) {
+          const started = startRound(this.state);
+          if (started) this.startTimer();
+        }
+        break;
+      }
       case "endGame": {
         this.stopTimer();
-        this.state.phase = "summary";
+        resetToLobby(this.state);
         break;
       }
     }
@@ -306,7 +333,13 @@ export default class GameRoom implements Party.Server {
     this.timerInterval = setInterval(() => {
       if (this.state.timerEnd && Date.now() >= this.state.timerEnd) {
         this.stopTimer();
-        if (this.state.phase === "demo") {
+        if (this.state.phase === "design") {
+          const saved = endDesign(this.state);
+          if (saved) {
+            const started = startRound(this.state);
+            if (started) this.startTimer();
+          }
+        } else if (this.state.phase === "demo") {
           endDemo(this.state);
         } else if (this.state.phase === "round1" || this.state.phase === "round2") {
           calculateAllScores(this.state);

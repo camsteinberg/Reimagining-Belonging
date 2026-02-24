@@ -21,6 +21,157 @@ interface ChatPanelProps {
   disabled?: boolean;
   teamName?: string;
   isAIThinking?: boolean;
+  role?: "architect" | "builder";
+}
+
+// --- Communication tips by role and round ---
+
+const ROUND1_ARCHITECT_TIPS = {
+  heading: "You see the target. Your builders don\u2019t!",
+  tips: [
+    "Start with the foundation \u2014 describe the ground floor first",
+    "Use grid coordinates: \u201CPlace walls from (1,1) to (1,6)\u201D",
+    "Name block types: wall, floor, roof, window, door, plant, table",
+    "Go layer by layer \u2014 finish the ground floor before moving up",
+  ],
+  prompts: [
+    "Start with a row of walls along row 1, from col 1 to col 6",
+    "The ground floor is mostly floor tiles with walls around the edges",
+    "Put a door at row 6, columns 3 and 4",
+    "Now let\u2019s move to layer 1 \u2014 more walls on top",
+  ],
+};
+
+const ROUND1_BUILDER_TIPS = {
+  heading: "Your architect describes \u2014 you build!",
+  tips: [
+    "Ask where to start \u2014 don\u2019t guess!",
+    "Confirm block types before placing",
+    "Ask for one row or section at a time",
+    "Let them know when you\u2019re done with a section",
+  ],
+  prompts: [
+    "Where should I start?",
+    "Which block type for the corners?",
+    "What goes on row 0?",
+    "Done with that row \u2014 what\u2019s next?",
+  ],
+};
+
+const ROUND2_ARCHITECT_TIPS = {
+  heading: "Scout (AI) can see the target too!",
+  tips: [
+    "Ask Scout to describe the whole building first",
+    "Tell Scout to build entire sections at once",
+    "Ask Scout to explain what\u2019s on a specific layer",
+    "Combine: let Scout build while you guide your builders on details",
+  ],
+  prompts: [
+    "Scout, describe the target building",
+    "Scout, build the entire ground floor",
+    "Scout, what blocks are on layer 2?",
+    "Scout, place the roof on top",
+  ],
+};
+
+const ROUND2_BUILDER_TIPS = {
+  heading: "Scout is your AI co-builder!",
+  tips: [
+    "Ask Scout to build whole rows or sections for you",
+    "Tell Scout to describe what you should place next",
+    "Ask Scout to fix or adjust what\u2019s already placed",
+    "Work together \u2014 you place blocks while Scout handles other areas",
+  ],
+  prompts: [
+    "Scout, build the walls on row 0",
+    "What should I build next?",
+    "Scout, place all the floor tiles",
+    "Scout, add windows to the second layer",
+  ],
+};
+
+function ChatTips({
+  role,
+  isRound2,
+  onSend,
+}: {
+  role: "architect" | "builder";
+  isRound2: boolean;
+  onSend: (text: string) => void;
+}) {
+  const tips = isRound2
+    ? role === "architect"
+      ? ROUND2_ARCHITECT_TIPS
+      : ROUND2_BUILDER_TIPS
+    : role === "architect"
+    ? ROUND1_ARCHITECT_TIPS
+    : ROUND1_BUILDER_TIPS;
+
+  const accentColor = isRound2 ? "#6b8f71" : "#8b5e3c";
+  const bgTint = isRound2 ? "rgba(107,143,113,0.08)" : "rgba(139,94,60,0.06)";
+  const promptBg = isRound2 ? "rgba(107,143,113,0.12)" : "rgba(139,94,60,0.10)";
+  const promptHover = isRound2
+    ? "hover:bg-[#6b8f71]/20 active:bg-[#6b8f71]/30"
+    : "hover:bg-[#8b5e3c]/15 active:bg-[#8b5e3c]/25";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col gap-2.5 px-1 py-1"
+    >
+      {/* Heading */}
+      <p
+        className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-center"
+        style={{ color: accentColor }}
+      >
+        {tips.heading}
+      </p>
+
+      {/* Tip bullets */}
+      <ul className="flex flex-col gap-1">
+        {tips.tips.map((tip, i) => (
+          <li
+            key={i}
+            className="text-[10px] leading-snug px-2 py-1 rounded"
+            style={{ backgroundColor: bgTint, color: isRound2 ? "#e8e0d0" : "#2a2520" }}
+          >
+            <span style={{ color: accentColor, marginRight: 4 }}>&bull;</span>
+            {tip}
+          </li>
+        ))}
+      </ul>
+
+      {/* Tappable example prompts */}
+      <div className="flex flex-col gap-1 mt-0.5">
+        <p
+          className="font-[family-name:var(--font-pixel)] text-[7px] tracking-wider uppercase"
+          style={{ color: isRound2 ? "rgba(232,224,208,0.4)" : "rgba(42,37,32,0.35)" }}
+        >
+          Tap to send:
+        </p>
+        {tips.prompts.map((prompt, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => onSend(prompt)}
+            className={[
+              "text-left text-[10px] leading-snug px-2.5 py-1.5 rounded cursor-pointer transition-colors",
+              promptHover,
+            ].join(" ")}
+            style={{
+              backgroundColor: promptBg,
+              color: isRound2 ? "#e8e0d0" : "#2a2520",
+            }}
+          >
+            &ldquo;{prompt}&rdquo;
+          </button>
+        ))}
+      </div>
+    </motion.div>
+  );
 }
 
 export default function ChatPanel({
@@ -30,6 +181,7 @@ export default function ChatPanel({
   disabled = false,
   teamName,
   isAIThinking,
+  role,
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -95,6 +247,13 @@ export default function ChatPanel({
 
       {/* Message List */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 min-h-0">
+        {/* Communication tips — shown when no messages yet */}
+        <AnimatePresence>
+          {messages.length === 0 && role && !disabled && (
+            <ChatTips role={role} isRound2={isRound2} onSend={onSend} />
+          )}
+        </AnimatePresence>
+
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <motion.div

@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Team, Grid } from "@/lib/types";
+import type { Team } from "@/lib/types";
 import VoxelGrid from "./VoxelGrid";
 import ScoreGauge from "./ScoreGauge";
 
 interface RevealCarouselProps {
   teams: Team[];
-  targetGrid: Grid;
   round: 1 | 2;
   onComplete?: () => void;
 }
@@ -30,7 +29,6 @@ const slideVariants = {
 
 export default function RevealCarousel({
   teams,
-  targetGrid,
   round,
   onComplete,
 }: RevealCarouselProps) {
@@ -47,6 +45,7 @@ export default function RevealCarousel({
 
   const clampedIndex = Math.min(index, validTeams.length - 1);
   const team = validTeams[clampedIndex];
+  const targetGrid = team.roundTarget!;
 
   const score = round === 1 ? (team.round1Score ?? 0) : (team.round2Score ?? 0);
   const displayGrid =

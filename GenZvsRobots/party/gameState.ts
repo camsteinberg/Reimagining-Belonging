@@ -13,6 +13,7 @@ import {
   MAX_TEAM_SIZE,
   GRID_SIZE,
   ROUND_DURATION_MS,
+  DESIGN_DURATION_MS,
   MAX_HEIGHT,
   getStackHeight,
   getTopBlockHeight,
@@ -49,6 +50,8 @@ export function addPlayer(state: RoomState, id: string, name: string): Player {
       round1Grid: null,
       round1Score: null,
       round2Score: null,
+      designGrid: null,
+      roundTarget: null,
     };
   }
 
@@ -125,9 +128,23 @@ export function startRound(state: RoomState): boolean {
   const isRound2 = state.phase === "interstitial";
   state.round = isRound2 ? 2 : 1;
   state.phase = isRound2 ? "round2" : "round1";
-  const { target } = pickRandomTarget(isRound2 ? 2 : 1);
-  state.currentTarget = target;
   state.timerEnd = Date.now() + ROUND_DURATION_MS;
+
+  // Pick targets: use per-team designs if available, else prepopulated
+  const hasDesigns = Object.values(state.teams).some(t => t.roundTarget != null);
+  if (!hasDesigns) {
+    const { target } = pickRandomTarget(isRound2 ? 2 : 1);
+    state.currentTarget = target;
+    for (const team of Object.values(state.teams)) {
+      team.roundTarget = target;
+    }
+  } else if (isRound2) {
+    // Round 2: keep same per-team targets as round 1
+    state.currentTarget = null;
+  } else {
+    // Round 1 with designs: targets already assigned by endDesign()
+    state.currentTarget = null;
+  }
 
   for (const team of Object.values(state.teams)) {
     if (isRound2) {
@@ -222,7 +239,8 @@ export function placeBlock(
   const team = state.teams[teamId];
   if (!team) return { placed: false, height: -1 };
   if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return { placed: false, height: -1 };
-  if (state.phase !== "round1" && state.phase !== "round2" && state.phase !== "demo") return { placed: false, height: -1 };
+  const allowedPhases: GamePhase[] = ["round1", "round2", "demo", "design"];
+  if (!allowedPhases.includes(state.phase)) return { placed: false, height: -1 };
 
   if (block === "empty") {
     // Erase topmost block — if it's a door sitting on another door, erase both
@@ -262,8 +280,9 @@ export function calculateScore(build: Grid, target: Grid): number {
   for (let r = 0; r < GRID_SIZE; r++) {
     for (let c = 0; c < GRID_SIZE; c++) {
       for (let h = 0; h < MAX_HEIGHT; h++) {
-        const expected = target[r][c][h];
-        const actual = build[r][c][h];
+        // Treat air as empty for scoring — it's invisible scaffolding
+        const expected = target[r][c][h] === "air" ? "empty" : target[r][c][h];
+        const actual = build[r][c][h] === "air" ? "empty" : build[r][c][h];
 
         if (expected !== "empty") {
           total++;
@@ -281,14 +300,83 @@ export function calculateScore(build: Grid, target: Grid): number {
 }
 
 export function calculateAllScores(state: RoomState): void {
-  const target = state.currentTarget;
-  if (!target) return;
-
   for (const team of Object.values(state.teams)) {
+    const target = team.roundTarget ?? state.currentTarget;
+    if (!target) continue;
+
     if (state.round === 1) {
       team.round1Score = calculateScore(team.grid, target);
     } else {
       team.round2Score = calculateScore(team.grid, target);
     }
   }
+}
+
+export function startDesign(state: RoomState): void {
+  if (state.phase !== "lobby") return;
+  state.phase = "design";
+  state.timerEnd = Date.now() + DESIGN_DURATION_MS;
+
+  for (const team of Object.values(state.teams)) {
+    team.grid = createEmptyGrid();
+  }
+}
+
+export function endDesign(state: RoomState): boolean {
+  if (state.phase !== "design") return false;
+  state.timerEnd = null;
+
+  // Save each team's design
+  for (const team of Object.values(state.teams)) {
+    team.designGrid = team.grid.map(row => row.map(col => [...col]));
+  }
+
+  // Cross-assign targets: Team[i] gets Team[(i+1) % N]'s design
+  const teamIds = Object.keys(state.teams);
+  if (teamIds.length >= 2) {
+    for (let i = 0; i < teamIds.length; i++) {
+      const nextIdx = (i + 1) % teamIds.length;
+      state.teams[teamIds[i]].roundTarget = state.teams[teamIds[nextIdx]].designGrid;
+    }
+  } else if (teamIds.length === 1) {
+    // Only 1 team: fall back to a prepopulated target
+    const { target } = pickRandomTarget(1);
+    state.teams[teamIds[0]].roundTarget = target;
+  }
+
+  // Return to lobby so startRound() handles the transition
+  state.phase = "lobby";
+  return true;
+}
+
+export function resetToLobby(state: RoomState): void {
+  state.phase = "lobby";
+  state.round = 1;
+  state.currentTarget = null;
+  state.timerEnd = null;
+
+  for (const team of Object.values(state.teams)) {
+    team.grid = createEmptyGrid();
+    team.designGrid = null;
+    team.roundTarget = null;
+    team.round1Grid = null;
+    team.round1Score = null;
+    team.round2Score = null;
+  }
+
+  // Reset roles (first connected player = architect)
+  for (const team of Object.values(state.teams)) {
+    const connected = team.players
+      .map(pid => state.players[pid])
+      .filter(p => p?.connected);
+    for (let i = 0; i < connected.length; i++) {
+      connected[i].role = i === 0 ? "architect" : "builder";
+    }
+  }
+}
+
+export function setTeamName(state: RoomState, teamId: string, name: string): void {
+  const team = state.teams[teamId];
+  if (!team) return;
+  team.name = name.trim().slice(0, 24) || team.name;
 }
