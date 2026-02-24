@@ -20,7 +20,7 @@ interface VoxelGridProps {
   targetGrid?: Grid;
   aiPlacedCells?: Set<string>;
   className?: string;
-  newCells?: Set<string>;
+  newCells?: Map<string, number>;
 }
 
 // ---------------------------------------------------------------------------
@@ -97,7 +97,9 @@ export default function VoxelGrid({
       const isoX = (canvasX - offsetX) / scale;
       const isoY = (canvasY - offsetY) / scale;
 
-      const { row, col } = screenToGrid(isoX, isoY, rotation);
+      // Offset by half tile height so clicks align with diamond visual center
+      // (gridToScreen returns the top vertex, but users click the face center)
+      const { row, col } = screenToGrid(isoX, isoY - TILE_H / 2, rotation);
 
       if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
         return { row, col };
@@ -107,9 +109,10 @@ export default function VoxelGrid({
     [rotation, canvasSize, dpr],
   );
 
-  // ---- Single render function ----
-  const render = useCallback(
-    (time?: number) => {
+  // ---- Single render function (stored in ref to avoid restarting animation loop) ----
+  const renderRef = useRef<(time: number) => void>(() => {});
+  renderRef.current = useCallback(
+    (time: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
@@ -132,7 +135,7 @@ export default function VoxelGrid({
         targetGrid,
         aiPlacedCells,
         newCells,
-        animTime: time ?? 0,
+        animTime: time,
         hoverCell: readOnly ? null : (keyboardCursor ?? hoverCell),
         hoverBlock: selectedBlock,
       });
@@ -140,27 +143,27 @@ export default function VoxelGrid({
     [grid, canvasSize, dpr, rotation, showScoring, targetGrid, aiPlacedCells, newCells, hoverCell, keyboardCursor, selectedBlock, readOnly],
   );
 
-  // ---- Animation loop (only when needed) ----
+  // ---- Static render when no animation needed ----
   useEffect(() => {
     const hasAnim = (newCells && newCells.size > 0) || (aiPlacedCells && aiPlacedCells.size > 0);
-
     if (!hasAnim) {
-      // Single static render
-      render(0);
-      return;
+      renderRef.current(performance.now());
     }
+  }, [renderRef.current]);
 
-    animStartRef.current = performance.now();
+  // ---- Animation loop (only when animated cells exist) ----
+  useEffect(() => {
+    const hasAnim = (newCells && newCells.size > 0) || (aiPlacedCells && aiPlacedCells.size > 0);
+    if (!hasAnim) return;
 
-    const loop = (now: number) => {
-      const elapsed = now - animStartRef.current;
-      render(elapsed);
+    const loop = () => {
+      renderRef.current(performance.now());
       animFrameRef.current = requestAnimationFrame(loop);
     };
 
     animFrameRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [render]);
+  }, [newCells, aiPlacedCells]);
 
   // ---- Click / tap handling ----
   const handlePointerDown = useCallback((e: React.PointerEvent) => {

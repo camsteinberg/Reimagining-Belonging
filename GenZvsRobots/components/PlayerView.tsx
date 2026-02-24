@@ -125,7 +125,7 @@ export default function PlayerView({
   const [selectedBlock, setSelectedBlock] = useState<BlockType>("wall");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [aiPlacedCells, setAiPlacedCells] = useState<Set<string>>(new Set());
-  const [newCells, setNewCells] = useState<Set<string>>(new Set());
+  const [newCells, setNewCells] = useState<Map<string, number>>(new Map());
   const [aiThinking, setAiThinking] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const cellTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
@@ -146,7 +146,7 @@ export default function PlayerView({
   useEffect(() => {
     setMessages([]);
     setAiPlacedCells(new Set());
-    setNewCells(new Set());
+    setNewCells(new Map());
     setAiThinking(false);
   }, [phase]);
 
@@ -203,9 +203,10 @@ export default function PlayerView({
 
       if (msg.type === "gridUpdate" && msg.teamId === teamId) {
         const key = `${msg.row},${msg.col},${msg.height}`;
+        const now = performance.now();
         setNewCells((prev) => {
-          const next = new Set(prev);
-          next.add(key);
+          const next = new Map(prev);
+          next.set(key, now);
           return next;
         });
         const existing = cellTimeoutsRef.current.get(key);
@@ -213,7 +214,7 @@ export default function PlayerView({
         const timer = setTimeout(() => {
           cellTimeoutsRef.current.delete(key);
           setNewCells((prev) => {
-            const next = new Set(prev);
+            const next = new Map(prev);
             next.delete(key);
             return next;
           });

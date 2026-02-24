@@ -11,7 +11,7 @@ export interface RenderOptions {
   showScoring?: boolean;
   targetGrid?: Grid;
   aiPlacedCells?: Set<string>;
-  newCells?: Set<string>;
+  newCells?: Map<string, number>;
   animTime?: number;
   hoverCell?: { row: number; col: number } | null;
   hoverBlock?: BlockType;
@@ -259,11 +259,12 @@ export function renderVoxelGrid(
       let dx = x - TILE_W / 2 - OX;
       let dy = y - (SPRITE_SIZE - TILE_H) - heightOffset;
 
-      // Drop animation for new cells
+      // Drop animation for new cells (per-cell timestamps for independent animation)
       const key = `${row},${col},${h}`;
-      if (newCells?.has(key)) {
-        const elapsed = animTime;
-        const progress = Math.min(1, elapsed / 400);
+      const cellStart = newCells?.get(key);
+      if (cellStart !== undefined) {
+        const cellElapsed = animTime - cellStart;
+        const progress = Math.min(1, cellElapsed / 400);
         const bounce = easeOutBounce(progress);
         dy -= 30 * (1 - bounce);
       }
