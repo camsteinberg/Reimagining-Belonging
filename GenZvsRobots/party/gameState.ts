@@ -218,18 +218,34 @@ export function placeBlock(
   row: number,
   col: number,
   block: BlockType
-): { placed: boolean; height: number } {
+): { placed: boolean; height: number; secondHeight?: number } {
   const team = state.teams[teamId];
   if (!team) return { placed: false, height: -1 };
   if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) return { placed: false, height: -1 };
   if (state.phase !== "round1" && state.phase !== "round2" && state.phase !== "demo") return { placed: false, height: -1 };
 
   if (block === "empty") {
-    // Erase topmost block
+    // Erase topmost block — if it's a door sitting on another door, erase both
     const topH = getTopBlockHeight(team.grid, row, col);
     if (topH < 0) return { placed: false, height: -1 };
+    if (team.grid[row][col][topH] === "door" && topH > 0 && team.grid[row][col][topH - 1] === "door") {
+      team.grid[row][col][topH] = "empty";
+      team.grid[row][col][topH - 1] = "empty";
+      return { placed: true, height: topH, secondHeight: topH - 1 };
+    }
     team.grid[row][col][topH] = "empty";
     return { placed: true, height: topH };
+  } else if (block === "door") {
+    // Doors auto-stack 2 blocks high
+    const nextH = getStackHeight(team.grid, row, col);
+    if (nextH >= MAX_HEIGHT) return { placed: false, height: -1 };
+    team.grid[row][col][nextH] = "door";
+    // Place second door block above if there's room
+    if (nextH + 1 < MAX_HEIGHT) {
+      team.grid[row][col][nextH + 1] = "door";
+      return { placed: true, height: nextH, secondHeight: nextH + 1 };
+    }
+    return { placed: true, height: nextH };
   } else {
     // Place at next available height
     const nextH = getStackHeight(team.grid, row, col);

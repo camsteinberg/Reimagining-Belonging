@@ -139,7 +139,7 @@ function EraserIcon() {
 
 // ─── block order ────────────────────────────────────────────────────────────
 
-const BLOCK_ORDER: BlockType[] = ["wall", "floor", "roof", "window", "door", "empty"];
+const BLOCK_ORDER: BlockType[] = ["wall", "floor", "roof", "window", "door", "plant", "table", "empty"];
 
 // ─── main component ──────────────────────────────────────────────────────────
 
@@ -171,7 +171,7 @@ export default function BlockPalette({ selected, onSelect }: BlockPaletteProps) 
               style={{ touchAction: "manipulation" }}
               className={[
                 "flex flex-col items-center justify-center gap-0.5",
-                "rounded-lg px-2 py-1.5 min-w-[48px] min-h-[48px]",
+                "rounded-lg px-1.5 py-1.5 min-w-[40px] min-h-[48px]",
                 "transition-colors duration-150",
                 isSelected
                   ? "bg-[#b89f65]/25 ring-2 ring-[#b89f65]"

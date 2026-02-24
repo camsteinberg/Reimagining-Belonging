@@ -1,5 +1,5 @@
 // === Block Types ===
-export type BlockType = "wall" | "floor" | "roof" | "window" | "door" | "empty";
+export type BlockType = "wall" | "floor" | "roof" | "window" | "door" | "plant" | "table" | "empty";
 
 // === Grid ===
 export type Cell = BlockType;

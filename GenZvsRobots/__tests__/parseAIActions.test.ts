@@ -54,4 +54,18 @@ describe("parseAIResponse", () => {
     const result = parseAIResponse(text);
     expect(result.actions[0].height).toBeUndefined();
   });
+
+  it("accepts plant and table as valid block types", () => {
+    const text = '<actions>[{"row":1,"col":1,"block":"plant"},{"row":2,"col":2,"block":"table"}]</actions>';
+    const result = parseAIResponse(text);
+    expect(result.actions).toHaveLength(2);
+    expect(result.actions[0].block).toBe("plant");
+    expect(result.actions[1].block).toBe("table");
+  });
+
+  it("rejects invalid block types like grass and furniture", () => {
+    const text = '<actions>[{"row":0,"col":0,"block":"grass"},{"row":1,"col":1,"block":"furniture"}]</actions>';
+    const result = parseAIResponse(text);
+    expect(result.actions).toHaveLength(0);
+  });
 });

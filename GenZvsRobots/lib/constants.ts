@@ -16,6 +16,8 @@ export const BLOCK_COLORS: Record<BlockType, string> = {
   roof: "#3d6b4f",
   window: "#b89f65",
   door: "#b8755d",
+  plant: "#4a8c3f",
+  table: "#c4956a",
   empty: "transparent",
 };
 
@@ -25,6 +27,8 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   roof: "Roof",
   window: "Window",
   door: "Door",
+  plant: "Plant",
+  table: "Table",
   empty: "Erase",
 };
 

@@ -209,6 +209,51 @@ describe("calculateDetailedScore", () => {
     expect(result.total).toBe(2);
   });
 
+  // New block types: plant and table score correctly
+  it("scores plant and table blocks at matching positions correctly", () => {
+    const target = createEmptyGrid();
+    const build = createEmptyGrid();
+
+    let targetGrid = setCell(target, 1, 1, "plant");
+    targetGrid = setCell(targetGrid, 2, 2, "table");
+    let buildGrid = setCell(build, 1, 1, "plant");
+    buildGrid = setCell(buildGrid, 2, 2, "table");
+
+    const result = calculateDetailedScore(buildGrid, targetGrid);
+    expect(result.percentage).toBe(100);
+    expect(result.correct).toBe(2);
+    expect(result.total).toBe(2);
+  });
+
+  // 2-high door scoring
+  it("scores 2-high door target with 2-high door build as 100%", () => {
+    const target = createEmptyGrid();
+    target[3][3][0] = "door";
+    target[3][3][1] = "door";
+    const build = createEmptyGrid();
+    build[3][3][0] = "door";
+    build[3][3][1] = "door";
+
+    const result = calculateDetailedScore(build, target);
+    expect(result.percentage).toBe(100);
+    expect(result.correct).toBe(2);
+    expect(result.total).toBe(2);
+  });
+
+  it("scores 2-high door target with only 1 door block as 50%", () => {
+    const target = createEmptyGrid();
+    target[3][3][0] = "door";
+    target[3][3][1] = "door";
+    const build = createEmptyGrid();
+    build[3][3][0] = "door";
+    // height 1 is empty
+
+    const result = calculateDetailedScore(build, target);
+    expect(result.percentage).toBe(50);
+    expect(result.correct).toBe(1);
+    expect(result.total).toBe(2);
+  });
+
   // Additional: percentage rounds correctly
   it("rounds percentage to nearest integer", () => {
     const target = createEmptyGrid();

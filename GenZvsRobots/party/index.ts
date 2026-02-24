@@ -78,7 +78,7 @@ export default class GameRoom implements Party.Server {
         // During demo, all players can place blocks; otherwise only builders
         if (this.state.phase !== "demo" && player.role !== "builder") return;
 
-        const { placed, height } = placeBlock(
+        const { placed, height, secondHeight } = placeBlock(
           this.state,
           player.teamId,
           msg.row,
@@ -94,6 +94,17 @@ export default class GameRoom implements Party.Server {
             height,
             block: msg.block,
           });
+          // Broadcast second gridUpdate for 2-high door placement/erasure
+          if (secondHeight !== undefined) {
+            this.broadcast({
+              type: "gridUpdate",
+              teamId: player.teamId,
+              row: msg.row,
+              col: msg.col,
+              height: secondHeight,
+              block: msg.block,
+            });
+          }
         }
         break;
       }

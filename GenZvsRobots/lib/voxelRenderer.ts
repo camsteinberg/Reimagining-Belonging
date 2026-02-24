@@ -1,6 +1,6 @@
 import type { Grid, BlockType } from "./types";
 import { GRID_SIZE, MAX_HEIGHT, getStackHeight, getTopBlockHeight } from "./constants";
-import { getSpriteAtlas, getSpriteRect, SPRITE_SIZE, TILE_W, TILE_H, BLOCK_H, FLOOR_H } from "./sprites";
+import { getSpriteAtlas, getSpriteRect, SPRITE_SIZE, TILE_W, TILE_H, BLOCK_H, FLOOR_H, type SpriteType } from "./sprites";
 import { gridToScreen, getDrawOrder, type Rotation } from "./voxel";
 
 export interface RenderOptions {
@@ -170,7 +170,15 @@ function drawHoverPreview(
 
   // Draw 50%-opacity sprite of the hover block
   if (block && block !== "empty") {
-    const { sx, sy, sw, sh } = getSpriteRect(block, rotation);
+    // When hovering a door on top of another door, show door_top sprite
+    let hoverSprite: SpriteType = block as SpriteType;
+    if (block === "door" && stack) {
+      const nextH = getStackHeight(grid, row, col);
+      if (nextH > 0 && stack[nextH - 1] === "door") {
+        hoverSprite = "door_top";
+      }
+    }
+    const { sx, sy, sw, sh } = getSpriteRect(hoverSprite, rotation);
     const dx = x - TILE_W / 2 - OX;
     const dy = y - (SPRITE_SIZE - TILE_H) - heightOffset;
 
@@ -247,7 +255,12 @@ export function renderVoxelGrid(
       if (!block || block === "empty") continue;
 
       const { x, y } = gridToScreen(row, col, rotation);
-      const { sx, sy, sw, sh } = getSpriteRect(block, rotation);
+      // Detect door-on-door stacking: upper door renders as door_top
+      let spriteBlock: SpriteType = block as SpriteType;
+      if (block === "door" && h > 0 && stack[h - 1] === "door") {
+        spriteBlock = "door_top";
+      }
+      const { sx, sy, sw, sh } = getSpriteRect(spriteBlock, rotation);
       const blockH = block === "floor" ? FLOOR_H : BLOCK_H;
 
       // Calculate cumulative height offset from blocks below

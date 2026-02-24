@@ -60,18 +60,24 @@ Grid data by layer (row,col):blockType — only non-empty cells shown:
 ${gridStr}
 
 ## Block Types Available
-- wall: Solid structural block (brown)
-- floor: Ground/foundation panel (cream)
-- roof: Roofing piece (green)
-- window: Wall with glass cutout (gold)
-- door: Entry block (clay)
-- empty: Remove/clear a cell
+- wall: Brown wall block (exterior/interior walls)
+- floor: Light stone floor (ground, paths, platforms)
+- roof: Green slanted roof with shingle details (top of buildings)
+- window: Gold semi-transparent window with glass cross pattern (walls with glass)
+- door: Reddish door — auto-stacks 2 blocks high (building entrances). One door action creates both blocks.
+- plant: Green leafy plant (gardens, landscaping)
+- table: Oak wooden table (interior furniture)
+- empty: Removes topmost block
 
 ## Your Capabilities
 You can DESCRIBE the target and you can BUILD by including action commands in your response.
 
 To place blocks, include a JSON array in your response wrapped in <actions> tags:
 <actions>[{"row":0,"col":0,"height":0,"block":"wall"},{"row":0,"col":1,"height":0,"block":"wall"}]</actions>
+
+## Important Notes
+- Doors automatically stack 2 blocks high. One door action creates both the lower and upper door blocks.
+- When erasing a 2-high door, both blocks are removed at once.
 
 ## Rules
 - You can see the TARGET structure. If build progress is shown below, use it to guide the team

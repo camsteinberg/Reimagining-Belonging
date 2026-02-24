@@ -9,7 +9,9 @@ export const SPRITE_SIZE = 64;
 
 type Rotation = 0 | 1 | 2 | 3;
 
-const BLOCK_TYPES: BlockType[] = ["wall", "floor", "roof", "window", "door", "empty"];
+// Sprite types include all block types plus the non-user-placeable door_top variant
+export const SPRITE_TYPES = ["wall", "floor", "roof", "window", "door", "door_top", "plant", "table", "empty"] as const;
+export type SpriteType = (typeof SPRITE_TYPES)[number];
 
 // Centering offset: (SPRITE_SIZE - TILE_W) / 2
 const OX = 8;
@@ -62,7 +64,7 @@ function drawLine(img: ImageData, x0: number, y0: number, x1: number, y1: number
 }
 
 /** Scanline polygon fill — integer math, no anti-aliasing */
-function fillPoly(img: ImageData, points: [number, number][], r: number, g: number, b: number): void {
+function fillPoly(img: ImageData, points: [number, number][], r: number, g: number, b: number, a: number = 255): void {
   if (points.length < 3) return;
 
   // Find bounding box
@@ -85,10 +87,10 @@ function fillPoly(img: ImageData, points: [number, number][], r: number, g: numb
         intersections.push(Math.round(x0 + t * (x1 - x0)));
       }
     }
-    intersections.sort((a, b) => a - b);
+    intersections.sort((a2, b2) => a2 - b2);
     for (let k = 0; k < intersections.length - 1; k += 2) {
       for (let x = intersections[k]; x <= intersections[k + 1]; x++) {
-        setPixel(img, x, y, r, g, b);
+        setPixel(img, x, y, r, g, b, a);
       }
     }
   }
@@ -138,13 +140,8 @@ function drawWallDecorations(img: ImageData, yOff: number, h: number, leftRgb: [
   const mortarLeft = adjustRgb(leftRgb, -15);
   for (let dy = 5; dy < h; dy += 5) {
     const y = yOff + 24 + dy;
-    // Left face spans from (OX, yOff+12+dy) to (OX+24, yOff+24+dy)
-    // Interpolate across the face at this height
-    const t = dy / h;
     const leftX0 = OX;
     const leftX1 = OX + 24;
-    const leftY = Math.round(yOff + 12 + dy + t * 0); // horizontal line at fixed y
-    // Draw a line across the left face at this scanline
     drawLine(img, leftX0 + 1, Math.round(yOff + 12 + dy), leftX1 - 1, y, mortarLeft[0], mortarLeft[1], mortarLeft[2]);
   }
 
@@ -160,13 +157,24 @@ function drawWindowDecorations(img: ImageData, yOff: number, h: number): void {
   const glassR = 0xa8, glassG = 0xd8, glassB = 0xea;
   const frameR = 0x3a, frameG = 0x3a, frameB = 0x4a;
 
-  // Window on left face: 3x4 rectangle centered
+  // --- Left face: semi-transparent glass pane with cross pattern ---
   const lCx = OX + 12;
   const lCy = yOff + 18 + Math.floor(h / 2);
+  // Glass fill with alpha for semi-transparency (Minecraft-style)
   for (let dy = 0; dy < 4; dy++) {
     for (let dx = 0; dx < 3; dx++) {
-      setPixel(img, lCx - 1 + dx, lCy - 2 + dy, glassR, glassG, glassB);
+      setPixel(img, lCx - 1 + dx, lCy - 2 + dy, glassR, glassG, glassB, 150);
     }
+  }
+  // Cross dividers at 50% opacity
+  const crossR = 0x70, crossG = 0x90, crossB = 0xa0;
+  // Horizontal divider across middle
+  for (let dx = 0; dx < 3; dx++) {
+    setPixel(img, lCx - 1 + dx, lCy, crossR, crossG, crossB, 128);
+  }
+  // Vertical divider down center
+  for (let dy = 0; dy < 4; dy++) {
+    setPixel(img, lCx, lCy - 2 + dy, crossR, crossG, crossB, 128);
   }
   // 1px dark frame around window
   for (let dx = -1; dx <= 3; dx++) {
@@ -178,13 +186,20 @@ function drawWindowDecorations(img: ImageData, yOff: number, h: number): void {
     setPixel(img, lCx + 3, lCy + dy, frameR, frameG, frameB);
   }
 
-  // Window on right face: 3x4 rectangle centered
+  // --- Right face: semi-transparent glass pane with cross pattern ---
   const rCx = OX + 36;
   const rCy = yOff + 18 + Math.floor(h / 2);
   for (let dy = 0; dy < 4; dy++) {
     for (let dx = 0; dx < 3; dx++) {
-      setPixel(img, rCx - 1 + dx, rCy - 2 + dy, glassR, glassG, glassB);
+      setPixel(img, rCx - 1 + dx, rCy - 2 + dy, glassR, glassG, glassB, 150);
     }
+  }
+  // Cross dividers
+  for (let dx = 0; dx < 3; dx++) {
+    setPixel(img, rCx - 1 + dx, rCy, crossR, crossG, crossB, 128);
+  }
+  for (let dy = 0; dy < 4; dy++) {
+    setPixel(img, rCx, rCy - 2 + dy, crossR, crossG, crossB, 128);
   }
   // 1px dark frame
   for (let dx = -1; dx <= 3; dx++) {
@@ -201,23 +216,61 @@ function drawDoorDecoration(img: ImageData, yOff: number, h: number): void {
   const doorR = 0x3d, doorG = 0x2b, doorB = 0x1f;
   const knobR = 0xc0, knobG = 0xa0, knobB = 0x50;
 
-  // Door on right face: 3x5 rectangle near bottom
+  // Door on right face: 4x6 panel near bottom (larger than before)
   const dCx = OX + 36;
-  const dCy = yOff + 24 + h - 7;
-  for (let dy = 0; dy < 5; dy++) {
-    for (let dx = 0; dx < 3; dx++) {
-      setPixel(img, dCx - 1 + dx, dCy + dy, doorR, doorG, doorB);
+  const dCy = yOff + 24 + h - 8;
+  for (let dy = 0; dy < 6; dy++) {
+    for (let dx = 0; dx < 4; dx++) {
+      setPixel(img, dCx - 2 + dx, dCy + dy, doorR, doorG, doorB);
     }
   }
-  // 1px gold knob pixel
-  setPixel(img, dCx + 1, dCy + 2, knobR, knobG, knobB);
+  // Rounded top corners — darken corners for arch effect
+  const darkR = 0x2a, darkG = 0x1c, darkB = 0x14;
+  setPixel(img, dCx - 2, dCy, darkR, darkG, darkB);
+  setPixel(img, dCx + 1, dCy, darkR, darkG, darkB);
+  // Larger handle dot (2px)
+  setPixel(img, dCx + 1, dCy + 3, knobR, knobG, knobB);
+  setPixel(img, dCx + 1, dCy + 4, knobR, knobG, knobB);
 }
 
-function drawRoofDecoration(img: ImageData, yOff: number, topRgb: [number, number, number]): void {
-  // 1px lighter ridge line across top face center
-  const ridge = adjustRgb(topRgb, 20);
-  // Ridge runs from center-left to center-right of diamond
+function drawDoorTopDecorations(img: ImageData, yOff: number, h: number): void {
+  // Upper half of 2-high door: transom window on right face
+  const glassR = 0xa8, glassG = 0xd8, glassB = 0xea;
+  const frameR = 0x3a, frameG = 0x3a, frameB = 0x4a;
+
+  // Small transom window: 3x2 glass rectangle centered on right face
+  const rCx = OX + 36;
+  const rCy = yOff + 18 + Math.floor(h / 2);
+  for (let dy = 0; dy < 2; dy++) {
+    for (let dx = 0; dx < 3; dx++) {
+      setPixel(img, rCx - 1 + dx, rCy - 1 + dy, glassR, glassG, glassB, 150);
+    }
+  }
+  // 1px frame around transom
+  for (let dx = -1; dx <= 3; dx++) {
+    setPixel(img, rCx - 1 + dx, rCy - 2, frameR, frameG, frameB);
+    setPixel(img, rCx - 1 + dx, rCy + 1, frameR, frameG, frameB);
+  }
+  for (let dy = -1; dy <= 1; dy++) {
+    setPixel(img, rCx - 2, rCy + dy, frameR, frameG, frameB);
+    setPixel(img, rCx + 2, rCy + dy, frameR, frameG, frameB);
+  }
+}
+
+function drawRoofDecoration(img: ImageData, yOff: number, topRgb: [number, number, number], leftRgb: [number, number, number]): void {
+  // Peaked ridge line across center of top face
+  const ridge = adjustRgb(topRgb, 25);
   drawLine(img, OX + 12, yOff + 12, OX + 36, yOff + 12, ridge[0], ridge[1], ridge[2]);
+
+  // Diagonal shingle lines across top face (top-left to bottom-right direction)
+  const shingle = adjustRgb(topRgb, -15);
+  drawLine(img, OX + 16, yOff + 4, OX + 40, yOff + 16, shingle[0], shingle[1], shingle[2]);
+  drawLine(img, OX + 8, yOff + 8, OX + 32, yOff + 20, shingle[0], shingle[1], shingle[2]);
+  drawLine(img, OX + 20, yOff + 2, OX + 44, yOff + 14, shingle[0], shingle[1], shingle[2]);
+
+  // Shadow along top edge of left face for depth
+  const shadow = adjustRgb(leftRgb, -20);
+  drawLine(img, OX + 1, yOff + 13, OX + 23, yOff + 25, shadow[0], shadow[1], shadow[2]);
 }
 
 function drawFloorDecoration(img: ImageData, yOff: number, topRgb: [number, number, number]): void {
@@ -228,16 +281,92 @@ function drawFloorDecoration(img: ImageData, yOff: number, topRgb: [number, numb
   drawLine(img, OX + 36, yOff + 6, OX + 12, yOff + 18, crossColor[0], crossColor[1], crossColor[2]);
 }
 
+function drawPlantDecorations(img: ImageData, yOff: number, topRgb: [number, number, number]): void {
+  // Top face: small darker green leaf blobs
+  const leafDark = adjustRgb(topRgb, -30);
+  const leafLight = adjustRgb(topRgb, 20);
+
+  // Cluster of leaf blobs offset from center on top face
+  const cx = OX + 24;
+  const cy = yOff + 12;
+  // Blob 1 (top-left area)
+  setPixel(img, cx - 4, cy - 1, leafDark[0], leafDark[1], leafDark[2]);
+  setPixel(img, cx - 3, cy - 2, leafDark[0], leafDark[1], leafDark[2]);
+  setPixel(img, cx - 3, cy - 1, leafDark[0], leafDark[1], leafDark[2]);
+  // Blob 2 (top-right area)
+  setPixel(img, cx + 3, cy - 1, leafDark[0], leafDark[1], leafDark[2]);
+  setPixel(img, cx + 4, cy, leafDark[0], leafDark[1], leafDark[2]);
+  setPixel(img, cx + 3, cy, leafDark[0], leafDark[1], leafDark[2]);
+  // Blob 3 (bottom area)
+  setPixel(img, cx, cy + 3, leafDark[0], leafDark[1], leafDark[2]);
+  setPixel(img, cx + 1, cy + 3, leafDark[0], leafDark[1], leafDark[2]);
+  setPixel(img, cx - 1, cy + 2, leafDark[0], leafDark[1], leafDark[2]);
+  // Light highlight spots
+  setPixel(img, cx - 2, cy, leafLight[0], leafLight[1], leafLight[2]);
+  setPixel(img, cx + 2, cy + 1, leafLight[0], leafLight[1], leafLight[2]);
+
+  // Front faces: small leaf/stem accent details
+  const stemColor = adjustRgb(topRgb, -40);
+  // Left face: tiny stem
+  const lCx = OX + 12;
+  const lCy = yOff + 22;
+  setPixel(img, lCx, lCy, stemColor[0], stemColor[1], stemColor[2]);
+  setPixel(img, lCx, lCy + 1, stemColor[0], stemColor[1], stemColor[2]);
+  setPixel(img, lCx - 1, lCy - 1, leafDark[0], leafDark[1], leafDark[2]);
+  setPixel(img, lCx + 1, lCy - 1, leafDark[0], leafDark[1], leafDark[2]);
+
+  // Right face: tiny leaf accent
+  const rCx = OX + 36;
+  const rCy = yOff + 20;
+  setPixel(img, rCx, rCy, stemColor[0], stemColor[1], stemColor[2]);
+  setPixel(img, rCx, rCy + 1, stemColor[0], stemColor[1], stemColor[2]);
+  setPixel(img, rCx - 1, rCy - 1, leafDark[0], leafDark[1], leafDark[2]);
+  setPixel(img, rCx + 1, rCy - 1, leafDark[0], leafDark[1], leafDark[2]);
+}
+
+function drawTableDecorations(img: ImageData, yOff: number, topRgb: [number, number, number]): void {
+  // Top face: horizontal wood grain lines (slightly darker)
+  const grain = adjustRgb(topRgb, -18);
+  drawLine(img, OX + 14, yOff + 8, OX + 34, yOff + 8, grain[0], grain[1], grain[2]);
+  drawLine(img, OX + 10, yOff + 12, OX + 38, yOff + 12, grain[0], grain[1], grain[2]);
+  drawLine(img, OX + 14, yOff + 16, OX + 34, yOff + 16, grain[0], grain[1], grain[2]);
+
+  // Front faces: thin dark vertical leg shapes near edges
+  const legColor = adjustRgb(topRgb, -45);
+  // Left face legs
+  const lBase = yOff + 24;
+  // Near-left leg
+  setPixel(img, OX + 4, lBase + 2, legColor[0], legColor[1], legColor[2]);
+  setPixel(img, OX + 4, lBase + 4, legColor[0], legColor[1], legColor[2]);
+  setPixel(img, OX + 4, lBase + 6, legColor[0], legColor[1], legColor[2]);
+  // Near-right leg on left face
+  setPixel(img, OX + 20, lBase + 2, legColor[0], legColor[1], legColor[2]);
+  setPixel(img, OX + 20, lBase + 4, legColor[0], legColor[1], legColor[2]);
+  setPixel(img, OX + 20, lBase + 6, legColor[0], legColor[1], legColor[2]);
+
+  // Right face legs
+  // Near-left leg on right face
+  setPixel(img, OX + 28, lBase + 2, legColor[0], legColor[1], legColor[2]);
+  setPixel(img, OX + 28, lBase + 4, legColor[0], legColor[1], legColor[2]);
+  setPixel(img, OX + 28, lBase + 6, legColor[0], legColor[1], legColor[2]);
+  // Near-right leg on right face
+  setPixel(img, OX + 44, lBase + 2, legColor[0], legColor[1], legColor[2]);
+  setPixel(img, OX + 44, lBase + 4, legColor[0], legColor[1], legColor[2]);
+  setPixel(img, OX + 44, lBase + 6, legColor[0], legColor[1], legColor[2]);
+}
+
 // --- Main sprite drawing ---
 
-function drawBlockToImageData(block: BlockType): ImageData {
+function drawSpriteToImageData(sprite: SpriteType): ImageData {
   const img = new ImageData(SPRITE_SIZE, SPRITE_SIZE);
 
-  if (block === "empty") return img;
+  if (sprite === "empty") return img;
 
-  const baseColor = BLOCK_COLORS[block];
+  // door_top uses the same base color as door
+  const colorKey: BlockType = sprite === "door_top" ? "door" : sprite as BlockType;
+  const baseColor = BLOCK_COLORS[colorKey];
   const baseRgb = hexToRgb(baseColor);
-  const h = block === "floor" ? FLOOR_H : BLOCK_H;
+  const h = sprite === "floor" ? FLOOR_H : BLOCK_H;
 
   // yOff positions the block so it sits at the bottom of the sprite
   const yOff = SPRITE_SIZE - TILE_H - h;
@@ -256,7 +385,7 @@ function drawBlockToImageData(block: BlockType): ImageData {
   fillPoly(img, top, topRgb[0], topRgb[1], topRgb[2]);
 
   // Block-specific decorations
-  switch (block) {
+  switch (sprite) {
     case "wall":
       drawWallDecorations(img, yOff, h, leftRgb, rightRgb);
       break;
@@ -266,11 +395,20 @@ function drawBlockToImageData(block: BlockType): ImageData {
     case "door":
       drawDoorDecoration(img, yOff, h);
       break;
+    case "door_top":
+      drawDoorTopDecorations(img, yOff, h);
+      break;
     case "roof":
-      drawRoofDecoration(img, yOff, topRgb);
+      drawRoofDecoration(img, yOff, topRgb, leftRgb);
       break;
     case "floor":
       drawFloorDecoration(img, yOff, topRgb);
+      break;
+    case "plant":
+      drawPlantDecorations(img, yOff, topRgb);
+      break;
+    case "table":
+      drawTableDecorations(img, yOff, topRgb);
       break;
   }
 
@@ -292,14 +430,13 @@ let atlasCanvas: HTMLCanvasElement | null = null;
 export function getSpriteAtlas(): HTMLCanvasElement {
   if (atlasCanvas) return atlasCanvas;
 
-  // 6 types x 4 rotations = 24 sprites, each SPRITE_SIZE x SPRITE_SIZE
   const canvas = document.createElement("canvas");
-  canvas.width = BLOCK_TYPES.length * 4 * SPRITE_SIZE;
+  canvas.width = SPRITE_TYPES.length * 4 * SPRITE_SIZE;
   canvas.height = SPRITE_SIZE;
   const ctx = canvas.getContext("2d")!;
 
-  for (let ti = 0; ti < BLOCK_TYPES.length; ti++) {
-    const imgData = drawBlockToImageData(BLOCK_TYPES[ti]);
+  for (let ti = 0; ti < SPRITE_TYPES.length; ti++) {
+    const imgData = drawSpriteToImageData(SPRITE_TYPES[ti]);
     for (let ri = 0; ri < 4; ri++) {
       const x = (ti * 4 + ri) * SPRITE_SIZE;
       ctx.putImageData(imgData, x, 0);
@@ -310,8 +447,8 @@ export function getSpriteAtlas(): HTMLCanvasElement {
   return canvas;
 }
 
-export function getSpriteRect(block: BlockType, rotation: Rotation): { sx: number; sy: number; sw: number; sh: number } {
-  const ti = BLOCK_TYPES.indexOf(block);
+export function getSpriteRect(sprite: SpriteType, rotation: Rotation): { sx: number; sy: number; sw: number; sh: number } {
+  const ti = SPRITE_TYPES.indexOf(sprite);
   return {
     sx: (ti * 4 + rotation) * SPRITE_SIZE,
     sy: 0,
