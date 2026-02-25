@@ -11,6 +11,7 @@ import {
   generateRoomCode,
   TEAM_NAMES,
   MAX_TEAM_SIZE,
+  PREFERRED_TEAM_SIZE,
   GRID_SIZE,
   ROUND_DURATION_MS,
   DESIGN_DURATION_MS,
@@ -34,9 +35,9 @@ export function createRoomState(): RoomState {
 }
 
 export function addPlayer(state: RoomState, id: string, name: string): Player {
-  // Find a team with available space
+  // Find a team with available space (prefer teams of 2)
   let teamId = Object.keys(state.teams).find(
-    (tid) => state.teams[tid].players.length < MAX_TEAM_SIZE
+    (tid) => state.teams[tid].players.length < PREFERRED_TEAM_SIZE
   );
 
   if (!teamId) {
@@ -65,6 +66,72 @@ export function addPlayer(state: RoomState, id: string, name: string): Player {
   team.players.push(id);
 
   return player;
+}
+
+export function rebalanceTeams(state: RoomState): void {
+  // Find teams with only 1 connected player
+  const teamIds = Object.keys(state.teams);
+
+  for (const teamId of [...teamIds]) {
+    const team = state.teams[teamId];
+    if (!team) continue;
+
+    const connectedPlayers = team.players.filter(pid => state.players[pid]?.connected);
+
+    if (connectedPlayers.length === 1) {
+      // Find another team to merge into (must have < MAX_TEAM_SIZE connected players)
+      const targetTeamId = Object.keys(state.teams).find(tid => {
+        if (tid === teamId) return false;
+        const t = state.teams[tid];
+        const connected = t.players.filter(pid => state.players[pid]?.connected);
+        return connected.length >= 1 && connected.length < MAX_TEAM_SIZE;
+      });
+
+      if (targetTeamId) {
+        const playerId = connectedPlayers[0];
+        const player = state.players[playerId];
+        if (!player) continue;
+
+        // Remove from old team
+        team.players = team.players.filter(pid => pid !== playerId);
+
+        // Add to target team
+        state.teams[targetTeamId].players.push(playerId);
+        player.teamId = targetTeamId;
+
+        // Clean up empty team
+        if (team.players.filter(pid => state.players[pid]?.connected).length === 0) {
+          // Remove disconnected players from this team too
+          for (const pid of team.players) {
+            delete state.players[pid];
+          }
+          delete state.teams[teamId];
+        }
+      }
+    }
+  }
+
+  // Also remove completely empty teams (all disconnected)
+  for (const teamId of Object.keys(state.teams)) {
+    const team = state.teams[teamId];
+    const connectedPlayers = team.players.filter(pid => state.players[pid]?.connected);
+    if (connectedPlayers.length === 0) {
+      for (const pid of team.players) {
+        delete state.players[pid];
+      }
+      delete state.teams[teamId];
+    }
+  }
+
+  // Reassign roles: first connected player = architect, rest = builders
+  for (const team of Object.values(state.teams)) {
+    const connected = team.players
+      .map(pid => state.players[pid])
+      .filter(p => p?.connected);
+    for (let i = 0; i < connected.length; i++) {
+      connected[i].role = i === 0 ? "architect" : "builder";
+    }
+  }
 }
 
 export function removePlayer(state: RoomState, id: string): void {
@@ -121,6 +188,8 @@ export function reconnectPlayer(
 export function startRound(state: RoomState): boolean {
   const validStartPhases: GamePhase[] = ["lobby", "reveal1", "interstitial"];
   if (!validStartPhases.includes(state.phase)) return false;
+
+  rebalanceTeams(state);
 
   const playerCount = Object.values(state.players).filter((p) => p.connected).length;
   if (playerCount === 0) return false;
@@ -314,6 +383,9 @@ export function calculateAllScores(state: RoomState): void {
 
 export function startDesign(state: RoomState): void {
   if (state.phase !== "lobby") return;
+
+  rebalanceTeams(state);
+
   state.phase = "design";
   state.timerEnd = Date.now() + DESIGN_DURATION_MS;
 

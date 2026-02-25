@@ -8,6 +8,7 @@ export const TEAM_NAMES = [
   "Team Timber", "The Builders", "CNC Squad", "Pod People",
 ];
 export const MAX_TEAM_SIZE = 3;
+export const PREFERRED_TEAM_SIZE = 2;
 export const MIN_TEAM_SIZE = 2;
 export const MAX_HEIGHT = 4;
 

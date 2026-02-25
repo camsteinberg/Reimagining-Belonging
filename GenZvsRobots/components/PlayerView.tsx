@@ -198,6 +198,47 @@ function PlayerLobbyView({
   );
 }
 
+// --- Compact team info bar (visible during all active phases) ---
+
+function TeamInfoBar({ team, player, allPlayers, isRound2 }: {
+  team: Team;
+  player: Player;
+  allPlayers: Record<string, Player>;
+  isRound2: boolean;
+}) {
+  const teammates = team.players
+    .map(pid => allPlayers[pid])
+    .filter(Boolean);
+
+  return (
+    <div className={`flex items-center justify-center gap-3 px-3 py-1.5 ${
+      isRound2 ? "bg-[#2a2a20] border-b border-[#3d6b4f]/20" : "bg-[#e8e0d0] border-b border-[#8b5e3c]/10"
+    }`}>
+      <span className={`font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase ${
+        isRound2 ? "text-[#6b8f71]" : "text-[#8b5e3c]"
+      }`}>
+        {team.name}
+      </span>
+      <span className={`text-[10px] ${isRound2 ? "text-[#e8e0d0]/30" : "text-[#2a2520]/20"}`}>|</span>
+      {teammates.map((p, i) => (
+        <span key={p.id} className={`font-[family-name:var(--font-body)] text-[10px] ${
+          isRound2 ? "text-[#e8e0d0]/60" : "text-[#2a2520]/50"
+        }`}>
+          {p.name}{p.id === player.id ? " (You)" : ""}
+          <span className={`ml-0.5 font-[family-name:var(--font-pixel)] text-[7px] uppercase ${
+            isRound2
+              ? (p.role === "architect" ? "text-[#b89f65]/60" : "text-[#6b8f71]/60")
+              : (p.role === "architect" ? "text-[#b89f65]/70" : "text-[#8b5e3c]/50")
+          }`}>
+            {p.role === "architect" ? "A" : "B"}
+          </span>
+          {i < teammates.length - 1 ? <span className={isRound2 ? "text-[#e8e0d0]/20" : "text-[#2a2520]/15"}> · </span> : null}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 // --- Main component ---
 
 export default function PlayerView({
@@ -364,6 +405,7 @@ export default function PlayerView({
     return (
       <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={false} />}
         <WaitingReveal teamName={teamName} score={team?.round1Score} />
       </div>
     );
@@ -373,6 +415,7 @@ export default function PlayerView({
     return (
       <div className="flex flex-col h-screen overflow-hidden bg-[#1a1510]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={true} />}
         <WaitingInterstitial currentRole={role} />
       </div>
     );
@@ -382,6 +425,7 @@ export default function PlayerView({
     return (
       <div className="flex flex-col h-screen overflow-hidden bg-[#1a1510]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={true} />}
         <WaitingFinalReveal team={team} />
       </div>
     );
@@ -391,6 +435,7 @@ export default function PlayerView({
     return (
       <div className="flex flex-col h-screen overflow-hidden bg-[#1a1510]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={true} />}
         <WaitingSummary />
       </div>
     );
@@ -417,6 +462,7 @@ export default function PlayerView({
     return (
       <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={false} />}
         <div className="flex flex-col flex-1 min-h-0 p-3 gap-2">
           <div className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-center py-1 px-2 rounded text-[#8b5e3c]/70 bg-[#8b5e3c]/10">
             Design your building! Another team will try to recreate it.
@@ -450,6 +496,7 @@ export default function PlayerView({
     return (
       <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={false} />}
         <div className="flex flex-col flex-1 min-h-0 p-3 gap-2">
           <div className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-center py-1 px-2 rounded text-[#8b5e3c]/70 bg-[#8b5e3c]/10">
             Practice Mode &mdash; Try placing blocks!
@@ -503,6 +550,7 @@ export default function PlayerView({
         role={role}
         timerEnd={state.timerEnd}
       />
+      {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={isRound2} />}
 
       {/* Main content area */}
       <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
