@@ -6,6 +6,7 @@ import type { GamePhase, ClientMessage, HostAction } from "@/lib/types";
 interface HostControlsProps {
   phase: GamePhase;
   send: (msg: ClientMessage) => void;
+  hasDesigns?: boolean;
 }
 
 function HostButton({
@@ -44,7 +45,7 @@ function HostButton({
   );
 }
 
-export default function HostControls({ phase, send }: HostControlsProps) {
+export default function HostControls({ phase, send, hasDesigns }: HostControlsProps) {
   return (
     <motion.div
       key={phase}
@@ -56,12 +57,16 @@ export default function HostControls({ phase, send }: HostControlsProps) {
       {phase === "lobby" && (
         <>
           <HostButton label="Practice Round" action="startDemo" send={send} variant="secondary" />
-          <HostButton label="Start Design Phase" action="startDesign" send={send} variant="primary" />
+          {hasDesigns ? (
+            <HostButton label="Start Round 1" action="startRound" send={send} variant="primary" />
+          ) : (
+            <HostButton label="Start Design Phase" action="startDesign" send={send} variant="primary" />
+          )}
         </>
       )}
 
       {phase === "design" && (
-        <HostButton label="End Design & Start Game" action="endDesign" send={send} variant="primary" />
+        <HostButton label="End Design Phase" action="endDesign" send={send} variant="primary" />
       )}
 
       {phase === "demo" && (

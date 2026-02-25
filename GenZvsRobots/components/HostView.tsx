@@ -125,7 +125,7 @@ function LobbyView({
 
       {/* Bottom controls */}
       <div className="px-6 py-5 border-t border-white/10 flex items-center justify-center">
-        <HostControls phase={state.phase} send={send} />
+        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} />
       </div>
     </div>
   );
@@ -222,7 +222,7 @@ function ActiveRoundView({
 
       {/* Controls */}
       <div className={["px-5 py-3 border-t shrink-0", borderAccent].join(" ")}>
-        <HostControls phase={state.phase} send={send} />
+        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} />
       </div>
     </div>
   );
@@ -333,7 +333,7 @@ function FinalRevealView({
       <div className="flex flex-col h-full bg-[#110f0d] text-cream items-center justify-center">
         <p className="text-cream/40">No teams to show.</p>
         <div className="mt-4">
-          <HostControls phase={state.phase} send={send} />
+          <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} />
         </div>
       </div>
     );
@@ -460,7 +460,7 @@ function InterstitialView({
 
       {/* Fallback controls behind the overlay */}
       <div className="flex-1 flex items-center justify-center">
-        <HostControls phase={state.phase} send={send} />
+        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} />
       </div>
     </div>
   );
@@ -486,7 +486,7 @@ function SummaryView({
 
       {/* Controls */}
       <div className="px-6 py-4 border-t border-white/10 flex justify-center shrink-0">
-        <HostControls phase={state.phase} send={send} />
+        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} />
       </div>
     </div>
   );

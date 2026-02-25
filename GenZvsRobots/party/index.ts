@@ -310,11 +310,8 @@ export default class GameRoom implements Party.Server {
       }
       case "endDesign": {
         this.stopTimer();
-        const saved = endDesign(this.state);
-        if (saved) {
-          const started = startRound(this.state);
-          if (started) this.startTimer();
-        }
+        endDesign(this.state);
+        // Returns to lobby — host manually starts round 1
         break;
       }
       case "endGame": {
@@ -334,11 +331,8 @@ export default class GameRoom implements Party.Server {
       if (this.state.timerEnd && Date.now() >= this.state.timerEnd) {
         this.stopTimer();
         if (this.state.phase === "design") {
-          const saved = endDesign(this.state);
-          if (saved) {
-            const started = startRound(this.state);
-            if (started) this.startTimer();
-          }
+          endDesign(this.state);
+          // Returns to lobby — host manually starts round 1
         } else if (this.state.phase === "demo") {
           endDemo(this.state);
         } else if (this.state.phase === "round1" || this.state.phase === "round2") {
