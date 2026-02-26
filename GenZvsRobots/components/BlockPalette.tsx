@@ -175,6 +175,13 @@ const BLOCK_ORDER: BlockType[] = [
   "air", "empty",
 ];
 
+// ─── block hotkeys ──────────────────────────────────────────────────────────
+
+const BLOCK_HOTKEYS: Partial<Record<BlockType, string>> = {
+  wall: "1", floor: "2", roof: "3", window: "4", door: "5",
+  concrete: "6", plant: "7", metal: "8", table: "9", empty: "0",
+};
+
 // ─── block descriptions ──────────────────────────────────────────────────────
 
 const BLOCK_DESCRIPTIONS: Record<BlockType, string> = {
@@ -328,6 +335,9 @@ export default function BlockPalette({ selected, onSelect }: BlockPaletteProps) 
                   isSelected ? "text-[#b89f65]" : "text-[#e8e0d0]/80",
                 ].join(" ")}
               >
+                {BLOCK_HOTKEYS[blockType] && (
+                  <span className="text-[#b89f65]/50 mr-0.5">{BLOCK_HOTKEYS[blockType]}</span>
+                )}
                 {label}
               </span>
             </motion.button>

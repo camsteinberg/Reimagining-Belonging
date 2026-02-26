@@ -429,6 +429,26 @@ export default function PlayerView({
     return unsubscribe;
   }, [onMessage, teamId, playerId]);
 
+  // Keyboard shortcuts: number keys 1-0 map to block types during building phases
+  useEffect(() => {
+    if (!isPlaying && !isDemo && !isDesign) return;
+    if (isPlaying && !isBuilder) return;
+
+    const HOTKEYS: Record<string, BlockType> = {
+      "1": "wall", "2": "floor", "3": "roof", "4": "window", "5": "door",
+      "6": "concrete", "7": "plant", "8": "metal", "9": "table", "0": "empty",
+    };
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      const block = HOTKEYS[e.key];
+      if (block) setSelectedBlock(block);
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isPlaying, isDemo, isDesign, isBuilder]);
+
   const handleCellClick = useCallback(
     (row: number, col: number) => {
       // Allow placement in demo or design (all players) or during play (builders only)
