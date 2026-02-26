@@ -5,12 +5,14 @@ import { MAX_HEIGHT } from "./constants";
 const charMap: Record<string, BlockType> = {
   "W": "wall", "F": "floor", "R": "roof",
   "N": "window", "D": "door", "P": "plant",
-  "T": "table", ".": "empty",
+  "T": "table", "M": "metal", "C": "concrete",
+  "B": "barrel", "I": "pipe", ".": "empty",
 };
 
 // Parse a multi-layer 3D target from string template layers
+// Each layer is an array of 6 strings, each string 6 characters wide (6x6 grid)
 function parse3DTarget(layers: string[][]): Grid {
-  const GRID_SIZE = 8;
+  const GRID_SIZE = 6;
   // Initialize empty 3D grid
   const grid: Grid = Array.from({ length: GRID_SIZE }, () =>
     Array.from({ length: GRID_SIZE }, () =>
@@ -48,413 +50,407 @@ function parseTarget(template: string[]): Grid {
 }
 
 // ============================================================
-// Round 1 targets (2-3 layers, simpler)
+// Round 1 targets (simpler, describable verbally in 3 min)
 // ============================================================
 
+// COTTAGE: Simple 4x4 cabin centered on the 6x6 grid
+// ~32 blocks, 3 layers
 const COTTAGE: Grid = parse3DTarget([
-  // L0: walls + floor + door + plants around edges
+  // L0: Wall perimeter with door on front, floor inside
   [
-    "..P..P..",
-    ".WWWWWW.",
-    ".WFFFFW.",
-    ".WFTFFW.",
-    ".WFFFFW.",
-    ".WFFFFW.",
-    ".WFDDFW.",
-    "..P..P..",
+    ".P..P.",
+    "WWWWWW",
+    "WFFFFW",
+    "WFFFFW",
+    "WFDDFW",
+    "..P...",
   ],
-  // L1: upper walls + windows
+  // L1: Walls with windows on two sides
   [
-    "........",
-    ".WWWWWW.",
-    ".NFFFWN.",
-    ".WFFFFW.",
-    ".NFFFWN.",
-    ".WWWWWW.",
-    "........",
-    "........",
+    "......",
+    "WWWWWW",
+    "NFFFWN",
+    "NFFFWN",
+    "WWWWWW",
+    "......",
   ],
-  // L2: roof
+  // L2: Full roof
   [
-    "........",
-    ".RRRRRR.",
-    ".RRRRRR.",
-    ".RRRRRR.",
-    ".RRRRRR.",
-    ".RRRRRR.",
-    "........",
-    "........",
+    "......",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "......",
   ],
 ]);
 
+// GARDEN_SHED: Small 3x3 structure with barrels and plants outside
+// ~22 blocks, 2 layers
 const GARDEN_SHED: Grid = parse3DTarget([
-  // L0: walls + floor + door + plants flanking entrance
+  // L0: Wall box with door, barrel outside, plants flanking
   [
-    "........",
-    "........",
-    "..WWWW..",
-    "..WFFW..",
-    "..WFFW..",
-    "..WDDW..",
-    "..P..P..",
-    "........",
+    "......",
+    ".BWWW.",
+    "..WFFW",
+    "..WFFW",
+    "..WDDW",
+    ".P..P.",
   ],
-  // L1: roof cap
+  // L1: Roof
   [
-    "........",
-    "........",
-    "..RRRR..",
-    "..RRRR..",
-    "........",
-    "........",
-    "........",
-    "........",
+    "......",
+    "..RRRR",
+    "..RRRR",
+    "..RRRR",
+    "......",
+    "......",
   ],
 ]);
 
-const TREEHOUSE: Grid = parse3DTarget([
-  // L0: floor platform + plants underneath
+// WORKSHOP: Industrial building with metal, concrete, pipe
+// ~33 blocks, 3 layers
+const WORKSHOP: Grid = parse3DTarget([
+  // L0: Concrete floor, metal walls, pipe in corner, door
   [
-    "........",
-    "..P..P..",
-    "..FFFF..",
-    "..FFFF..",
-    "..FFFF..",
-    "..FFFF..",
-    "..P..P..",
-    "........",
+    "MMMMMM",
+    "MCCCIM",
+    "MCCCFM",
+    "MCCCFM",
+    "MFDDMM",
+    "......",
   ],
-  // L1: cabin walls + windows + door + table
+  // L1: Metal walls with windows
   [
-    "........",
-    "..WWWW..",
-    "..NFFN..",
-    "..WTFW..",
-    "..WFFW..",
-    "..NDDN..",
-    "........",
-    "........",
+    "MMMMMM",
+    "NFFFMN",
+    "MFFFFM",
+    "NFFFFN",
+    "MMMMMM",
+    "......",
   ],
-  // L2: roof
+  // L2: Metal roof
   [
-    "........",
-    "..RRRR..",
-    "..RRRR..",
-    "........",
-    "........",
-    "........",
-    "........",
-    "........",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "......",
   ],
 ]);
 
+// WATCHTOWER: Tall narrow structure using height
+// ~30 blocks, 5 layers
 const WATCHTOWER: Grid = parse3DTarget([
-  // L0: courtyard + tower base + plants
+  // L0: 3x3 wall base with door
   [
-    "..FFFF..",
-    ".FFFFFF.",
-    ".FWWWWF.",
-    ".FWFFWF.",
-    ".FWFFWF.",
-    ".FWDDWF.",
-    ".FFFFFF.",
-    "P.FFFF.P",
+    "......",
+    "..WWW.",
+    "..WFW.",
+    "..WDW.",
+    "......",
+    "......",
   ],
-  // L1: tower walls + table
+  // L1: Walls with window
   [
-    "........",
-    "........",
-    "..WWWW..",
-    "..NTFN..",
-    "..WFFW..",
-    "..WFFW..",
-    "..WWWW..",
-    "........",
+    "......",
+    "..WWW.",
+    "..NFN.",
+    "..WWW.",
+    "......",
+    "......",
   ],
-  // L2: upper tower
+  // L2: Walls
   [
-    "........",
-    "........",
-    "..WWWW..",
-    "..NFFN..",
-    "..WFFW..",
-    "..WFFW..",
-    "..WWWW..",
-    "........",
+    "......",
+    "..WWW.",
+    "..WFW.",
+    "..WWW.",
+    "......",
+    "......",
   ],
-  // L3: tower roof
+  // L3: Walls with windows
   [
-    "........",
-    "........",
-    "..RRRR..",
-    "..RRRR..",
-    "........",
-    "........",
-    "........",
-    "........",
+    "......",
+    "..WWW.",
+    "..NFN.",
+    "..WWW.",
+    "......",
+    "......",
+  ],
+  // L4: Roof platform
+  [
+    "......",
+    "..RRR.",
+    "..RRR.",
+    "..RRR.",
+    "......",
+    "......",
   ],
 ]);
 
-export const ROUND_1_TARGETS = [COTTAGE, GARDEN_SHED, TREEHOUSE, WATCHTOWER];
+export const ROUND_1_TARGETS: Grid[] = [COTTAGE, GARDEN_SHED, WORKSHOP, WATCHTOWER];
 
-export const ROUND_1_DESCRIPTIONS = [
-  `The Cottage is a cozy rectangular house, 6 columns wide and 6 rows tall, centered on the 8x8 grid (rows 1-6, cols 1-6). It rises 3 layers high. Plants decorate the corners and a table sits inside.
+export const ROUND_1_DESCRIPTIONS: string[] = [
+  // COTTAGE
+  `The Cottage is a cozy rectangular cabin, 6 columns wide and 4 rows deep, sitting in rows 1-4 of the 6x6 grid. It rises 3 layers high. Plants decorate three corners outside the walls.
 
-Layer 0 (ground floor): Plants at the four outer corners: (0,2), (0,5), (7,2), (7,5). Wall blocks form the perimeter rectangle — top wall at row 1 cols 1-6, bottom wall at row 6 cols 1-6, left wall at col 1 rows 2-5, right wall at col 6 rows 2-5. Floor tiles fill the interior (rows 2-5, cols 2-5). A table at (3,3). A 2-high door at row 6 cols 3-4 (doors auto-stack to 2 blocks high).
+Layer 0 (ground floor): Plants at row 0 col 1 and row 0 col 4, and at row 5 col 1. Walls form the perimeter rectangle at rows 1-4, cols 0-5. Floor tiles fill the interior (rows 2-3, cols 1-4). A 2-high door at row 4 cols 2-3 (doors auto-stack to 2 blocks high).
 
-Layer 1 (upper floor): Walls continue upward along the north wall (row 1 cols 1-6) and south wall (row 5 cols 1-6). Windows replace walls on the east and west sides at rows 2 and 4. Solid walls remain at rows 3. Floor fills the interior. The door auto-expands to this layer.
+Layer 1 (upper walls): Walls continue at rows 1 and 4 across all 6 columns. Windows replace the side walls at rows 2-3 on cols 0 and 5. Floor fills the interior.
 
-Layer 2 (roof): Roof tiles cover rows 1-5, cols 1-6.
+Layer 2 (roof): Roof tiles cover rows 1-4, cols 0-5 (24 blocks).
 
-Building strategy: Start with plants at corners, then the ground-floor wall rectangle with interior floor and table. Add the door (it auto-stacks 2 high). Build upper walls with windows. Cap with roof.`,
+Building strategy: Place the ground-floor wall rectangle first, fill the interior with floor, add the door at front. Build upper walls with windows on the sides. Cap with the roof slab.`,
 
-  `The Garden Shed is a compact 4-column-wide, 4-row-tall structure centered on the grid (rows 2-5, cols 2-5). It rises 2 layers high with plants flanking the entrance.
+  // GARDEN_SHED
+  `The Garden Shed is a compact 4-wide, 3-deep structure in the right half of the grid (cols 2-5, rows 1-4). A barrel sits outside to the left and plants flank the entrance. It rises 2 layers.
 
-Layer 0 (ground floor): Walls form a small rectangle — top wall at row 2 cols 2-5, bottom wall at row 5 cols 2-5, sides at cols 2 and 5 rows 3-4. Floor fills the interior. A 2-high door at row 5 cols 3-4 (auto-stacks). Plants flank the entrance at (6,2) and (6,5).
+Layer 0 (ground floor): A barrel at row 1 col 1. Walls form a rectangle at rows 1-4, cols 2-5. Floor fills the interior at rows 2-3, cols 3-4. A 2-high door at row 4 cols 3-4 (auto-stacks). Plants at row 5 cols 1 and 4.
 
-Layer 1 (roof): Roof tiles cover rows 2-3, cols 2-5 (8 blocks). The door auto-expands to this layer.
+Layer 1 (roof): Roof tiles cover rows 1-3, cols 2-5 (12 blocks).
 
-Building strategy: Place plants at entrance, lay the wall perimeter, fill interior floor, add door (auto-stacks), then roof tiles. About 28 blocks total.`,
+Building strategy: Start with the wall perimeter, add interior floor, place the door. Put the barrel outside to the upper-left and plants at the entrance. Lay the roof on top. About 22 blocks total.`,
 
-  `The Treehouse is a cabin sitting on a raised platform with plants below. It rises 3 layers high.
+  // WORKSHOP
+  `The Workshop is an industrial building spanning 6 columns wide and 5 rows deep (rows 0-4), using metal walls, concrete floor, and a pipe. It rises 3 layers high.
 
-Layer 0 (platform): Plants at four corners: (1,2), (1,5), (6,2), (6,5). A flat 4x4 floor platform at rows 2-5, cols 2-5.
+Layer 0 (ground floor): Metal walls form the perimeter at rows 0 and 4, and cols 0 and 5 of rows 1-3. Concrete fills the interior floor (rows 1-3, cols 1-3). A pipe at row 1 col 4. Some floor blocks at rows 2-3 col 4. A 2-high door at row 4 cols 2-3 (auto-stacks).
 
-Layer 1 (cabin): Walls and windows form the cabin on top. North wall at row 1 cols 2-5. Windows at corners: (2,2), (2,5), (5,2), (5,5). Walls at (3,2), (3,5), (4,2), (4,5). A table at (3,3). Floor interior. 2-high door at row 5 cols 3-4 (auto-stacks).
+Layer 1 (upper walls): Metal walls continue around the perimeter. Windows at row 0 col 0, row 0 col 5, row 3 col 0, and row 3 col 5. Floor fills the interior.
 
-Layer 2 (roof): Roof tiles at rows 1-2, cols 2-5. The door auto-expands to this layer.
+Layer 2 (roof): Roof tiles cover the full 6x5 area (rows 0-4, cols 0-5).
 
-Building strategy: Place corner plants, lay the platform, build cabin walls with windows and table, add door (auto-stacks), cap with roof.`,
+Building strategy: Lay the metal perimeter walls, fill with concrete interior. Add the pipe in the upper-right corner and the door. Build upper metal walls with windows. Cap with roof.`,
 
-  `The Watchtower is a tall central tower surrounded by a ground-level courtyard. It rises 4 layers high with plants and a table inside.
+  // WATCHTOWER
+  `The Watchtower is a tall narrow tower, 3 columns wide and 3 rows deep (cols 2-4, rows 1-3), rising 5 layers high in the center of the grid. It uses the most height of any Round 1 structure.
 
-Layer 0 (courtyard + tower base): Floor courtyard in octagonal shape. Tower base walls at rows 2-5 cols 2-5. Interior floor. 2-high door at (5,3-4) (auto-stacks). Plants at corners: (7,0) and (7,7).
+Layer 0 (base): Walls form a 3x3 perimeter at rows 1-3, cols 2-4. Floor at the center (row 2, col 3). A single-wide door at row 3 col 3 (auto-stacks to 2 high).
 
-Layer 1 (lower tower): Tower walls at rows 2-6 cols 2-5. Windows at (3,2) and (3,5). A table at (3,3). Floor fills interior. The door auto-expands to this layer.
+Layer 1: Walls with windows on the east and west sides at row 2. Floor center.
 
-Layer 2 (upper tower): Same wall layout with windows at (3,2) and (3,5). Floor interior.
+Layer 2: Solid walls with floor center.
 
-Layer 3 (roof): Roof tiles at rows 2-3, cols 2-5.
+Layer 3: Walls with windows again at row 2. Floor center.
 
-Building strategy: Build courtyard floor with plants, tower walls and door (auto-stacks), table inside. Stack tower walls up through layers 1-2 with windows. Cap with roof.`,
+Layer 4 (roof): Roof tiles cap the tower at rows 1-3, cols 2-4 (9 blocks).
+
+Building strategy: Build the 3x3 base with door, then stack walls upward layer by layer, alternating windows and solid walls. Place the roof cap on top. About 30 blocks, mostly vertical.`,
 ];
 
 // ============================================================
-// Round 2 targets (2-4 layers, complex)
+// Round 2 targets (complex, designed for AI assistance)
 // ============================================================
 
-const BARN: Grid = parse3DTarget([
-  // L0: walls + floor + doors + plants along path
+// FACTORY: L-shaped industrial building with utility blocks
+// ~50 blocks, 3 layers
+const FACTORY: Grid = parse3DTarget([
+  // L0: L-shaped footprint with metal, concrete, pipe, barrel
   [
-    "WWWWWWWW",
-    "WFFFFFFW",
-    "WFFFFFFW",
-    "WFFFFFFW",
-    "WFFFFFFW",
-    "WFFFFFFW",
-    "WWFDDWWW",
-    "FPFFFFPF",
+    "MMMM..",
+    "MCCCM.",
+    "MCIBM.",
+    "MMMMMM",
+    "..MCCM",
+    "..MDDM",
   ],
-  // L1: upper walls + windows
+  // L1: Upper walls with windows
   [
-    "WNWWWWNW",
-    "WFFFFFFW",
-    "WFFFFFFW",
-    "NFFFFFFN",
-    "WFFFFFFW",
-    "WFFFFFFW",
-    "WNWWWWNW",
-    "........",
+    "MMMM..",
+    "NFFMN.",
+    "MFFFM.",
+    "MMMMMM",
+    "..NFFN",
+    "..MMMM",
   ],
-  // L2: roof
+  // L2: Roof
   [
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "........",
+    "RRRR..",
+    "RRRR..",
+    "RRRR..",
+    "RRRRRR",
+    "..RRRR",
+    "..RRRR",
   ],
 ]);
 
-const CASTLE: Grid = parse3DTarget([
-  // L0: ground walls + plants + tables inside
+// TWO_STORY: Full 2-story house with interior detail
+// ~55 blocks, 5 layers
+const TWO_STORY: Grid = parse3DTarget([
+  // L0: Ground floor with door, table, plants outside
   [
-    "WW.PP.WW",
-    "WWWWWWWW",
-    "WNTFFTNW",
-    "WFFFFFFW",
-    "WNFFFFNW",
-    "WWWWWWWW",
-    "WWWDDWWW",
-    "FPFFFFPF",
+    "P....P",
+    "WWWWWW",
+    "WTFFNW",
+    "WFFFFW",
+    "WFDDFW",
+    "......",
   ],
-  // L1: upper walls
+  // L1: Upper ground-floor walls with windows
   [
-    "WW....WW",
-    "WWWWWWWW",
-    "WNFFFFNW",
-    "WFFFFFFW",
-    "WNFFFFNW",
-    "WWWWWWWW",
-    "WW....WW",
-    "........",
+    "......",
+    "WWWWWW",
+    "NFFFWN",
+    "WFFFFW",
+    "WWWWWW",
+    "......",
   ],
-  // L2: corner towers
+  // L2: Second floor (floor slab + walls)
   [
-    "WW....WW",
-    "........",
-    "........",
-    "........",
-    "........",
-    "........",
-    "WW....WW",
-    "........",
+    "......",
+    "WWWWWW",
+    "WFFFFW",
+    "WTFFFW",
+    "WWWWWW",
+    "......",
   ],
-  // L3: tower roofs
+  // L3: Second floor upper walls with windows
   [
-    "RR....RR",
-    "........",
-    "........",
-    "........",
-    "........",
-    "........",
-    "RR....RR",
-    "........",
+    "......",
+    "WWWWWW",
+    "NFFFWN",
+    "NFFFWN",
+    "WWWWWW",
+    "......",
   ],
-]);
-
-const CHURCH: Grid = parse3DTarget([
-  // L0: cross plan + plants
+  // L4: Roof
   [
-    "...WW...",
-    "..WFFW..",
-    ".WFFFFW.",
-    "WNFFFFNW",
-    ".WFFFFW.",
-    "..WFFW..",
-    "..WDDW..",
-    ".P.FF.P.",
-  ],
-  // L1: upper walls
-  [
-    "...WW...",
-    "..WFFW..",
-    ".WFFFFW.",
-    "WNFFFFNW",
-    ".WFFFFW.",
-    "..WFFW..",
-    "........",
-    "........",
-  ],
-  // L2: roof
-  [
-    "...RR...",
-    "..RRRR..",
-    ".RRRRRR.",
-    "RRRRRRRR",
-    ".RRRRRR.",
-    "..RRRR..",
-    "........",
-    "........",
-  ],
-  // L3: steeple
-  [
-    "........",
-    "...RR...",
-    "........",
-    "........",
-    "........",
-    "........",
-    "........",
-    "........",
+    "......",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "......",
   ],
 ]);
 
-const STOREFRONT: Grid = parse3DTarget([
-  // L0: lower shop + tables (shop displays)
+// MARKET: Open-air market with tables, roof canopy, barrels, plants
+// ~45 blocks, 3 layers
+const MARKET: Grid = parse3DTarget([
+  // L0: Tables in rows, barrels at edges, plants, partial walls
   [
-    "WWWWWWWW",
-    "WFFFFFFW",
-    "WNFFFFNW",
-    "WWWWWWWW",
-    "NNFTFNNN",
-    "WFFFFFFW",
-    "WFFDDFFW",
-    "FPFFFFPF",
+    "WP..PW",
+    "BTTTFB",
+    "......",
+    "BTTTFB",
+    "......",
+    "WP..PW",
   ],
-  // L1: upper floor + windows
+  // L1: Support columns (walls at corners)
   [
-    "WNWWWWNW",
-    "WFFFFFFW",
-    "WNFFFFNW",
-    "WWWWWWWW",
-    "........",
-    "........",
-    "........",
-    "........",
+    "W....W",
+    "......",
+    "......",
+    "......",
+    "......",
+    "W....W",
   ],
-  // L2: roof
+  // L2: Roof canopy floating on corner columns
   [
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "RRRRRRRR",
-    "........",
-    "........",
-    "........",
-    "........",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
+    "RRRRRR",
   ],
 ]);
 
-export const ROUND_2_TARGETS = [BARN, CASTLE, CHURCH, STOREFRONT];
+// FORTRESS: Walled compound with corner towers
+// ~58 blocks, 4 layers
+const FORTRESS: Grid = parse3DTarget([
+  // L0: Thick walls, entrance, interior floor
+  [
+    "WWWWWW",
+    "WFFFFW",
+    "WFFFFW",
+    "WFFFFW",
+    "WFFFFW",
+    "WWDDWW",
+  ],
+  // L1: Walls with windows, corner towers solid
+  [
+    "WWNNWW",
+    "W....W",
+    "N....N",
+    "N....N",
+    "W....W",
+    "WWWWWW",
+  ],
+  // L2: Corner towers only (walls at 4 corners)
+  [
+    "WW..WW",
+    "......",
+    "......",
+    "......",
+    "......",
+    "WW..WW",
+  ],
+  // L3: Tower roofs
+  [
+    "RR..RR",
+    "......",
+    "......",
+    "......",
+    "......",
+    "RR..RR",
+  ],
+]);
 
-export const ROUND_2_DESCRIPTIONS = [
-  `The Barn is a large full-width structure spanning the entire 8-column grid, 7 rows deep (rows 0-6), with a path at row 7. It rises 3 layers high with plants along the path.
+export const ROUND_2_TARGETS: Grid[] = [FACTORY, TWO_STORY, MARKET, FORTRESS];
 
-Layer 0 (ground floor): Walls form the perimeter. Floor fills the interior. 2-high doors at row 6 cols 3-4 (auto-stack). Row 7 is a floor path with plants at (7,1) and (7,6).
+export const ROUND_2_DESCRIPTIONS: string[] = [
+  // FACTORY
+  `The Factory is an L-shaped industrial building using metal walls, concrete floors, pipes, and barrels. The L-shape occupies the top-left 4 columns (rows 0-2) and a wing extending down the right side (rows 3-5, cols 2-5). It rises 3 layers high.
 
-Layer 1 (upper walls): Walls continue with windows at corners: (0,1), (0,6), (3,0), (3,7), (6,1), (6,6). Floor fills interior. Doors auto-expand to this layer.
+Layer 0 (ground floor): Metal walls form the L-shaped perimeter. Concrete fills the interior floor. A pipe at row 2 col 2 and a barrel at row 2 col 3 sit inside the main hall. The door is at row 5 cols 3-4 on the wing (auto-stacks 2 high). Concrete floor in the wing interior.
 
-Layer 2 (roof): Roof tiles cover rows 0-6, cols 0-7 (56 blocks).
+Layer 1 (upper walls): Metal walls continue along the L-shaped perimeter. Windows at key positions on the outer edges (row 0 col 0, row 0 col 4, row 1 col 4, row 4 col 2, row 4 col 5). Floor fills both sections.
 
-Building strategy: Build ground-floor walls, fill interior with floor, add doors (auto-stack), path with plants. Stack upper walls with windows. Lay the massive roof. About 100 blocks total.`,
+Layer 2 (roof): Roof tiles cover the entire L-shaped footprint including both the main hall and the wing.
 
-  `The Castle is a walled fortress with four corner towers, plants in the courtyard, and tables inside. It rises 4 layers high.
+Building strategy: Build the L-shaped metal perimeter first. Fill with concrete floor, place the pipe and barrel inside. Add the door on the wing. Stack upper walls with windows, then lay the L-shaped roof. About 50 blocks total.`,
 
-Layer 0 (ground floor): Corner towers at (0,0-1) and (0,6-7). Plants between towers at (0,3) and (0,4). Full wall rows. Windows and tables inside at (2,1), (2,2) and (2,5), (2,6). Floor interior. 2-high doors at row 6 cols 3-4 (auto-stack). Row 7 path with plants at (7,1) and (7,6). Corner towers also at (6,0-1) and (6,6-7).
+  // TWO_STORY
+  `The Two-Story House is a full 6-wide, 4-deep residential building (rows 1-4) that rises 5 layers to create two complete floors plus a roof. Plants decorate the front corners and tables furnish the interior.
 
-Layer 1 (upper walls): Same wall pattern without doors or row 7. Corner towers, walls, windows, floor interior.
+Layer 0 (ground floor): Plants at row 0 cols 0 and 5. Walls form the perimeter at rows 1-4. A table at row 2 col 1 and a window at row 2 col 4. Floor fills the interior. A 2-high door at row 4 cols 2-3 (auto-stacks).
 
-Layer 2 (corner towers only): Wall blocks at the 4 corner tower positions.
+Layer 1 (upper ground-floor walls): Walls continue at rows 1 and 4. Windows at row 2 cols 0 and 5. Floor interior.
 
-Layer 3 (tower roofs): Roof tiles cap the corner towers.
+Layer 2 (second floor): Wall perimeter with floor interior. A table at row 3 col 1 for the upstairs room.
 
-Building strategy: Build walls with interior tables and plants. Add doors (auto-stack) and path. Stack upper walls. Add tower walls and roofs. About 95 blocks total.`,
+Layer 3 (second floor upper walls): Walls continue with windows on the east and west sides at rows 2 and 3.
 
-  `The Church has a cross-shaped (cruciform) floor plan with a steeple and plants at the entrance. It rises 4 layers high.
+Layer 4 (roof): Roof tiles cover rows 1-4, cols 0-5 (24 blocks).
 
-Layer 0 (ground floor): Cross shape with walls, floor interior, and windows on transept sides. 2-high doors at row 6 cols 3-4 (auto-stack). Entry path floor at row 7 cols 3-4 with plants at (7,1) and (7,6).
+Building strategy: Place ground-floor walls with table and door. Stack to layer 1 with windows. Build second floor walls with another table. Add upper windows. Cap with roof. About 55 blocks across 5 layers.`,
 
-Layer 1 (upper walls): Same cross shape continues with windows. Floor fills interior. Doors auto-expand to this layer.
+  // MARKET
+  `The Market is an open-air structure with tables arranged in rows, barrels on the sides, plants for decoration, and a floating roof canopy supported by corner columns. It uses the full 6x6 grid and rises 3 layers.
 
-Layer 2 (roof): Roof tiles in cross shape from narrow top to full transept width.
+Layer 0 (ground level): Wall posts at all four corners (row 0 cols 0 and 5, row 5 cols 0 and 5). Plants next to the corner posts (row 0 cols 1 and 4, row 5 cols 1 and 4). Barrels line the left and right sides at rows 1 and 3 (cols 0 and 5). Two rows of 3 tables each at rows 1 and 3 (cols 1-3). Floor blocks at rows 1 and 3 col 4.
 
-Layer 3 (steeple): 2 roof blocks at row 1 cols 3-4.
+Layer 1 (support columns): Wall blocks at the four corners only (row 0 cols 0 and 5, row 5 cols 0 and 5). Everything else is empty.
 
-Building strategy: Build cross-shaped ground floor with plants at entrance. Add doors (auto-stack). Stack upper walls. Lay cross-shaped roof. Place steeple. About 85 blocks total.`,
+Layer 2 (roof canopy): Full 6x6 roof covering the entire grid (36 blocks), floating above the open market space.
 
-  `The Storefront is a two-story commercial building with shop display tables and plants outside. The back half (rows 0-3) is 2-story; the front (rows 4-7) is single-story. Full width. Rises 3 layers.
+Building strategy: Place corner wall posts, add plants and barrels on the sides. Fill in the table rows. Stack corner walls up to layer 1. Lay the full roof canopy on layer 2. About 45 blocks total.`,
 
-Layer 0 (ground floor): Walls span full width. Back section with interior floor and windows. Dividing wall at row 3. Front section with display windows and a table at (4,3). Floor interior. 2-high doors at row 6 cols 3-4 (auto-stack). Row 7 sidewalk with plants at (7,1) and (7,6).
+  // FORTRESS
+  `The Fortress is a walled compound spanning the entire 6x6 grid with four corner towers that rise above the main walls. A grand entrance with doors faces south. It rises 4 layers high.
 
-Layer 1 (upper floor — back half): Walls with windows at (0,1), (0,6), (2,1), (2,6). Floor interior. Doors auto-expand to this layer.
+Layer 0 (ground floor): Walls form the full 6x6 perimeter. Floor fills the entire interior (rows 1-4, cols 1-4). A 2-high door at row 5 cols 2-3 (auto-stacks).
 
-Layer 2 (roof — back half): Roof tiles at rows 0-3, cols 0-7.
+Layer 1 (upper walls): Corner blocks are double-thick walls at rows 0 and 5 (cols 0-1 and 4-5). Windows on the north wall at row 0 cols 2-3, and on the east and west walls at rows 2-3. Walls continue at rows 0 and 5 with the door auto-expanded.
 
-Building strategy: Build ground floor walls for both sections. Fill interiors with floor and display table. Add doors (auto-stack) and sidewalk with plants. Stack upper floor on back half. Cap with roof. About 85 blocks total.`,
+Layer 2 (corner towers): Wall blocks at the four corner positions only: row 0 cols 0-1, row 0 cols 4-5, row 5 cols 0-1, row 5 cols 4-5.
+
+Layer 3 (tower roofs): Roof tiles cap each corner tower at the same positions as layer 2.
+
+Building strategy: Build the full wall perimeter with interior floor. Add the front door. Stack upper walls with windows and thick corners. Build corner tower walls up through layer 2. Cap towers with roof. About 58 blocks total.`,
 ];
 
 // --- Backwards-compatible exports ---
