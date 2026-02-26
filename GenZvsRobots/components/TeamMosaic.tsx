@@ -127,7 +127,87 @@ function TeamCard({
   );
 }
 
+function PlayerDesignCard({
+  player,
+  teamName,
+  index,
+}: {
+  player: Player;
+  teamName: string;
+  index: number;
+}) {
+  if (!player.designGrid) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.35, delay: index * 0.06, ease: "easeOut" }}
+      className="flex flex-col rounded-lg border overflow-hidden bg-charcoal/70 backdrop-blur-sm border-gold/30"
+    >
+      <div className="flex items-center justify-between px-3 py-2 bg-bark/40">
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span className="font-[family-name:var(--font-pixel)] text-[9px] tracking-wider uppercase leading-tight text-gold truncate">
+            {player.name}
+          </span>
+          <span className="font-[family-name:var(--font-pixel)] text-[6px] tracking-wider uppercase text-cream/40 truncate">
+            {teamName}
+          </span>
+        </div>
+        {player.connected && (
+          <span className="relative flex h-1.5 w-1.5 shrink-0">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sage opacity-70" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-sage" />
+          </span>
+        )}
+      </div>
+      <div className="flex-1 p-1 min-h-0">
+        <VoxelGrid grid={player.designGrid} readOnly className="w-full h-full" />
+      </div>
+    </motion.div>
+  );
+}
+
 export default function TeamMosaic({ teams, players, phase }: TeamMosaicProps) {
+  const isDesign = phase === "design";
+
+  if (isDesign) {
+    const designPlayers = Object.values(players).filter(
+      (p) => p.connected && p.designGrid != null
+    );
+
+    if (designPlayers.length === 0) {
+      return (
+        <div className="flex items-center justify-center h-full text-cream/30 font-[family-name:var(--font-pixel)] text-[10px]">
+          Players are designing...
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className={[
+          "grid gap-3 h-full",
+          designPlayers.length <= 2
+            ? "grid-cols-2"
+            : designPlayers.length <= 4
+            ? "grid-cols-2 sm:grid-cols-4"
+            : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
+        ].join(" ")}
+      >
+        {designPlayers.map((player, i) => (
+          <PlayerDesignCard
+            key={player.id}
+            player={player}
+            teamName={teams[player.teamId]?.name ?? "—"}
+            index={i}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // Existing team-based rendering
   const teamList = Object.values(teams);
 
   if (teamList.length === 0) {
