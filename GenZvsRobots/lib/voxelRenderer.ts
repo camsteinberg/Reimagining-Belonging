@@ -15,6 +15,7 @@ export interface RenderOptions {
   animTime?: number;
   hoverCell?: { row: number; col: number } | null;
   hoverBlock?: BlockType;
+  topDown?: boolean;
 }
 
 // Centering offset for sprite positioning
@@ -212,6 +213,133 @@ function drawAxisLabels(ctx: CanvasRenderingContext2D, rotation: Rotation): void
   ctx.restore();
 }
 
+// Inline block colors to avoid circular dep issues
+const TOP_DOWN_COLORS: Record<string, string> = {
+  wall: "#8b5e3c",
+  floor: "#e8e0d0",
+  roof: "#5a8a68",
+  window: "#7eb8cc",
+  door: "#b8755d",
+  plant: "#4a8c3f",
+  table: "#c4956a",
+  metal: "#8a9bae",
+  concrete: "#a0a0a0",
+  barrel: "#b07840",
+  pipe: "#6e7b8a",
+};
+
+// Flat 2D overhead grid renderer
+function renderTopDown(
+  ctx: CanvasRenderingContext2D,
+  grid: Grid,
+  width: number,
+  height: number,
+  showScoring: boolean,
+  targetGrid?: Grid,
+  hoverCell?: { row: number; col: number } | null,
+  hoverBlock?: BlockType,
+): void {
+  ctx.clearRect(0, 0, width, height);
+  ctx.imageSmoothingEnabled = false;
+
+  // Calculate cell size to fit grid with padding
+  const padding = 16;
+  const availW = width - padding * 2;
+  const availH = height - padding * 2;
+  const cellSize = Math.floor(Math.min(availW / GRID_SIZE, availH / GRID_SIZE));
+  const gridPxW = cellSize * GRID_SIZE;
+  const gridPxH = cellSize * GRID_SIZE;
+  const originX = Math.floor((width - gridPxW) / 2);
+  const originY = Math.floor((height - gridPxH) / 2);
+
+  // Draw cells
+  for (let row = 0; row < GRID_SIZE; row++) {
+    for (let col = 0; col < GRID_SIZE; col++) {
+      const x = originX + col * cellSize;
+      const y = originY + row * cellSize;
+
+      // Find topmost block
+      let topBlock: BlockType = "empty";
+      const stack = grid[row]?.[col];
+      if (stack) {
+        for (let h = MAX_HEIGHT - 1; h >= 0; h--) {
+          if (stack[h] && stack[h] !== "empty" && stack[h] !== "air") {
+            topBlock = stack[h];
+            break;
+          }
+        }
+      }
+
+      // Fill cell
+      if (topBlock !== "empty" && topBlock !== "air") {
+        ctx.fillStyle = TOP_DOWN_COLORS[topBlock] ?? "#ccc";
+      } else {
+        // Checkerboard for empty cells
+        const isDark = (row + col) % 2 === 0;
+        ctx.fillStyle = isDark ? "#d4cfc4" : "#cec8bc";
+      }
+      ctx.fillRect(x, y, cellSize, cellSize);
+
+      // Grid lines
+      ctx.strokeStyle = "rgba(0,0,0,0.12)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, cellSize, cellSize);
+
+      // Scoring overlay
+      if (showScoring && targetGrid) {
+        let hasOverlay = false;
+        let allCorrect = true;
+        for (let h = 0; h < MAX_HEIGHT; h++) {
+          const expected = targetGrid[row]?.[col]?.[h];
+          const actual = grid[row]?.[col]?.[h];
+          const expEmpty = !expected || expected === "empty" || expected === "air";
+          const actEmpty = !actual || actual === "empty" || actual === "air";
+          if (!expEmpty || !actEmpty) {
+            hasOverlay = true;
+            if (expEmpty !== actEmpty || expected !== actual) {
+              allCorrect = false;
+            }
+          }
+        }
+        if (hasOverlay) {
+          ctx.fillStyle = allCorrect
+            ? "rgba(34, 197, 94, 0.4)"
+            : "rgba(239, 68, 68, 0.4)";
+          ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
+        }
+      }
+
+      // Hover highlight
+      if (hoverCell && hoverCell.row === row && hoverCell.col === col) {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+        ctx.fillRect(x, y, cellSize, cellSize);
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
+
+        // Hover block preview
+        if (hoverBlock && hoverBlock !== "empty" && hoverBlock !== "air") {
+          ctx.fillStyle = TOP_DOWN_COLORS[hoverBlock] ?? "#ccc";
+          ctx.globalAlpha = 0.45;
+          ctx.fillRect(x + 2, y + 2, cellSize - 4, cellSize - 4);
+          ctx.globalAlpha = 1.0;
+        }
+      }
+
+      // Coordinate label
+      const label = colToLetter(col) + String(rowToNumber(row));
+      const fontSize = Math.max(8, Math.floor(cellSize * 0.28));
+      ctx.font = `bold ${fontSize}px monospace`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      // Dark text on light cells, light text on dark cells
+      const isLight = topBlock === "empty" || topBlock === "air" || topBlock === "floor" || topBlock === "window" || topBlock === "concrete";
+      ctx.fillStyle = isLight ? "rgba(42, 37, 32, 0.55)" : "rgba(255, 255, 255, 0.7)";
+      ctx.fillText(label, x + cellSize / 2, y + cellSize / 2);
+    }
+  }
+}
+
 export function renderVoxelGrid(
   ctx: CanvasRenderingContext2D,
   opts: RenderOptions,
@@ -229,6 +357,12 @@ export function renderVoxelGrid(
     hoverCell,
     hoverBlock,
   } = opts;
+
+  // Top-down 2D view — early return
+  if (opts.topDown) {
+    renderTopDown(ctx, grid, width, height, showScoring ?? false, targetGrid, hoverCell, hoverBlock);
+    return;
+  }
 
   // Clear
   ctx.clearRect(0, 0, width, height);

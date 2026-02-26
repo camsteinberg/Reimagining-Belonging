@@ -42,6 +42,7 @@ export default function VoxelGrid({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [rotation, setRotation] = useState<Rotation>(0);
   const [rotationLocked, setRotationLocked] = useState(true);
+  const [topDown, setTopDown] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ w: 400, h: 300 });
   const [hoverCell, setHoverCell] = useState<{ row: number; col: number } | null>(null);
   const [keyboardCursor, setKeyboardCursor] = useState<{ row: number; col: number } | null>(null);
@@ -82,6 +83,28 @@ export default function VoxelGrid({
       const canvasX = (clientX - rect.left) * scaleXR;
       const canvasY = (clientY - rect.top) * scaleYR;
 
+      // Top-down mode: simple grid math
+      if (topDown) {
+        const w = canvasSize.w * dpr;
+        const h = canvasSize.h * dpr;
+        const padding = 16;
+        const availW = w - padding * 2;
+        const availH = h - padding * 2;
+        const cellSize = Math.floor(Math.min(availW / GRID_SIZE, availH / GRID_SIZE));
+        const gridPxW = cellSize * GRID_SIZE;
+        const gridPxH = cellSize * GRID_SIZE;
+        const originX = Math.floor((w - gridPxW) / 2);
+        const originY = Math.floor((h - gridPxH) / 2);
+
+        const col = Math.floor((canvasX - originX) / cellSize);
+        const row = Math.floor((canvasY - originY) / cellSize);
+
+        if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
+          return { row, col };
+        }
+        return null;
+      }
+
       const { minX, minY, maxX, maxY } = getGridExtent(rotation);
       const gridW = maxX - minX;
       const gridH = maxY - minY;
@@ -106,7 +129,7 @@ export default function VoxelGrid({
       }
       return null;
     },
-    [rotation, canvasSize, dpr, grid],
+    [rotation, canvasSize, dpr, grid, topDown],
   );
 
   // ---- Single render function (stored in ref to avoid restarting animation loop) ----
@@ -138,9 +161,10 @@ export default function VoxelGrid({
         animTime: time,
         hoverCell: readOnly ? null : (keyboardCursor ?? hoverCell),
         hoverBlock: selectedBlock,
+        topDown,
       });
     },
-    [grid, canvasSize, dpr, rotation, showScoring, targetGrid, aiPlacedCells, newCells, hoverCell, keyboardCursor, selectedBlock, readOnly],
+    [grid, canvasSize, dpr, rotation, showScoring, targetGrid, aiPlacedCells, newCells, hoverCell, keyboardCursor, selectedBlock, readOnly, topDown],
   );
 
   // ---- Static render when no animation needed ----
@@ -286,6 +310,21 @@ export default function VoxelGrid({
         }}
         aria-hidden="true"
       />
+
+      {/* Top-down / 3D view toggle */}
+      <button
+        onClick={() => setTopDown((v) => !v)}
+        className={[
+          "absolute top-2 left-2 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-[family-name:var(--font-pixel)] transition-all duration-200 shadow-md",
+          topDown
+            ? "bg-[#b89f65]/90 hover:bg-[#b89f65] text-[#2a2520] ring-1 ring-[#b89f65]"
+            : "bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] ring-1 ring-[#b89f65]/40",
+        ].join(" ")}
+        title={topDown ? "Switch to 3D isometric view" : "Switch to 2D top-down view"}
+        type="button"
+      >
+        <span className="text-sm">{topDown ? "3D" : "2D"}</span>
+      </button>
 
       {/* Rotation controls — available on all grids (architects need to rotate too) */}
       {(
