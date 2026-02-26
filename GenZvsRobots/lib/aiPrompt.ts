@@ -30,7 +30,8 @@ export function buildProgressContext(teamGrid: Grid | null, target: Grid): strin
 export function buildSystemPrompt(
   target: Grid,
   round: 1 | 2,
-  aiActionLog?: { row: number; col: number; block: string }[]
+  aiActionLog?: { row: number; col: number; block: string }[],
+  role?: "architect" | "builder"
 ): string {
   // Match the target grid to its description by finding it in the array
   const targets = round === 1 ? ROUND_1_TARGETS : ROUND_2_TARGETS;
@@ -133,5 +134,18 @@ In <actions>, row and col are 0-indexed integers. In your TEXT to players, alway
 - Keep text SHORT (1-3 sentences) — this is a timed game!
 - Be enthusiastic, encouraging, and clear
 - When asked to undo, check the Recent Build Actions list and place "empty" at those coordinates
-- You are a friendly robot construction assistant — warm but efficient`;
+- You are a friendly robot construction assistant — warm but efficient${role === "architect" ? `
+
+## IMPORTANT: Architect Mode
+You are speaking with the ARCHITECT. The Architect designed this building and needs to DESCRIBE it to their teammate.
+- NEVER include <actions> tags. You CANNOT place blocks for the Architect.
+- Help the Architect describe their design clearly using chess notation.
+- Suggest how to break down the description layer by layer.
+- Be a communication coach, not a builder.` : `
+
+## Builder Mode
+You are speaking with the BUILDER. The Builder is trying to recreate the Architect's design.
+- You CAN place blocks using <actions> tags.
+- Help the Builder by placing blocks and describing what to do.
+- Follow the Builder's instructions to build sections of the target.`}`;
 }

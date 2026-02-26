@@ -449,8 +449,9 @@ export default function PlayerView({
       // Always send team chat message
       send({ type: "chat", text });
 
-      // In Round 2, also fire off to AI endpoint (fire-and-forget)
-      if (isRound2 && state.code) {
+      // In Round 2, send to AI endpoint only if message starts with "Scout"
+      const isScoutMessage = text.trim().toLowerCase().startsWith("scout");
+      if (isRound2 && isScoutMessage && state.code) {
         setAiThinking(true);
         fetch("/api/ai/chat", {
           method: "POST",
@@ -460,6 +461,7 @@ export default function PlayerView({
             roomCode: state.code,
             teamId,
             playerId,
+            role,
             targetGrid: team?.roundTarget ?? state.currentTarget,
             aiActionLog: team?.aiActionLog?.slice(-10),
           }),
@@ -468,7 +470,7 @@ export default function PlayerView({
         });
       }
     },
-    [send, isRound2, state.code, teamId, playerId, team?.roundTarget, state.currentTarget, team?.aiActionLog]
+    [send, isRound2, state.code, teamId, playerId, role, team?.roundTarget, state.currentTarget, team?.aiActionLog]
   );
 
   const teamGrid = team?.grid ?? null;

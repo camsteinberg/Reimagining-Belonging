@@ -223,7 +223,7 @@ export default function ChatPanel({
   const placeholder = disabled
     ? "Chat disabled"
     : isRound2
-    ? "Message your team..."
+    ? "Chat or say \"Scout...\" for AI help"
     : "Chat with your team...";
 
   return (
