@@ -16,12 +16,14 @@ import {
   endDesign,
   resetToLobby,
   setTeamName,
+  kickPlayer,
 } from "./gameState";
 
 export default class GameRoom implements Party.Server {
   state: RoomState;
   hostId: string | null = null;
   timerInterval: ReturnType<typeof setInterval> | null = null;
+  pausedRemainingMs: number | null = null;
 
   constructor(readonly room: Party.Room) {
     this.state = createRoomState();
@@ -143,7 +145,16 @@ export default class GameRoom implements Party.Server {
           this.send(sender, { type: "error", message: "Not authorized" });
           return;
         }
-        this.handleHostAction(msg.action);
+        if (msg.action === "kickPlayer" && msg.targetPlayerId) {
+          const targetConn = this.room.getConnection(msg.targetPlayerId);
+          if (targetConn) {
+            this.send(targetConn, { type: "kicked", message: "You've been removed by the host" });
+          }
+          kickPlayer(this.state, msg.targetPlayerId);
+          this.broadcastState();
+        } else {
+          this.handleHostAction(msg.action);
+        }
         break;
       }
 
@@ -158,6 +169,20 @@ export default class GameRoom implements Party.Server {
         if (!namePlayer) return;
         if (this.state.phase !== "lobby") return;
         setTeamName(this.state, namePlayer.teamId, msg.name);
+        this.broadcastState();
+        break;
+      }
+
+      case "leaveGame": {
+        const leavingPlayer = this.state.players[sender.id];
+        if (!leavingPlayer) return;
+        const leavingTeamId = leavingPlayer.teamId;
+        removePlayer(this.state, sender.id);
+        delete this.state.players[sender.id];
+        const leavingTeam = this.state.teams[leavingTeamId];
+        if (leavingTeam && leavingTeam.players.filter(pid => this.state.players[pid]?.connected).length === 0) {
+          delete this.state.teams[leavingTeamId];
+        }
         this.broadcastState();
         break;
       }
@@ -225,6 +250,23 @@ export default class GameRoom implements Party.Server {
       );
     }
 
+    // Log AI actions for the team
+    const logTeam = this.state.teams[teamId];
+    if (logTeam) {
+      for (const action of actions) {
+        logTeam.aiActionLog.push({
+          row: action.row,
+          col: action.col,
+          block: action.block as BlockType,
+          timestamp: Date.now(),
+        });
+      }
+      // Keep only last 10
+      if (logTeam.aiActionLog.length > 10) {
+        logTeam.aiActionLog = logTeam.aiActionLog.slice(-10);
+      }
+    }
+
     // Broadcast AI chat message to the team
     this.broadcastToTeam(teamId, {
       type: "chat",
@@ -255,6 +297,7 @@ export default class GameRoom implements Party.Server {
   handleHostAction(action: string) {
     switch (action) {
       case "startRound": {
+        this.pausedRemainingMs = null;
         const started = startRound(this.state);
         if (!started) {
           this.broadcastState();
@@ -264,11 +307,19 @@ export default class GameRoom implements Party.Server {
         break;
       }
       case "pause": {
+        if (this.state.timerEnd) {
+          this.pausedRemainingMs = Math.max(0, this.state.timerEnd - Date.now());
+        }
         this.stopTimer();
+        this.state.timerEnd = null;
         break;
       }
       case "resume": {
-        this.startTimer();
+        if (this.pausedRemainingMs != null && this.pausedRemainingMs > 0) {
+          this.state.timerEnd = Date.now() + this.pausedRemainingMs;
+          this.pausedRemainingMs = null;
+          this.startTimer();
+        }
         break;
       }
       case "skipToReveal": {
@@ -294,6 +345,7 @@ export default class GameRoom implements Party.Server {
         break;
       }
       case "startDemo": {
+        this.pausedRemainingMs = null;
         startDemo(this.state);
         this.startTimer();
         break;
@@ -304,6 +356,7 @@ export default class GameRoom implements Party.Server {
         break;
       }
       case "startDesign": {
+        this.pausedRemainingMs = null;
         startDesign(this.state);
         this.startTimer();
         break;
@@ -315,6 +368,7 @@ export default class GameRoom implements Party.Server {
         break;
       }
       case "endGame": {
+        this.pausedRemainingMs = null;
         this.stopTimer();
         resetToLobby(this.state);
         break;
