@@ -77,13 +77,33 @@ export default function HostControls({ phase, send, hasDesigns, disabled, timerE
         </>
       )}
 
-      {phase === "design" && (
-        <HostButton label="End Design Phase" action="endDesign" send={send} variant="primary" />
-      )}
+      {phase === "design" && (() => {
+        const isPaused = !timerEnd;
+        return (
+          <>
+            <HostButton label="End Design Phase" action="endDesign" send={send} variant="primary" />
+            {isPaused ? (
+              <HostButton label="Resume" action="resume" send={send} variant="secondary" />
+            ) : (
+              <HostButton label="Pause" action="pause" send={send} variant="secondary" />
+            )}
+          </>
+        );
+      })()}
 
-      {phase === "demo" && (
-        <HostButton label="End Practice" action="endDemo" send={send} variant="secondary" />
-      )}
+      {phase === "demo" && (() => {
+        const isPaused = !timerEnd;
+        return (
+          <>
+            <HostButton label="End Practice" action="endDemo" send={send} variant="secondary" />
+            {isPaused ? (
+              <HostButton label="Resume" action="resume" send={send} variant="secondary" />
+            ) : (
+              <HostButton label="Pause" action="pause" send={send} variant="secondary" />
+            )}
+          </>
+        );
+      })()}
 
       {(phase === "round1" || phase === "round2") && (() => {
         const isPaused = !timerEnd;
