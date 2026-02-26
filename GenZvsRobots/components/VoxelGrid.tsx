@@ -311,24 +311,24 @@ export default function VoxelGrid({
         aria-hidden="true"
       />
 
-      {/* Top-down / 3D view toggle */}
-      <button
-        onClick={() => setTopDown((v) => !v)}
-        className={[
-          "absolute top-2 left-2 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-[family-name:var(--font-pixel)] transition-all duration-200 shadow-md",
-          topDown
-            ? "bg-[#b89f65]/90 hover:bg-[#b89f65] text-[#2a2520] ring-1 ring-[#b89f65]"
-            : "bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] ring-1 ring-[#b89f65]/40",
-        ].join(" ")}
-        title={topDown ? "Switch to 3D isometric view" : "Switch to 2D top-down view"}
-        type="button"
-      >
-        <span className="text-sm">{topDown ? "3D" : "2D"}</span>
-      </button>
-
-      {/* Rotation controls — available on all grids (architects need to rotate too) */}
+      {/* View + Rotation controls */}
       {(
         <>
+          {/* Top-down / 3D view toggle — next to rotation button */}
+          <button
+            onClick={() => setTopDown((v) => !v)}
+            className={[
+              "absolute top-2 right-28 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-[family-name:var(--font-pixel)] transition-all duration-200 shadow-md",
+              topDown
+                ? "bg-[#b89f65]/90 hover:bg-[#b89f65] text-[#2a2520] ring-1 ring-[#b89f65]"
+                : "bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] ring-1 ring-[#b89f65]/40",
+            ].join(" ")}
+            title={topDown ? "Switch to 3D isometric view" : "Switch to 2D top-down view"}
+            type="button"
+          >
+            <span className="text-sm">{topDown ? "3D" : "2D"}</span>
+          </button>
+
           {/* Rotate toggle — prominent labeled button */}
           <button
             onClick={() => setRotationLocked((l) => !l)}
