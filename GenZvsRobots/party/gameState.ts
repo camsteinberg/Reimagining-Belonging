@@ -31,6 +31,7 @@ export function createRoomState(): RoomState {
     timerEnd: null,
     hostConnected: false,
     nextTeamIndex: 0,
+    theme: null,
   };
 }
 
@@ -353,6 +354,7 @@ export function resetToLobby(state: RoomState): void {
   state.currentTarget = null;
   state.timerEnd = null;
   state.nextTeamIndex = Object.keys(state.teams).length;
+  state.theme = null;
 
   for (const team of Object.values(state.teams)) {
     team.grid = createEmptyGrid();

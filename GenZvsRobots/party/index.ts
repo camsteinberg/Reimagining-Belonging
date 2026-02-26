@@ -221,6 +221,14 @@ export default class GameRoom implements Party.Server {
         break;
       }
 
+      case "setTheme": {
+        if (sender.id !== this.hostId) return;
+        if (this.state.phase !== "lobby") return;
+        this.state.theme = (msg.theme || "").trim().slice(0, 50) || null;
+        this.broadcastState();
+        break;
+      }
+
       case "leaveGame": {
         const leavingPlayer = this.state.players[sender.id];
         if (!leavingPlayer) return;

@@ -122,6 +122,21 @@ function LobbyView({
           </p>
         </motion.div>
 
+        {/* Theme input */}
+        <div className="w-full max-w-md">
+          <label className="block font-[family-name:var(--font-pixel)] text-[8px] text-cream/40 uppercase tracking-widest mb-2 text-center">
+            Design Theme (optional)
+          </label>
+          <input
+            type="text"
+            value={state.theme ?? ""}
+            onChange={(e) => send({ type: "setTheme", theme: e.target.value })}
+            placeholder="e.g. Houses, Castles, Vehicles..."
+            maxLength={50}
+            className="w-full text-center font-[family-name:var(--font-body)] text-sm px-4 py-2.5 rounded bg-white/5 border border-gold/30 text-cream placeholder:text-cream/20 outline-none focus:border-gold/60 transition-colors"
+          />
+        </div>
+
         {/* Player list */}
         <div className="w-full max-w-2xl mt-4">
           <p className="font-[family-name:var(--font-pixel)] text-[9px] text-cream/40 uppercase tracking-widest mb-3 text-center">
@@ -224,7 +239,9 @@ function ActiveRoundView({
             accentColor,
           ].join(" ")}
         >
-          {PHASE_LABELS[state.phase]}
+          {state.phase === "design" && state.theme
+            ? `DESIGN YOUR BUILDING \u2014 Theme: ${state.theme}`
+            : PHASE_LABELS[state.phase]}
         </span>
         {state.timerEnd != null && (
           <Timer

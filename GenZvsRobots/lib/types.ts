@@ -55,6 +55,7 @@ export interface RoomState {
   timerEnd: number | null; // unix timestamp
   hostConnected: boolean;
   nextTeamIndex: number;
+  theme: string | null;
 }
 
 // === WebSocket Messages ===
@@ -65,6 +66,7 @@ export type ClientMessage =
   | { type: "hostAction"; action: HostAction; targetPlayerId?: string }
   | { type: "aiChat"; text: string }
   | { type: "setTeamName"; name: string }
+  | { type: "setTheme"; theme: string }
   | { type: "leaveGame" };
 
 export type HostAction =

@@ -572,7 +572,9 @@ export default function PlayerView({
         <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
           <div className="flex flex-col flex-1 min-h-0 min-w-0 p-3 gap-2">
             <div className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-center py-1 px-2 rounded text-[#8b5e3c]/70 bg-[#8b5e3c]/10">
-              Build your own creation! Your teammate will try to recreate it.
+              {state.theme
+                ? `Theme: ${state.theme} — Build your own ${state.theme.toLowerCase()}! Your teammate will try to recreate it.`
+                : "Build your own creation! Your teammate will try to recreate it."}
             </div>
             <div className="flex-1 min-h-0 flex items-center justify-center">
               {myDesignGrid ? (
