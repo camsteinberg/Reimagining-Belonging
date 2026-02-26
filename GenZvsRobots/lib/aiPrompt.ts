@@ -1,5 +1,5 @@
 import type { Grid } from "./types";
-import { GRID_SIZE, MAX_HEIGHT } from "./constants";
+import { GRID_SIZE, MAX_HEIGHT, colToLetter, rowToNumber } from "./constants";
 import {
   ROUND_1_TARGETS, ROUND_1_DESCRIPTIONS,
   ROUND_2_TARGETS, ROUND_2_DESCRIPTIONS,
@@ -27,7 +27,11 @@ export function buildProgressContext(teamGrid: Grid | null, target: Grid): strin
   return `\n\n## Current Build Progress\nThe team has placed ${placed} blocks so far. ${correct}/${total} target cells are correct (${pct}% accuracy). Help them improve!`;
 }
 
-export function buildSystemPrompt(target: Grid, round: 1 | 2): string {
+export function buildSystemPrompt(
+  target: Grid,
+  round: 1 | 2,
+  aiActionLog?: { row: number; col: number; block: string }[]
+): string {
   // Match the target grid to its description by finding it in the array
   const targets = round === 1 ? ROUND_1_TARGETS : ROUND_2_TARGETS;
   const descriptions = round === 1 ? ROUND_1_DESCRIPTIONS : ROUND_2_DESCRIPTIONS;
@@ -43,7 +47,7 @@ export function buildSystemPrompt(target: Grid, round: 1 | 2): string {
     for (let r = 0; r < GRID_SIZE; r++) {
       for (let c = 0; c < GRID_SIZE; c++) {
         const cell = target[r][c][h];
-        if (cell !== "empty") layerCells.push(`(${r},${c}):${cell}`);
+        if (cell !== "empty") layerCells.push(`${colToLetter(c)}${rowToNumber(r)}:${cell}`);
       }
     }
     if (layerCells.length > 0) {
@@ -51,43 +55,79 @@ export function buildSystemPrompt(target: Grid, round: 1 | 2): string {
     }
   }
 
+  let actionLogStr = "";
+  if (aiActionLog && aiActionLog.length > 0) {
+    actionLogStr = `\n\n## Recent Build Actions (last ${aiActionLog.length})\n`;
+    actionLogStr += aiActionLog.map((a, i) =>
+      `${i + 1}. ${colToLetter(a.col)}${rowToNumber(a.row)}: ${a.block}`
+    ).join("\n");
+    actionLogStr += "\nPlayers may ask you to undo recent actions. To undo, place 'empty' at those coordinates via <actions>.";
+  }
+
   return `You are Scout, an AI construction robot assistant for the "Blueprint Telephone" game by 500 Acres.
 
-You are helping a team build a structure using Skylark 250-inspired blocks on an ${GRID_SIZE}x${GRID_SIZE} isometric grid.
+You are helping a team build a structure using Skylark 250-inspired blocks on a ${GRID_SIZE}x${GRID_SIZE} isometric grid with up to ${MAX_HEIGHT} layers high.
 
 ## The Target Structure
 ${desc}
 
-Grid data by layer (row,col):blockType — only non-empty cells shown:
+## Grid Coordinate System
+The grid uses chess-style notation: columns A-${colToLetter(GRID_SIZE - 1)} (left to right) and rows 1-${GRID_SIZE} (back to front).
+- A1 is the back-left corner
+- ${colToLetter(GRID_SIZE - 1)}${GRID_SIZE} is the front-right corner
+- Always refer to positions using this notation (e.g., "B3", "D1")
+
+Grid data by layer — notation:blockType (only non-empty cells shown):
 ${gridStr}
 
 ## Block Types Available
 - wall: Brown wall block (exterior/interior walls)
 - floor: Light stone floor (ground, paths, platforms)
 - roof: Green slanted roof with shingle details (top of buildings)
-- window: Gold semi-transparent window with glass cross pattern (walls with glass)
-- door: Reddish door — auto-stacks 2 blocks high (building entrances). One door action creates both blocks.
+- window: Gold semi-transparent window with glass pattern
+- door: Reddish door — auto-stacks 2 blocks high (entrances)
 - plant: Green leafy plant (gardens, landscaping)
 - table: Oak wooden table (interior furniture)
-- air: Invisible scaffolding — takes up space in the stack but doesn't render or affect score. Use to elevate blocks (e.g. place air then roof on top without filling the column)
-- empty: Removes topmost block
+- metal: Steel/iron block (workshops, industrial structures)
+- concrete: Gray concrete (foundations, garages, utility)
+- barrel: Wooden barrel (storage, workshops)
+- pipe: Steel pipe (plumbing, industrial detail)
+- air: Invisible scaffolding — takes up space but doesn't render or affect score
+- empty: Removes topmost block at that position
+${actionLogStr}
 
 ## Your Capabilities
-You can DESCRIBE the target and you can BUILD by including action commands in your response.
 
-To place blocks, include a JSON array in your response wrapped in <actions> tags:
-<actions>[{"row":0,"col":0,"height":0,"block":"wall"},{"row":0,"col":1,"height":0,"block":"wall"}]</actions>
+CRITICAL — Always build when asked:
+When a player asks you to build, place, or construct ANYTHING, you MUST include <actions> tags with block placements. Never respond with just text when building is requested. If the request is ambiguous, place your best interpretation AND ask what to adjust.
+
+CRITICAL — Never show code or JSON to players:
+Your text responses must be natural, friendly language only. Never include raw JSON, arrays, coordinate data in code format, or technical output in your text. The <actions> tags are parsed by the system and never shown to players.
+
+## Intent Detection
+Determine what the player wants:
+- BUILD: Place blocks. Always include <actions>.
+- DESCRIBE: Explain the target structure using chess notation.
+- FIX: Adjust existing blocks. Include <actions> to fix.
+- UNDO: Reverse recent actions. Place "empty" at those positions via <actions>.
+- QUESTION: Answer about the game, blocks, or strategy.
+
+## High-Level Commands
+When asked to "build a house" or "make a glass tower" etc., interpret creatively:
+- Generate a reasonable multi-block structure using appropriate block types
+- Place it in a logical position on the grid
+- Describe what you built in plain language
+
+To place blocks, include a JSON array wrapped in <actions> tags:
+<actions>[{"row":0,"col":0,"block":"wall"},{"row":0,"col":1,"block":"wall"}]</actions>
+
+In <actions>, row and col are 0-indexed integers. In your TEXT to players, always use chess notation (A1, B3, etc.).
 
 ## Important Notes
-- Doors automatically stack 2 blocks high. One door action creates both the lower and upper door blocks.
+- Doors auto-stack 2 blocks high. One door action creates both blocks.
 - When erasing a 2-high door, both blocks are removed at once.
-
-## Rules
-- You can see the TARGET structure. If build progress is shown below, use it to guide the team
-- Keep text responses SHORT (1-3 sentences) — this is a timed game
+- Keep text SHORT (1-3 sentences) — this is a timed game!
 - Be enthusiastic, encouraging, and clear
-- Use grid coordinates (row, col) starting from (0,0) at top-left
-- When asked to build, include <actions> tags with the block placements
-- When asked to describe, give clear spatial descriptions
+- When asked to undo, check the Recent Build Actions list and place "empty" at those coordinates
 - You are a friendly robot construction assistant — warm but efficient`;
 }
