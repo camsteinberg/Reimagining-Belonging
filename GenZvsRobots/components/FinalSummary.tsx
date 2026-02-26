@@ -1,10 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
-import type { Team } from "@/lib/types";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import type { Team, Player } from "@/lib/types";
+import VoxelGrid from "./VoxelGrid";
 
 interface FinalSummaryProps {
   teams: Team[];
+  players?: Record<string, Player>;
 }
 
 interface RankedTeam {
@@ -55,6 +58,109 @@ function DeltaBadge({ delta }: { delta: number }) {
   );
 }
 
+function TeamDetailModal({
+  entry,
+  players,
+  onClose,
+}: {
+  entry: RankedTeam;
+  players: Record<string, Player>;
+  onClose: () => void;
+}) {
+  const team = entry.team;
+  const teamPlayers = team.players
+    .map(pid => players[pid])
+    .filter(Boolean) as Player[];
+  const designPlayers = teamPlayers.filter(p => p.designGrid != null);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+        transition={{ duration: 0.3 }}
+        className="bg-charcoal border border-gold/30 rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header with team name, players, close button */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+          <div>
+            <h2 className="font-[family-name:var(--font-pixel)] text-lg text-gold tracking-wider">{team.name}</h2>
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] text-cream/40 tracking-wider uppercase mt-1">
+              {teamPlayers.map(p => p.name).join(" & ")}
+            </p>
+          </div>
+          <button onClick={onClose} className="w-10 h-10 rounded-full flex items-center justify-center text-cream/40 hover:text-cream hover:bg-white/10 transition-colors text-lg" type="button">
+            &times;
+          </button>
+        </div>
+
+        {/* Scores summary row */}
+        <div className="flex items-center justify-center gap-8 px-6 py-4 border-b border-white/10">
+          <div className="text-center">
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] text-cream/40 uppercase tracking-widest mb-1">Round 1</p>
+            <p className="font-[family-name:var(--font-pixel)] text-2xl text-cream/60">{entry.r1}%</p>
+          </div>
+          <span className="text-cream/20 text-2xl">&rarr;</span>
+          <div className="text-center">
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] text-cream/40 uppercase tracking-widest mb-1">Round 2</p>
+            <p className="font-[family-name:var(--font-pixel)] text-2xl text-sage">{entry.r2}%</p>
+          </div>
+          <div className="text-center">
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] text-cream/40 uppercase tracking-widest mb-1">Change</p>
+            <p className="text-xl"><DeltaBadge delta={entry.delta} /></p>
+          </div>
+        </div>
+
+        {/* Player designs side-by-side */}
+        {designPlayers.length > 0 && (
+          <div className="px-6 py-4 border-b border-white/10">
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] text-cream/30 uppercase tracking-widest mb-3 text-center">Player Designs</p>
+            <div className="grid grid-cols-2 gap-4">
+              {designPlayers.map((p) => (
+                <div key={p.id} className="flex flex-col items-center gap-2">
+                  <div className="w-full h-40 rounded-lg border border-white/10 bg-white/5 p-1">
+                    <VoxelGrid grid={p.designGrid!} readOnly className="w-full h-full" />
+                  </div>
+                  <span className="font-[family-name:var(--font-pixel)] text-[9px] text-cream/60">{p.name}&apos;s design</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Build vs Target with scoring overlay */}
+        {team.roundTarget && (
+          <div className="px-6 py-4">
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] text-cream/30 uppercase tracking-widest mb-3 text-center">Build vs Target</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-full h-32 rounded-lg border border-white/10 bg-white/5 p-1">
+                  <VoxelGrid grid={team.roundTarget} readOnly className="w-full h-full" />
+                </div>
+                <span className="font-[family-name:var(--font-pixel)] text-[7px] text-cream/30">Target</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-full h-32 rounded-lg border border-white/10 bg-white/5 p-1">
+                  <VoxelGrid grid={team.grid} readOnly showScoring targetGrid={team.roundTarget} className="w-full h-full" />
+                </div>
+                <span className="font-[family-name:var(--font-pixel)] text-[7px] text-cream/30">Build (scored)</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
+
 const rowVariants = {
   hidden: { opacity: 0, x: -24 },
   visible: (i: number) => ({
@@ -68,11 +174,12 @@ const rowVariants = {
   }),
 };
 
-export default function FinalSummary({ teams }: FinalSummaryProps) {
+export default function FinalSummary({ teams, players }: FinalSummaryProps) {
   const ranked = rankTeams(teams);
   const avgR1 = avg(ranked.map((e) => e.r1));
   const avgR2 = avg(ranked.map((e) => e.r2));
   const topTeam = ranked[0];
+  const [selectedTeam, setSelectedTeam] = useState<RankedTeam | null>(null);
 
   return (
     <div className="flex flex-col min-h-full bg-charcoal text-cream overflow-y-auto">
@@ -149,11 +256,13 @@ export default function FinalSummary({ teams }: FinalSummaryProps) {
                 variants={rowVariants}
                 initial="hidden"
                 animate="visible"
+                onClick={() => players && setSelectedTeam(entry)}
                 className={[
                   "flex items-center gap-4 rounded-lg border px-4 py-3 transition-colors",
                   isTop
                     ? "border-gold/40 bg-gold/8"
                     : "border-white/10 bg-white/5",
+                  players ? "cursor-pointer hover:bg-white/10" : "",
                 ].join(" ")}
               >
                 {/* Rank */}
@@ -275,6 +384,14 @@ export default function FinalSummary({ teams }: FinalSummaryProps) {
           </div>
         </motion.div>
       </div>
+
+      {players && (
+        <AnimatePresence>
+          {selectedTeam && (
+            <TeamDetailModal entry={selectedTeam} players={players} onClose={() => setSelectedTeam(null)} />
+          )}
+        </AnimatePresence>
+      )}
     </div>
   );
 }

@@ -524,7 +524,7 @@ function SummaryView({
   return (
     <div className="flex flex-col h-full bg-charcoal text-cream overflow-hidden">
       <div className="flex-1 min-h-0 overflow-y-auto relative">
-        <FinalSummary teams={teams} />
+        <FinalSummary teams={teams} players={state.players} />
       </div>
 
       {/* Controls */}
