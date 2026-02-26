@@ -104,7 +104,14 @@ const panelVariants = {
 };
 
 export default function RoundComparison({ team }: RoundComparisonProps) {
-  const targetGrid = team.roundTarget!;
+  const targetGrid = team.roundTarget;
+  if (!targetGrid) {
+    return (
+      <div className="flex items-center justify-center h-full bg-charcoal text-cream/40">
+        No target available for this team.
+      </div>
+    );
+  }
   const r1 = team.round1Score ?? 0;
   const r2 = team.round2Score ?? 0;
   const round1Grid = team.round1Grid ?? team.grid;

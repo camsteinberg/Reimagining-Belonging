@@ -30,6 +30,7 @@ export function createRoomState(): RoomState {
     round: 1,
     timerEnd: null,
     hostConnected: false,
+    nextTeamIndex: 0,
   };
 }
 
@@ -40,8 +41,8 @@ export function addPlayer(state: RoomState, id: string, name: string): Player {
   );
 
   if (!teamId) {
-    teamId = `team-${Object.keys(state.teams).length}`;
-    const teamIndex = Object.keys(state.teams).length;
+    const teamIndex = state.nextTeamIndex++;
+    teamId = `team-${teamIndex}`;
     state.teams[teamId] = {
       id: teamId,
       name: TEAM_NAMES[teamIndex % TEAM_NAMES.length],
@@ -73,12 +74,11 @@ export function removePlayer(state: RoomState, id: string): void {
   if (!player) return;
   player.connected = false;
 
+  // Do NOT remove from team.players — keep the entry so reconnection can find and remap it.
   const team = state.teams[player.teamId];
   if (team) {
-    team.players = team.players.filter(pid => pid !== id);
-
-    if (player.role === "architect" && team.players.length > 0) {
-      const nextArchitect = team.players.find(pid => state.players[pid]?.connected);
+    if (player.role === "architect") {
+      const nextArchitect = team.players.find(pid => pid !== id && state.players[pid]?.connected);
       if (nextArchitect) {
         state.players[nextArchitect].role = "architect";
       }
@@ -356,6 +356,7 @@ export function resetToLobby(state: RoomState): void {
   state.round = 1;
   state.currentTarget = null;
   state.timerEnd = null;
+  state.nextTeamIndex = Object.keys(state.teams).length;
 
   for (const team of Object.values(state.teams)) {
     team.grid = createEmptyGrid();

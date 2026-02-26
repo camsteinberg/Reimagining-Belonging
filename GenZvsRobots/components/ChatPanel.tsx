@@ -356,7 +356,7 @@ export default function ChatPanel({
               type="button"
               onClick={() => onSend(emoji)}
               className={[
-                "min-h-[32px] min-w-[32px] px-2 py-1 rounded-lg text-base transition-colors",
+                "min-h-[44px] min-w-[44px] px-2 py-1 rounded-lg text-base transition-colors",
                 isRound2
                   ? "hover:bg-[#6b8f71]/20 active:bg-[#6b8f71]/30"
                   : "hover:bg-[#8b5e3c]/10 active:bg-[#8b5e3c]/20",

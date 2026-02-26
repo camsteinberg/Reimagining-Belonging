@@ -13,6 +13,7 @@ interface PlayerViewProps {
   playerId: string;
   send: (msg: ClientMessage) => void;
   onMessage: (listener: (msg: ServerMessage) => void) => () => void;
+  connected?: boolean;
 }
 
 // --- Exit button with confirmation ---
@@ -24,7 +25,7 @@ function ExitButton({ send }: { send: (msg: ClientMessage) => void }) {
     <>
       <button
         onClick={() => setShowConfirm(true)}
-        className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-xs opacity-50 hover:opacity-100 hover:bg-black/10 transition-all"
+        className="shrink-0 w-12 h-12 flex items-center justify-center rounded-full text-xs opacity-60 hover:opacity-100 hover:bg-black/10 transition-all"
         title="Leave game"
         type="button"
         aria-label="Leave game"
@@ -52,7 +53,7 @@ function ExitButton({ send }: { send: (msg: ClientMessage) => void }) {
               <button
                 onClick={() => {
                   send({ type: "leaveGame" });
-                  window.location.href = "/";
+                  setTimeout(() => { window.location.href = "/"; }, 150);
                 }}
                 className="px-4 py-2 rounded font-[family-name:var(--font-pixel)] text-[10px] tracking-wide uppercase bg-[#c45d3e] text-white hover:bg-[#8b5e3c] transition-colors"
                 type="button"
@@ -203,6 +204,7 @@ function PlayerLobbyView({
           onBlur={handleNameSubmit}
           onKeyDown={(e) => { if (e.key === "Enter") handleNameSubmit(); }}
           autoFocus
+          enterKeyHint="done"
           maxLength={24}
           className="font-[family-name:var(--font-pixel)] text-2xl text-center bg-white/80 border-2 border-[#b89f65] rounded px-4 py-2 text-[#2a2520] outline-none focus:border-[#8b5e3c] w-64"
         />
@@ -211,8 +213,8 @@ function PlayerLobbyView({
           <h2 className="font-[family-name:var(--font-pixel)] text-2xl text-[#8b5e3c]">
             {team.name}
           </h2>
-          <span className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#8b5e3c]/40 group-hover:text-[#8b5e3c]/70 transition-colors">
-            Tap to rename
+          <span className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#8b5e3c]/60 group-hover:text-[#8b5e3c]/70 transition-colors">
+            tap to rename team
           </span>
         </button>
       )}
@@ -298,6 +300,7 @@ export default function PlayerView({
   playerId,
   send,
   onMessage,
+  connected,
 }: PlayerViewProps) {
   const [selectedBlock, setSelectedBlock] = useState<BlockType>("wall");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -444,7 +447,7 @@ export default function PlayerView({
         });
       }
     },
-    [send, isRound2, state.code, teamId, playerId]
+    [send, isRound2, state.code, teamId, playerId, team?.roundTarget, state.currentTarget, team?.aiActionLog]
   );
 
   const teamGrid = team?.grid ?? null;
@@ -456,7 +459,7 @@ export default function PlayerView({
   // --- Waiting states for non-active phases ---
   if (phase === "reveal1") {
     return (
-      <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
+      <div className="flex flex-col h-dvh overflow-hidden bg-[#f0ebe0]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
         {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={false} />}
         <WaitingReveal teamName={teamName} score={team?.round1Score} />
@@ -466,7 +469,7 @@ export default function PlayerView({
 
   if (phase === "interstitial") {
     return (
-      <div className="flex flex-col h-screen overflow-hidden bg-[#1a1510]">
+      <div className="flex flex-col h-dvh overflow-hidden bg-[#1a1510]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
         {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={true} />}
         <WaitingInterstitial currentRole={role} />
@@ -476,7 +479,7 @@ export default function PlayerView({
 
   if (phase === "finalReveal") {
     return (
-      <div className="flex flex-col h-screen overflow-hidden bg-[#1a1510]">
+      <div className="flex flex-col h-dvh overflow-hidden bg-[#1a1510]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
         {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={true} />}
         <WaitingFinalReveal team={team} />
@@ -486,7 +489,7 @@ export default function PlayerView({
 
   if (phase === "summary") {
     return (
-      <div className="flex flex-col h-screen overflow-hidden bg-[#1a1510]">
+      <div className="flex flex-col h-dvh overflow-hidden bg-[#1a1510]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
         {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={true} />}
         <WaitingSummary />
@@ -497,7 +500,7 @@ export default function PlayerView({
   // --- Lobby phase: show team info ---
   if (phase === "lobby") {
     return (
-      <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
+      <div className="flex flex-col h-dvh overflow-hidden bg-[#f0ebe0]">
         <div className="flex items-center">
           <div className="flex-1">
             <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
@@ -520,7 +523,7 @@ export default function PlayerView({
   // --- Design phase: all players build their team's structure ---
   if (isDesign) {
     return (
-      <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
+      <div className="flex flex-col h-dvh overflow-hidden bg-[#f0ebe0]">
         <div className="flex items-center">
           <div className="flex-1">
             <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
@@ -556,7 +559,7 @@ export default function PlayerView({
             </div>
           </div>
           {/* Chat panel in design phase */}
-          <div className="shrink-0 h-48 md:h-auto md:w-80 p-3 pt-0 md:pt-3">
+          <div className="shrink-0 h-56 md:h-auto md:w-80 p-3 pt-0 md:pt-3">
             <ChatPanel
               messages={messages}
               onSend={handleSendChat}
@@ -574,7 +577,7 @@ export default function PlayerView({
   // --- Demo phase: all players build, no chat, no target ---
   if (isDemo) {
     return (
-      <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
+      <div className="flex flex-col h-dvh overflow-hidden bg-[#f0ebe0]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
         {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={false} />}
         <div className="flex flex-col flex-1 min-h-0 p-3 gap-2">
@@ -610,7 +613,7 @@ export default function PlayerView({
   return (
     <div
       className={[
-        "flex flex-col h-screen overflow-hidden",
+        "flex flex-col h-dvh overflow-hidden",
         isRound2 ? "bg-[#1a1510]" : "bg-[#f0ebe0]",
       ].join(" ")}
     >
@@ -639,6 +642,11 @@ export default function PlayerView({
         </div>
       </div>
       {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={isRound2} />}
+      {!connected && (
+        <div className="bg-[#c45d3e] text-white text-center py-2 font-[family-name:var(--font-pixel)] text-[9px] tracking-wider animate-pulse">
+          Reconnecting...
+        </div>
+      )}
 
       {/* Main content area */}
       <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
@@ -711,7 +719,7 @@ export default function PlayerView({
 
         {/* Chat panel */}
         {showChat && (
-          <div className="shrink-0 h-48 md:h-auto md:w-80 p-3 pt-0 md:pt-3">
+          <div className="shrink-0 h-56 md:h-auto md:w-80 p-3 pt-0 md:pt-3">
             <ChatPanel
               messages={messages}
               onSend={handleSendChat}

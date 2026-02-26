@@ -8,6 +8,7 @@ interface HostControlsProps {
   send: (msg: ClientMessage) => void;
   hasDesigns?: boolean;
   disabled?: boolean;
+  timerEnd?: number | null;
 }
 
 function HostButton({
@@ -15,11 +16,13 @@ function HostButton({
   action,
   send,
   variant = "primary",
+  disabled = false,
 }: {
   label: string;
   action: HostAction;
   send: (msg: ClientMessage) => void;
   variant?: "primary" | "secondary" | "danger";
+  disabled?: boolean;
 }) {
   const variantClasses: Record<string, string> = {
     primary:
@@ -32,21 +35,29 @@ function HostButton({
 
   return (
     <motion.button
-      onClick={() => send({ type: "hostAction", action })}
+      disabled={disabled}
+      onClick={() => {
+        if (disabled) return;
+        if (["startDesign", "startRound", "endDesign"].includes(action)) {
+          if (!window.confirm(`${label}?`)) return;
+        }
+        send({ type: "hostAction", action });
+      }}
       className={[
         "px-6 min-h-[48px] py-3 rounded font-[family-name:var(--font-pixel)] text-[10px] tracking-wide uppercase",
-        "transition-colors duration-150 cursor-pointer select-none focus-ring",
+        "transition-colors duration-150 select-none focus-ring",
+        disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
         variantClasses[variant],
       ].join(" ")}
-      whileHover={{ scale: 1.04 }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={disabled ? {} : { scale: 1.04 }}
+      whileTap={disabled ? {} : { scale: 0.97 }}
     >
       {label}
     </motion.button>
   );
 }
 
-export default function HostControls({ phase, send, hasDesigns, disabled }: HostControlsProps) {
+export default function HostControls({ phase, send, hasDesigns, disabled, timerEnd }: HostControlsProps) {
   return (
     <motion.div
       key={phase}
@@ -59,9 +70,9 @@ export default function HostControls({ phase, send, hasDesigns, disabled }: Host
         <>
           <HostButton label="Practice Round" action="startDemo" send={send} variant="secondary" />
           {hasDesigns ? (
-            <HostButton label="Start Round 1" action="startRound" send={send} variant={disabled ? "secondary" : "primary"} />
+            <HostButton label="Start Round 1" action="startRound" send={send} variant={disabled ? "secondary" : "primary"} disabled={disabled} />
           ) : (
-            <HostButton label="Start Design Phase" action="startDesign" send={send} variant={disabled ? "secondary" : "primary"} />
+            <HostButton label="Start Design Phase" action="startDesign" send={send} variant={disabled ? "secondary" : "primary"} disabled={disabled} />
           )}
         </>
       )}
@@ -74,12 +85,19 @@ export default function HostControls({ phase, send, hasDesigns, disabled }: Host
         <HostButton label="End Practice" action="endDemo" send={send} variant="secondary" />
       )}
 
-      {(phase === "round1" || phase === "round2") && (
-        <>
-          <HostButton label="Skip to Reveal" action="skipToReveal" send={send} variant="secondary" />
-          <HostButton label="Pause" action="pause" send={send} variant="secondary" />
-        </>
-      )}
+      {(phase === "round1" || phase === "round2") && (() => {
+        const isPaused = !timerEnd;
+        return (
+          <>
+            <HostButton label="Skip to Reveal" action="skipToReveal" send={send} variant="secondary" />
+            {isPaused ? (
+              <HostButton label="Resume" action="resume" send={send} variant="primary" />
+            ) : (
+              <HostButton label="Pause" action="pause" send={send} variant="secondary" />
+            )}
+          </>
+        );
+      })()}
 
       {phase === "reveal1" && (
         <HostButton label="Continue" action="nextReveal" send={send} variant="primary" />

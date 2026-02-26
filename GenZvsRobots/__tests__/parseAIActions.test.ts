@@ -63,6 +63,23 @@ describe("parseAIResponse", () => {
     expect(result.actions[1].block).toBe("table");
   });
 
+  it("accepts new utility block types", () => {
+    const input = '<actions>[{"row":0,"col":0,"block":"metal"},{"row":1,"col":1,"block":"concrete"},{"row":2,"col":2,"block":"barrel"},{"row":3,"col":3,"block":"pipe"}]</actions>';
+    const result = parseAIResponse(input);
+    expect(result.actions).toHaveLength(4);
+    expect(result.actions[0].block).toBe("metal");
+    expect(result.actions[1].block).toBe("concrete");
+    expect(result.actions[2].block).toBe("barrel");
+    expect(result.actions[3].block).toBe("pipe");
+  });
+
+  it("accepts air block type", () => {
+    const input = '<actions>[{"row":0,"col":0,"block":"air"}]</actions>';
+    const result = parseAIResponse(input);
+    expect(result.actions).toHaveLength(1);
+    expect(result.actions[0].block).toBe("air");
+  });
+
   it("rejects invalid block types like grass and furniture", () => {
     const text = '<actions>[{"row":0,"col":0,"block":"grass"},{"row":1,"col":1,"block":"furniture"}]</actions>';
     const result = parseAIResponse(text);

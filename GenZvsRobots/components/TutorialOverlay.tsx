@@ -128,12 +128,24 @@ export default function TutorialOverlay({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Tutorial"
       style={{
         backgroundColor: isRound2
           ? "rgba(26, 21, 16, 0.9)"
           : "rgba(42, 37, 32, 0.85)",
       }}
     >
+      {/* Skip button */}
+      <button
+        onClick={onDismiss}
+        className="absolute top-4 right-4 font-[family-name:var(--font-pixel)] text-[9px] tracking-wider text-cream/50 hover:text-cream/80 transition-colors uppercase"
+        type="button"
+      >
+        Skip
+      </button>
+
       <div className="max-w-xs mx-6 text-center flex flex-col items-center gap-4">
         {/* Progress dots */}
         <div className="flex items-center gap-2 mb-2">

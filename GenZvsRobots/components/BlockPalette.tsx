@@ -210,7 +210,7 @@ function BlockLegend({ onClose }: { onClose: () => void }) {
         </span>
         <button
           onClick={onClose}
-          className="text-[#e8e0d0]/60 hover:text-[#e8e0d0] text-xs px-1"
+          className="min-w-[36px] min-h-[36px] flex items-center justify-center text-[#e8e0d0]/60 hover:text-[#e8e0d0] text-xs"
           type="button"
         >
           X
@@ -261,13 +261,15 @@ export default function BlockPalette({ selected, onSelect }: BlockPaletteProps) 
 
   return (
     <div
-      className="relative bg-[#4a3728]/90 rounded-xl backdrop-blur-sm px-3 py-2 overflow-x-auto"
+      className="relative bg-[#4a3728]/90 rounded-xl backdrop-blur-sm px-3 py-2"
       role="toolbar"
       aria-label="Block palette"
     >
       <AnimatePresence>
         {showLegend && <BlockLegend onClose={() => setShowLegend(false)} />}
       </AnimatePresence>
+      <div className="relative">
+      <div className="overflow-x-auto scrollbar-none">
       <div className="flex flex-row gap-1 items-center justify-start min-w-max">
         {/* Legend toggle button */}
         <button
@@ -331,6 +333,10 @@ export default function BlockPalette({ selected, onSelect }: BlockPaletteProps) 
             </motion.button>
           );
         })}
+      </div>
+      </div>
+      {/* Right fade indicator */}
+      <div className="absolute right-0 top-0 bottom-0 w-8 pointer-events-none bg-gradient-to-l from-[#4a3728] to-transparent" />
       </div>
     </div>
   );

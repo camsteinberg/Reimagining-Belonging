@@ -34,7 +34,7 @@ export default function RevealCarousel({
 }: RevealCarouselProps) {
   const [[index, direction], setIndexDir] = useState([0, 0]);
 
-  const validTeams = teams.filter((t) => t != null);
+  const validTeams = teams.filter((t) => t != null && t.roundTarget != null);
   if (validTeams.length === 0) {
     return (
       <div className="flex items-center justify-center h-full text-cream/40">
@@ -45,7 +45,8 @@ export default function RevealCarousel({
 
   const clampedIndex = Math.min(index, validTeams.length - 1);
   const team = validTeams[clampedIndex];
-  const targetGrid = team.roundTarget!;
+  const targetGrid = team.roundTarget;
+  if (!targetGrid) return null;
 
   const score = round === 1 ? (team.round1Score ?? 0) : (team.round2Score ?? 0);
   const displayGrid =

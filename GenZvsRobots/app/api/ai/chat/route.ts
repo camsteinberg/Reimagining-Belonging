@@ -58,15 +58,22 @@ export async function POST(req: NextRequest) {
     // Add current message
     messages.push({ role: "user", content: text });
 
-    // C3: Update cooldown timestamp before calling API
-    teamCooldowns.set(cooldownKey, Date.now());
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    let response: Anthropic.Message;
+    try {
+      response = await anthropic.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 500,
+        system: systemPrompt,
+        messages,
+      }, { signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
-    const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 500,
-      system: systemPrompt,
-      messages,
-    });
+    // C3: Update cooldown timestamp after successful API call
+    teamCooldowns.set(cooldownKey, Date.now());
 
     const aiText = response.content
       .filter((block): block is Anthropic.TextBlock => block.type === "text")
@@ -82,7 +89,7 @@ export async function POST(req: NextRequest) {
       "blueprint-telephone.camsteinberg.partykit.dev";
     const partyProtocol = partyHost.startsWith("localhost") || partyHost.startsWith("127.") ? "http" : "https";
 
-    await fetch(`${partyProtocol}://${partyHost}/party/${roomCode.toLowerCase()}`, {
+    const pushRes = await fetch(`${partyProtocol}://${partyHost}/party/${roomCode.toLowerCase()}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -95,6 +102,9 @@ export async function POST(req: NextRequest) {
         actions: parsed.actions,
       }),
     });
+    if (!pushRes.ok) {
+      console.error("PartyKit push failed:", pushRes.status, await pushRes.text());
+    }
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {

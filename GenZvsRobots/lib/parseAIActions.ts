@@ -1,7 +1,7 @@
 import type { BuildAction, AIResponse, BlockType } from "./types";
 import { GRID_SIZE } from "./constants";
 
-const VALID_BLOCKS = new Set<string>(["wall", "floor", "roof", "window", "door", "plant", "table", "empty"]);
+const VALID_BLOCKS = new Set<string>(["wall", "floor", "roof", "window", "door", "plant", "table", "metal", "concrete", "barrel", "pipe", "empty", "air"]);
 
 export function parseAIResponse(text: string): AIResponse {
   const actions: BuildAction[] = [];

@@ -77,7 +77,7 @@ function LobbyView({
 }) {
   const players = Object.values(state.players);
   const hostname =
-    typeof window !== "undefined" ? window.location.hostname : "join";
+    typeof window !== "undefined" ? window.location.host : "join";
   const isOddPlayers = players.length > 0 && players.length % 2 !== 0;
 
   function handleKick(playerId: string) {
@@ -186,7 +186,7 @@ function PlayerPip({
       {onKick && (
         <button
           onClick={() => onKick(player.id)}
-          className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-cream/40 hover:text-ember hover:bg-ember/20 transition-colors text-xs"
+          className="shrink-0 w-8 h-8 min-w-[36px] min-h-[36px] rounded-full flex items-center justify-center text-cream/40 hover:text-ember hover:bg-ember/20 transition-colors text-xs"
           title={`Remove ${player.name}`}
           type="button"
         >
@@ -248,7 +248,7 @@ function ActiveRoundView({
 
       {/* Controls */}
       <div className={["px-5 py-3 border-t shrink-0", borderAccent].join(" ")}>
-        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} />
+        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} timerEnd={state.timerEnd} />
       </div>
     </div>
   );

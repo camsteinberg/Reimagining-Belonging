@@ -18,6 +18,12 @@ import {
   setTeamName,
   kickPlayer,
 } from "./gameState";
+import { GRID_SIZE } from "../lib/constants";
+
+const VALID_BLOCK_TYPES = new Set<string>([
+  "wall", "floor", "roof", "window", "door", "plant", "table",
+  "metal", "concrete", "barrel", "pipe", "empty",
+]);
 
 export default class GameRoom implements Party.Server {
   state: RoomState;
@@ -41,6 +47,10 @@ export default class GameRoom implements Party.Server {
   onClose(conn: Party.Connection) {
     if (conn.id === this.hostId) {
       this.state.hostConnected = false;
+      // Save remaining time before stopping so it can be restored on reconnect
+      if (this.state.timerEnd) {
+        this.pausedRemainingMs = Math.max(0, this.state.timerEnd - Date.now());
+      }
       this.stopTimer();
     }
     removePlayer(this.state, conn.id);
@@ -60,6 +70,12 @@ export default class GameRoom implements Party.Server {
         if (msg.isHost) {
           this.hostId = sender.id;
           this.state.hostConnected = true;
+          // Restore timer if host reconnects while a round was paused due to disconnect
+          if (this.pausedRemainingMs != null && this.pausedRemainingMs > 0) {
+            this.state.timerEnd = Date.now() + this.pausedRemainingMs;
+            this.pausedRemainingMs = null;
+            this.startTimer();
+          }
         } else if (msg.reconnectToken) {
           const reconnected = reconnectPlayer(this.state, sender.id, msg.reconnectToken);
           if (reconnected) {
@@ -81,8 +97,15 @@ export default class GameRoom implements Party.Server {
       case "placeBlock": {
         const player = this.state.players[sender.id];
         if (!player) return;
+        // Validate block type
+        if (!VALID_BLOCK_TYPES.has(msg.block)) return;
         // During demo or design, all players can place blocks; otherwise only builders
-        if (this.state.phase !== "demo" && this.state.phase !== "design" && player.role !== "builder") return;
+        // Exception: solo player on a team can always build
+        if (this.state.phase !== "demo" && this.state.phase !== "design" && player.role !== "builder") {
+          const team = this.state.teams[player.teamId];
+          const connectedCount = team ? team.players.filter(pid => this.state.players[pid]?.connected).length : 0;
+          if (connectedCount !== 1) return;
+        }
 
         const { placed, height, secondHeight } = placeBlock(
           this.state,
@@ -119,12 +142,15 @@ export default class GameRoom implements Party.Server {
         const chatPlayer = this.state.players[sender.id];
         if (!chatPlayer) return;
 
+        const text = (msg.text || "").trim().slice(0, 500);
+        if (!text) return;
+
         const chatMsg: ServerMessage = {
           type: "chat",
           teamId: chatPlayer.teamId,
           senderId: chatPlayer.id,
           senderName: chatPlayer.name,
-          text: msg.text,
+          text,
         };
 
         // Send to all team members
@@ -177,12 +203,17 @@ export default class GameRoom implements Party.Server {
         const leavingPlayer = this.state.players[sender.id];
         if (!leavingPlayer) return;
         const leavingTeamId = leavingPlayer.teamId;
+        // removePlayer marks disconnected but keeps in team.players for reconnect.
+        // For explicit leave, also remove from team.players and delete from state.players.
         removePlayer(this.state, sender.id);
-        delete this.state.players[sender.id];
         const leavingTeam = this.state.teams[leavingTeamId];
-        if (leavingTeam && leavingTeam.players.filter(pid => this.state.players[pid]?.connected).length === 0) {
-          delete this.state.teams[leavingTeamId];
+        if (leavingTeam) {
+          leavingTeam.players = leavingTeam.players.filter(pid => pid !== sender.id);
+          if (leavingTeam.players.filter(pid => this.state.players[pid]?.connected).length === 0) {
+            delete this.state.teams[leavingTeamId];
+          }
         }
+        delete this.state.players[sender.id];
         this.broadcastState();
         break;
       }
@@ -239,8 +270,14 @@ export default class GameRoom implements Party.Server {
 
     const { teamId, text, actions } = body;
 
-    // Apply AI build actions to the team's grid
-    for (const action of actions) {
+    // Apply AI build actions to the team's grid (validate each action)
+    const validActions = actions.filter(
+      (a) =>
+        VALID_BLOCK_TYPES.has(a.block) &&
+        typeof a.row === "number" && a.row >= 0 && a.row < GRID_SIZE &&
+        typeof a.col === "number" && a.col >= 0 && a.col < GRID_SIZE
+    );
+    for (const action of validActions) {
       placeBlock(
         this.state,
         teamId,
@@ -253,7 +290,7 @@ export default class GameRoom implements Party.Server {
     // Log AI actions for the team
     const logTeam = this.state.teams[teamId];
     if (logTeam) {
-      for (const action of actions) {
+      for (const action of validActions) {
         logTeam.aiActionLog.push({
           row: action.row,
           col: action.col,
@@ -278,11 +315,11 @@ export default class GameRoom implements Party.Server {
     });
 
     // Broadcast the build actions to the team so clients can animate AI placements
-    if (actions.length > 0) {
+    if (validActions.length > 0) {
       this.broadcastToTeam(teamId, {
         type: "aiBuilding",
         teamId,
-        actions: actions as BuildAction[],
+        actions: validActions as BuildAction[],
       });
     }
 

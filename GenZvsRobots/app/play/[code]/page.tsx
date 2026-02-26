@@ -94,6 +94,7 @@ export default function PlayPage() {
       playerId={playerId}
       send={send}
       onMessage={onMessage}
+      connected={connected}
     />
   );
 }

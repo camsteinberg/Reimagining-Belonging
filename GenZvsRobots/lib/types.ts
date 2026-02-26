@@ -53,6 +53,7 @@ export interface RoomState {
   round: 1 | 2;
   timerEnd: number | null; // unix timestamp
   hostConnected: boolean;
+  nextTeamIndex: number;
 }
 
 // === WebSocket Messages ===
