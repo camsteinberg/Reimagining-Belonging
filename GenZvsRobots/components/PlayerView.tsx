@@ -383,6 +383,27 @@ export default function PlayerView({
         });
       }
 
+      if (msg.type === "designGridUpdate" && msg.playerId === playerId) {
+        const key = `${msg.row},${msg.col},${msg.height}`;
+        const now = performance.now();
+        setNewCells((prev) => {
+          const next = new Map(prev);
+          next.set(key, now);
+          return next;
+        });
+        const existing = cellTimeoutsRef.current.get(key);
+        if (existing) clearTimeout(existing);
+        const timer = setTimeout(() => {
+          cellTimeoutsRef.current.delete(key);
+          setNewCells((prev) => {
+            const next = new Map(prev);
+            next.delete(key);
+            return next;
+          });
+        }, 600);
+        cellTimeoutsRef.current.set(key, timer);
+      }
+
       if (msg.type === "gridUpdate" && msg.teamId === teamId) {
         const key = `${msg.row},${msg.col},${msg.height}`;
         const now = performance.now();
@@ -406,7 +427,7 @@ export default function PlayerView({
     });
 
     return unsubscribe;
-  }, [onMessage, teamId]);
+  }, [onMessage, teamId, playerId]);
 
   const handleCellClick = useCallback(
     (row: number, col: number) => {
@@ -520,10 +541,20 @@ export default function PlayerView({
     );
   }
 
-  // --- Design phase: all players build their team's structure ---
+  // --- Design phase: each player builds their OWN design ---
   if (isDesign) {
+    const myDesignGrid = state.players[playerId]?.designGrid ?? null;
     return (
       <div className="flex flex-col h-dvh overflow-hidden bg-[#f0ebe0]">
+        {/* Tutorial overlay */}
+        {showTutorial && role && (
+          <TutorialOverlay
+            role={role}
+            isRound2={false}
+            onDismiss={() => setShowTutorial(false)}
+            phase="design"
+          />
+        )}
         <div className="flex items-center">
           <div className="flex-1">
             <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
@@ -533,15 +564,20 @@ export default function PlayerView({
           </div>
         </div>
         {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={false} />}
+        {!connected && (
+          <div className="bg-[#c45d3e] text-white text-center py-2 font-[family-name:var(--font-pixel)] text-[9px] tracking-wider animate-pulse">
+            Reconnecting...
+          </div>
+        )}
         <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
           <div className="flex flex-col flex-1 min-h-0 min-w-0 p-3 gap-2">
             <div className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-center py-1 px-2 rounded text-[#8b5e3c]/70 bg-[#8b5e3c]/10">
-              Design your building! Another team will try to recreate it.
+              Build your own creation! Your teammate will try to recreate it.
             </div>
             <div className="flex-1 min-h-0 flex items-center justify-center">
-              {teamGrid ? (
+              {myDesignGrid ? (
                 <VoxelGrid
-                  grid={teamGrid}
+                  grid={myDesignGrid}
                   onCellClick={handleCellClick}
                   selectedBlock={selectedBlock}
                   readOnly={false}
@@ -567,6 +603,7 @@ export default function PlayerView({
               disabled={false}
               teamName={teamName}
               role={role}
+              phase="design"
             />
           </div>
         </div>
@@ -728,6 +765,7 @@ export default function PlayerView({
               teamName={teamName}
               isAIThinking={aiThinking}
               role={role}
+              phase={phase}
             />
           </div>
         )}

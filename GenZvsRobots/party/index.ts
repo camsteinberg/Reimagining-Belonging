@@ -110,29 +110,51 @@ export default class GameRoom implements Party.Server {
         const { placed, height, secondHeight } = placeBlock(
           this.state,
           player.teamId,
+          sender.id,
           msg.row,
           msg.col,
           msg.block
         );
         if (placed) {
-          this.broadcast({
-            type: "gridUpdate",
-            teamId: player.teamId,
-            row: msg.row,
-            col: msg.col,
-            height,
-            block: msg.block,
-          });
-          // Broadcast second gridUpdate for 2-high door placement/erasure
-          if (secondHeight !== undefined) {
+          if (this.state.phase === "design") {
+            // During design, broadcast per-player designGridUpdate
+            this.broadcast({
+              type: "designGridUpdate",
+              playerId: sender.id,
+              row: msg.row,
+              col: msg.col,
+              height,
+              block: msg.block,
+            });
+            if (secondHeight !== undefined) {
+              this.broadcast({
+                type: "designGridUpdate",
+                playerId: sender.id,
+                row: msg.row,
+                col: msg.col,
+                height: secondHeight,
+                block: msg.block,
+              });
+            }
+          } else {
             this.broadcast({
               type: "gridUpdate",
               teamId: player.teamId,
               row: msg.row,
               col: msg.col,
-              height: secondHeight,
+              height,
               block: msg.block,
             });
+            if (secondHeight !== undefined) {
+              this.broadcast({
+                type: "gridUpdate",
+                teamId: player.teamId,
+                row: msg.row,
+                col: msg.col,
+                height: secondHeight,
+                block: msg.block,
+              });
+            }
           }
         }
         break;
@@ -281,6 +303,7 @@ export default class GameRoom implements Party.Server {
       placeBlock(
         this.state,
         teamId,
+        "ai",
         action.row,
         action.col,
         action.block as BlockType

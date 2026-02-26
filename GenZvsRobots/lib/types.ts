@@ -15,6 +15,7 @@ export interface Player {
   role: Role;
   connected: boolean;
   reconnectToken?: string;
+  designGrid: Grid | null;
 }
 
 // === Teams ===
@@ -83,6 +84,7 @@ export type HostAction =
 export type ServerMessage =
   | { type: "state"; state: RoomState }
   | { type: "gridUpdate"; teamId: string; row: number; col: number; height: number; block: BlockType }
+  | { type: "designGridUpdate"; playerId: string; row: number; col: number; height: number; block: BlockType }
   | { type: "chat"; teamId: string; senderId: string; senderName: string; text: string; isAI?: boolean }
   | { type: "aiBuilding"; teamId: string; actions: BuildAction[] }
   | { type: "timer"; timerEnd: number }

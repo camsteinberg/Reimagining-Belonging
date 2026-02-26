@@ -22,70 +22,87 @@ interface ChatPanelProps {
   teamName?: string;
   isAIThinking?: boolean;
   role?: "architect" | "builder";
+  phase?: string;
 }
 
-// --- Communication tips by role and round ---
+// --- Communication tips by role, round, and phase ---
+
+const DESIGN_TIPS = {
+  heading: "Design Phase \u2014 Build something creative!",
+  tips: [
+    "Build your own creation \u2014 your teammate will recreate it later",
+    "Use different block types to make it interesting",
+    "Think about how you\u2019d describe this to someone who can\u2019t see it",
+    "Keep it fun but buildable!",
+  ],
+  prompts: [
+    "I\u2019m going to build a house with a garden!",
+    "Let\u2019s make something with lots of windows",
+    "I\u2019ll start with the walls on the ground floor",
+    "Adding a roof on top!",
+  ],
+};
 
 const ROUND1_ARCHITECT_TIPS = {
-  heading: "You see the target. Your builders don\u2019t!",
+  heading: "Describe what YOU built to your teammate!",
   tips: [
     "Start with the foundation \u2014 describe the ground floor first",
-    "Use grid coordinates: \u201CPlace walls from (1,1) to (1,6)\u201D",
+    "Use grid coordinates like A1, B3 to be specific",
     "Name block types: wall, floor, roof, window, door, plant, table",
     "Go layer by layer \u2014 finish the ground floor before moving up",
   ],
   prompts: [
-    "Start with a row of walls along row 1, from col 1 to col 6",
+    "I\u2019ll describe my building \u2014 start with the ground floor",
+    "Start at A1 \u2014 I placed a wall there",
     "The ground floor is mostly floor tiles with walls around the edges",
-    "Put a door at row 6, columns 3 and 4",
-    "Now let\u2019s move to layer 1 \u2014 more walls on top",
+    "Ground floor first, then we\u2019ll go up",
   ],
 };
 
 const ROUND1_BUILDER_TIPS = {
-  heading: "Your architect describes \u2014 you build!",
+  heading: "Your teammate designed this \u2014 ask them to describe it!",
   tips: [
-    "Ask where to start \u2014 don\u2019t guess!",
+    "Your teammate built this design \u2014 ask them to describe it",
     "Confirm block types before placing",
-    "Ask for one row or section at a time",
+    "Ask about each section or row",
     "Let them know when you\u2019re done with a section",
   ],
   prompts: [
-    "Where should I start?",
-    "Which block type for the corners?",
-    "What goes on row 0?",
+    "What did you build? Describe the ground floor",
+    "What block type goes at A1?",
+    "What\u2019s on the ground floor?",
     "Done with that row \u2014 what\u2019s next?",
   ],
 };
 
 const ROUND2_ARCHITECT_TIPS = {
-  heading: "Scout (AI) can see the target too!",
+  heading: "Scout can help describe YOUR design!",
   tips: [
-    "Ask Scout to describe the whole building first",
+    "Scout can see your design \u2014 ask it to describe for your teammate",
     "Tell Scout to build entire sections at once",
-    "Ask Scout to explain what\u2019s on a specific layer",
-    "Combine: let Scout build while you guide your builders on details",
+    "You can also direct Scout with coordinates",
+    "Combine: let Scout build while you guide on details",
   ],
   prompts: [
-    "Scout, describe the target building",
+    "Scout, describe my building to my teammate",
     "Scout, build the entire ground floor",
-    "Scout, what blocks are on layer 2?",
+    "Scout, place walls from A1 to A6",
     "Scout, place the roof on top",
   ],
 };
 
 const ROUND2_BUILDER_TIPS = {
-  heading: "Scout is your AI co-builder!",
+  heading: "Scout + your teammate can help you build!",
   tips: [
     "Ask Scout to build whole rows or sections for you",
-    "Tell Scout to describe what you should place next",
+    "Let Scout handle large sections while you do details",
     "Ask Scout to fix or adjust what\u2019s already placed",
     "Work together \u2014 you place blocks while Scout handles other areas",
   ],
   prompts: [
-    "Scout, build the walls on row 0",
-    "What should I build next?",
-    "Scout, place all the floor tiles",
+    "Scout, what should I build first?",
+    "Scout, build the whole ground floor",
+    "Scout, fix the second floor",
     "Scout, add windows to the second layer",
   ],
 };
@@ -94,18 +111,22 @@ function ChatTips({
   role,
   isRound2,
   onSend,
+  phase,
 }: {
   role: "architect" | "builder";
   isRound2: boolean;
   onSend: (text: string) => void;
+  phase?: string;
 }) {
-  const tips = isRound2
-    ? role === "architect"
-      ? ROUND2_ARCHITECT_TIPS
-      : ROUND2_BUILDER_TIPS
-    : role === "architect"
-    ? ROUND1_ARCHITECT_TIPS
-    : ROUND1_BUILDER_TIPS;
+  const tips = phase === "design"
+    ? DESIGN_TIPS
+    : isRound2
+      ? role === "architect"
+        ? ROUND2_ARCHITECT_TIPS
+        : ROUND2_BUILDER_TIPS
+      : role === "architect"
+      ? ROUND1_ARCHITECT_TIPS
+      : ROUND1_BUILDER_TIPS;
 
   const accentColor = isRound2 ? "#6b8f71" : "#8b5e3c";
   const bgTint = isRound2 ? "rgba(107,143,113,0.08)" : "rgba(139,94,60,0.06)";
@@ -182,6 +203,7 @@ export default function ChatPanel({
   teamName,
   isAIThinking,
   role,
+  phase,
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -250,7 +272,7 @@ export default function ChatPanel({
         {/* Communication tips — shown when no messages yet */}
         <AnimatePresence>
           {messages.length === 0 && role && !disabled && (
-            <ChatTips role={role} isRound2={isRound2} onSend={onSend} />
+            <ChatTips role={role} isRound2={isRound2} onSend={onSend} phase={phase} />
           )}
         </AnimatePresence>
 

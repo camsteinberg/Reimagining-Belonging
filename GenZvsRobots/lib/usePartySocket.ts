@@ -38,6 +38,34 @@ export function usePartySocket(roomCode: string | null) {
           setState(msg.state);
         } else if (msg.type === "reconnected") {
           // No local state update needed — a full state broadcast follows
+        } else if (msg.type === "designGridUpdate") {
+          // Apply individual block placements to player's design grid
+          setState((prev) => {
+            if (!prev) return prev;
+            const player = prev.players[msg.playerId];
+            if (!player?.designGrid) return prev;
+            const dg = player.designGrid;
+            const stack = dg[msg.row]?.[msg.col];
+            if (!Array.isArray(stack)) return prev;
+            const newDesignGrid = dg.map((row, r) =>
+              r === msg.row
+                ? row.map((col, c) =>
+                    c === msg.col
+                      ? Array.isArray(col)
+                        ? col.map((cell, h) => (h === msg.height ? msg.block : cell))
+                        : col
+                      : col
+                  )
+                : row
+            );
+            return {
+              ...prev,
+              players: {
+                ...prev.players,
+                [msg.playerId]: { ...player, designGrid: newDesignGrid },
+              },
+            };
+          });
         } else if (msg.type === "gridUpdate") {
           // Apply individual block placements to local state immediately
           setState((prev) => {

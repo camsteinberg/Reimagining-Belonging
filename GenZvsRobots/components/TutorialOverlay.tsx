@@ -26,17 +26,17 @@ function getSlides(
       {
         icon: "\u{1F3D7}",
         heading: "Design Phase",
-        body: "Design a building for the other team to recreate!",
+        body: "Build your own creation! Your teammate will try to recreate it later.",
       },
       {
-        icon: "\u{1F9F1}",
-        heading: "Everyone Builds",
-        body: "Both teammates can place blocks. Use chat to coordinate your design.",
+        icon: "\u{1F3A8}",
+        heading: "Be Creative",
+        body: "Use different block types. Think about how you'd describe this to someone who can't see it.",
       },
       {
         icon: "\u{1F680}",
         heading: "Go!",
-        body: "Build something creative. The other team will try to copy it!",
+        body: "You have 2 minutes. Build something great!",
       },
     ];
   }
@@ -48,8 +48,8 @@ function getSlides(
         heading: "Roles Swapped!",
         body: `You're now the ${role === "architect" ? "Architect" : "Builder"}. ${
           role === "architect"
-            ? "You can see the target — describe it to your team!"
-            : "Listen to your Architect and place blocks!"
+            ? "Now YOU describe YOUR design! Scout the AI robot can help describe and build."
+            : "Your teammate designed a building. Scout can help you build it!"
         }`,
       },
       {
@@ -60,12 +60,12 @@ function getSlides(
       {
         icon: "\u{1F4AC}",
         heading: "Example Prompts",
-        body: `Try: "Scout, describe the building" or "Scout, build the ground floor" or "Scout, place walls at B1 to B6"`,
+        body: `Try: "Scout, describe my building" or "Scout, build the ground floor" or "Scout, place walls at B1 to B6"`,
       },
       {
         icon: "\u{1F680}",
         heading: "Go!",
-        body: "Work together with Scout to recreate the target as accurately as possible!",
+        body: "Work together with Scout to recreate the design as accurately as possible!",
       },
     ];
   }
@@ -77,8 +77,8 @@ function getSlides(
       heading: `You're the ${role === "architect" ? "Architect" : "Builder"}!`,
       body:
         role === "architect"
-          ? "You can see the target building. Your Builder can't — describe it using chat!"
-          : "Your Architect can see the target. Listen to their instructions and place blocks!",
+          ? "You designed this building! Now describe it to your Builder using the chat."
+          : "Your teammate designed a building. Listen to their chat messages and recreate it!",
     },
     {
       icon: "\u{1F9F1}",
@@ -94,12 +94,12 @@ function getSlides(
       body:
         role === "architect"
           ? "Go layer by layer — describe the ground floor first, then move up. Be specific!"
-          : "Ask your Architect where to start. Confirm block types before placing. Say when you're done with a section!",
+          : "Ask your teammate where to start. Confirm block types before placing. Say when you're done with a section!",
     },
     {
       icon: "\u{1F680}",
       heading: "Go!",
-      body: "Work together to recreate the target as accurately as possible. Good luck!",
+      body: "Work together to recreate the design as accurately as possible. Good luck!",
     },
   ];
 }
