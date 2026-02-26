@@ -1,5 +1,5 @@
 import type { Grid, BlockType } from "./types";
-import { GRID_SIZE, MAX_HEIGHT, getStackHeight, getTopBlockHeight } from "./constants";
+import { GRID_SIZE, MAX_HEIGHT, getStackHeight, getTopBlockHeight, colToLetter, rowToNumber } from "./constants";
 import { getSpriteAtlas, getSpriteRect, SPRITE_SIZE, TILE_W, TILE_H, BLOCK_H, FLOOR_H, type SpriteType } from "./sprites";
 import { gridToScreen, getDrawOrder, type Rotation } from "./voxel";
 
@@ -189,6 +189,29 @@ function drawHoverPreview(
   }
 }
 
+// Chess-notation axis labels (A-F columns, 1-6 rows)
+function drawAxisLabels(ctx: CanvasRenderingContext2D, rotation: Rotation): void {
+  ctx.save();
+  ctx.fillStyle = "rgba(42, 37, 32, 0.35)";
+  ctx.font = "bold 8px monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  // Column letters along top-left edge (row = -0.7, varying col)
+  for (let col = 0; col < GRID_SIZE; col++) {
+    const { x, y } = gridToScreen(-0.7, col, rotation);
+    ctx.fillText(colToLetter(col), x, y + TILE_H / 2);
+  }
+
+  // Row numbers along top-right edge (col = -0.7, varying row)
+  for (let row = 0; row < GRID_SIZE; row++) {
+    const { x, y } = gridToScreen(row, -0.7, rotation);
+    ctx.fillText(String(rowToNumber(row)), x, y + TILE_H / 2);
+  }
+
+  ctx.restore();
+}
+
 export function renderVoxelGrid(
   ctx: CanvasRenderingContext2D,
   opts: RenderOptions,
@@ -235,6 +258,9 @@ export function renderVoxelGrid(
     const isDark = (row + col) % 2 === 0;
     drawGroundTile(ctx, x, y, isDark ? "#d4cfc4" : "#cec8bc");
   }
+
+  // 1b. Draw chess-notation axis labels
+  drawAxisLabels(ctx, rotation);
 
   // 2. Draw blocks
   let atlas: HTMLCanvasElement;

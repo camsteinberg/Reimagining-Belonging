@@ -10,7 +10,7 @@ export const SPRITE_SIZE = 64;
 type Rotation = 0 | 1 | 2 | 3;
 
 // Sprite types include all block types plus the non-user-placeable door_top variant
-export const SPRITE_TYPES = ["wall", "floor", "roof", "window", "door", "door_top", "plant", "table", "air", "empty"] as const;
+export const SPRITE_TYPES = ["wall", "floor", "roof", "window", "door", "door_top", "plant", "table", "metal", "concrete", "barrel", "pipe", "air", "empty"] as const;
 export type SpriteType = (typeof SPRITE_TYPES)[number];
 
 // Centering offset: (SPRITE_SIZE - TILE_W) / 2
@@ -377,6 +377,193 @@ function drawTableDecorations(img: ImageData, yOff: number, topRgb: [number, num
   }
 }
 
+function drawMetalDecorations(img: ImageData, yOff: number, h: number, leftRgb: [number, number, number], rightRgb: [number, number, number]): void {
+  // Horizontal rivet lines at 1/3 and 2/3 height on both faces
+  const rivetLineLeft = adjustRgb(leftRgb, -20);
+  const rivetLineRight = adjustRgb(rightRgb, -20);
+  const rivetDotLeft = adjustRgb(leftRgb, 40);
+  const rivetDotRight = adjustRgb(rightRgb, 40);
+
+  const thirds = [Math.round(h / 3), Math.round((h * 2) / 3)];
+
+  // Left face rivet lines + dots
+  for (const dy of thirds) {
+    const y1 = Math.round(yOff + 12 + dy);
+    const y2 = yOff + 24 + dy;
+    drawLine(img, OX + 1, y1, OX + 23, y2, rivetLineLeft[0], rivetLineLeft[1], rivetLineLeft[2]);
+    // Rivet dots every 6px along the line
+    for (let t = 0; t <= 1; t += 0.25) {
+      const rx = Math.round(OX + 1 + t * 22);
+      const ry = Math.round(y1 + t * (y2 - y1));
+      setPixel(img, rx, ry, rivetDotLeft[0], rivetDotLeft[1], rivetDotLeft[2]);
+    }
+  }
+
+  // Right face rivet lines + dots
+  for (const dy of thirds) {
+    const y1 = yOff + 24 + dy;
+    const y2 = Math.round(yOff + 12 + dy);
+    drawLine(img, OX + 25, y1, OX + 47, y2, rivetLineRight[0], rivetLineRight[1], rivetLineRight[2]);
+    // Rivet dots every 6px along the line
+    for (let t = 0; t <= 1; t += 0.25) {
+      const rx = Math.round(OX + 25 + t * 22);
+      const ry = Math.round(y1 + t * (y2 - y1));
+      setPixel(img, rx, ry, rivetDotRight[0], rivetDotRight[1], rivetDotRight[2]);
+    }
+  }
+}
+
+function drawConcreteDecorations(img: ImageData, yOff: number, h: number, topRgb: [number, number, number], leftRgb: [number, number, number], rightRgb: [number, number, number]): void {
+  // Subtle speckle texture on all faces
+  const speckleTop = adjustRgb(topRgb, -18);
+  const speckleLeft = adjustRgb(leftRgb, -18);
+  const speckleRight = adjustRgb(rightRgb, -18);
+
+  // Top face speckles — scattered darker pixels across diamond
+  const cx = OX + 24;
+  const cy = yOff + 12;
+  const topSpeckles = [
+    [-5, 1], [-3, -2], [-1, 3], [1, -1], [3, 2],
+    [5, -1], [-4, -1], [0, 0], [4, -3], [-2, 4],
+    [6, 1], [-6, 0], [2, -4], [-1, -2], [3, 4],
+  ];
+  for (const [dx, dy] of topSpeckles) {
+    setPixel(img, cx + dx, cy + dy, speckleTop[0], speckleTop[1], speckleTop[2]);
+  }
+
+  // Left face speckles
+  const leftPts = leftFacePoints(yOff, h);
+  const lCx = Math.round((leftPts[0][0] + leftPts[1][0]) / 2);
+  const lCy = Math.round((leftPts[0][1] + leftPts[3][1]) / 2) + 6;
+  for (const [dx, dy] of [[-3, -2], [2, 1], [-1, 3], [4, -1], [0, -3], [-2, 4], [3, 2], [-4, 0]]) {
+    setPixel(img, lCx + dx, lCy + dy, speckleLeft[0], speckleLeft[1], speckleLeft[2]);
+  }
+
+  // Right face speckles
+  const rightPts = rightFacePoints(yOff, h);
+  const rCx = Math.round((rightPts[0][0] + rightPts[1][0]) / 2);
+  const rCy = Math.round((rightPts[1][1] + rightPts[2][1]) / 2) + 6;
+  for (const [dx, dy] of [[-3, -1], [2, 2], [-1, -3], [4, 0], [0, 3], [-2, -2], [3, -1], [-4, 1]]) {
+    setPixel(img, rCx + dx, rCy + dy, speckleRight[0], speckleRight[1], speckleRight[2]);
+  }
+
+  // Thin horizontal form-work lines at 1/3 and 2/3 height on side faces
+  const formLeft = adjustRgb(leftRgb, -12);
+  const formRight = adjustRgb(rightRgb, -12);
+  const thirds = [Math.round(h / 3), Math.round((h * 2) / 3)];
+
+  for (const dy of thirds) {
+    drawLine(img, OX + 1, Math.round(yOff + 12 + dy), OX + 23, yOff + 24 + dy, formLeft[0], formLeft[1], formLeft[2]);
+    drawLine(img, OX + 25, yOff + 24 + dy, OX + 47, Math.round(yOff + 12 + dy), formRight[0], formRight[1], formRight[2]);
+  }
+}
+
+function drawBarrelDecorations(img: ImageData, yOff: number, h: number, topRgb: [number, number, number], leftRgb: [number, number, number], rightRgb: [number, number, number]): void {
+  // Dark horizontal bands (hoops) near top and bottom of each face
+  const hoopLeft = adjustRgb(leftRgb, -35);
+  const hoopRight = adjustRgb(rightRgb, -35);
+
+  const hoopOffsets = [3, h - 3]; // near top and bottom
+
+  // Left face hoops
+  for (const dy of hoopOffsets) {
+    const y1 = Math.round(yOff + 12 + dy);
+    const y2 = yOff + 24 + dy;
+    drawLine(img, OX + 1, y1, OX + 23, y2, hoopLeft[0], hoopLeft[1], hoopLeft[2]);
+    drawLine(img, OX + 1, y1 + 1, OX + 23, y2 + 1, hoopLeft[0], hoopLeft[1], hoopLeft[2]);
+  }
+
+  // Right face hoops
+  for (const dy of hoopOffsets) {
+    const y1 = yOff + 24 + dy;
+    const y2 = Math.round(yOff + 12 + dy);
+    drawLine(img, OX + 25, y1, OX + 47, y2, hoopRight[0], hoopRight[1], hoopRight[2]);
+    drawLine(img, OX + 25, y1 + 1, OX + 47, y2 + 1, hoopRight[0], hoopRight[1], hoopRight[2]);
+  }
+
+  // Vertical wood grain lines between hoops on left face
+  const grainLeft = adjustRgb(leftRgb, -10);
+  for (let dx = 4; dx < 22; dx += 5) {
+    const x = OX + dx;
+    const topY = Math.round(yOff + 12 + (dx / 24) * 12) + 4;
+    const botY = topY + h - 8;
+    drawLine(img, x, topY, x, botY, grainLeft[0], grainLeft[1], grainLeft[2]);
+  }
+
+  // Vertical wood grain lines on right face
+  const grainRight = adjustRgb(rightRgb, -10);
+  for (let dx = 4; dx < 22; dx += 5) {
+    const x = OX + 24 + dx;
+    const topY = Math.round(yOff + 24 - (dx / 24) * 12) + 4;
+    const botY = topY + h - 8;
+    drawLine(img, x, topY, x, botY, grainRight[0], grainRight[1], grainRight[2]);
+  }
+
+  // Top face: darker inner circle/ellipse
+  const topDark = adjustRgb(topRgb, -30);
+  const tcx = OX + 24;
+  const tcy = yOff + 12;
+  // Draw a small elliptical ring on the top face diamond
+  for (let angle = 0; angle < 360; angle += 15) {
+    const rad = (angle * Math.PI) / 180;
+    const ex = Math.round(tcx + Math.cos(rad) * 6);
+    const ey = Math.round(tcy + Math.sin(rad) * 3);
+    setPixel(img, ex, ey, topDark[0], topDark[1], topDark[2]);
+  }
+}
+
+function drawPipeDecorations(img: ImageData, yOff: number, h: number, topRgb: [number, number, number], leftRgb: [number, number, number], rightRgb: [number, number, number]): void {
+  // Right face: bright vertical highlight stripe in center for cylindrical look
+  const highlightRight = adjustRgb(rightRgb, 35);
+  const rightPts = rightFacePoints(yOff, h);
+  const rCx = Math.round((rightPts[0][0] + rightPts[1][0]) / 2);
+  for (let dy = 2; dy < h - 1; dy++) {
+    const baseY = Math.round(rightPts[0][1] + dy);
+    setPixel(img, rCx, baseY, highlightRight[0], highlightRight[1], highlightRight[2]);
+    setPixel(img, rCx + 1, baseY, highlightRight[0], highlightRight[1], highlightRight[2]);
+  }
+
+  // Left face: dark edges for shadow/depth
+  const darkLeft = adjustRgb(leftRgb, -30);
+  const leftPts = leftFacePoints(yOff, h);
+  // Dark edge on left side of left face
+  for (let dy = 2; dy < h - 1; dy++) {
+    setPixel(img, leftPts[0][0] + 1, Math.round(leftPts[0][1] + dy), darkLeft[0], darkLeft[1], darkLeft[2]);
+    setPixel(img, leftPts[0][0] + 2, Math.round(leftPts[0][1] + dy), darkLeft[0], darkLeft[1], darkLeft[2]);
+  }
+  // Dark edge on right side of left face
+  for (let dy = 2; dy < h - 1; dy++) {
+    setPixel(img, leftPts[1][0] - 1, Math.round(leftPts[1][1] + dy), darkLeft[0], darkLeft[1], darkLeft[2]);
+    setPixel(img, leftPts[1][0] - 2, Math.round(leftPts[1][1] + dy), darkLeft[0], darkLeft[1], darkLeft[2]);
+  }
+
+  // Top face: dark ring for opening
+  const topDark = adjustRgb(topRgb, -40);
+  const topInner = adjustRgb(topRgb, -55);
+  const tcx = OX + 24;
+  const tcy = yOff + 12;
+  // Outer ring
+  for (let angle = 0; angle < 360; angle += 10) {
+    const rad = (angle * Math.PI) / 180;
+    const ex = Math.round(tcx + Math.cos(rad) * 7);
+    const ey = Math.round(tcy + Math.sin(rad) * 3.5);
+    setPixel(img, ex, ey, topDark[0], topDark[1], topDark[2]);
+  }
+  // Inner dark fill for pipe opening
+  for (let angle = 0; angle < 360; angle += 12) {
+    const rad = (angle * Math.PI) / 180;
+    const ex = Math.round(tcx + Math.cos(rad) * 4);
+    const ey = Math.round(tcy + Math.sin(rad) * 2);
+    setPixel(img, ex, ey, topInner[0], topInner[1], topInner[2]);
+  }
+  // Center fill
+  setPixel(img, tcx, tcy, topInner[0], topInner[1], topInner[2]);
+  setPixel(img, tcx - 1, tcy, topInner[0], topInner[1], topInner[2]);
+  setPixel(img, tcx + 1, tcy, topInner[0], topInner[1], topInner[2]);
+  setPixel(img, tcx, tcy - 1, topInner[0], topInner[1], topInner[2]);
+  setPixel(img, tcx, tcy + 1, topInner[0], topInner[1], topInner[2]);
+}
+
 // --- Main sprite drawing ---
 
 function drawSpriteToImageData(sprite: SpriteType): ImageData {
@@ -393,9 +580,18 @@ function drawSpriteToImageData(sprite: SpriteType): ImageData {
   // yOff positions the block so it sits at the bottom of the sprite
   const yOff = SPRITE_SIZE - TILE_H - h;
 
-  const topRgb = baseRgb;
-  const rightRgb = adjustRgb(baseRgb, -12);
-  const leftRgb = adjustRgb(baseRgb, -25);
+  // Custom per-face colors for new industrial blocks; others use standard shading
+  const customColors: Record<string, { top: [number, number, number]; left: [number, number, number]; right: [number, number, number] }> = {
+    metal:    { top: [138, 155, 174], left: [108, 125, 144], right: [123, 140, 159] },
+    concrete: { top: [160, 160, 160], left: [130, 130, 130], right: [145, 145, 145] },
+    barrel:   { top: [176, 120, 64],  left: [146, 90, 34],   right: [161, 105, 49] },
+    pipe:     { top: [110, 123, 138], left: [80, 93, 108],    right: [95, 108, 123] },
+  };
+
+  const custom = customColors[sprite];
+  const topRgb: [number, number, number] = custom ? custom.top : baseRgb;
+  const rightRgb: [number, number, number] = custom ? custom.right : adjustRgb(baseRgb, -12);
+  const leftRgb: [number, number, number] = custom ? custom.left : adjustRgb(baseRgb, -25);
 
   const top = topFacePoints(yOff);
   const left = leftFacePoints(yOff, h);
@@ -431,6 +627,18 @@ function drawSpriteToImageData(sprite: SpriteType): ImageData {
       break;
     case "table":
       drawTableDecorations(img, yOff, topRgb);
+      break;
+    case "metal":
+      drawMetalDecorations(img, yOff, h, leftRgb, rightRgb);
+      break;
+    case "concrete":
+      drawConcreteDecorations(img, yOff, h, topRgb, leftRgb, rightRgb);
+      break;
+    case "barrel":
+      drawBarrelDecorations(img, yOff, h, topRgb, leftRgb, rightRgb);
+      break;
+    case "pipe":
+      drawPipeDecorations(img, yOff, h, topRgb, leftRgb, rightRgb);
       break;
   }
 

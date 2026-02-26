@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Grid, BlockType } from "@/lib/types";
 import { GRID_SIZE } from "@/lib/constants";
 import { renderVoxelGrid, getGridExtent } from "@/lib/voxelRenderer";
-import { screenToGrid, type Rotation } from "@/lib/voxel";
+import { screenToGrid, screenToGridWithHeight, type Rotation } from "@/lib/voxel";
 import { TILE_W, TILE_H } from "@/lib/sprites";
 
 // ---------------------------------------------------------------------------
@@ -97,16 +97,16 @@ export default function VoxelGrid({
       const isoX = (canvasX - offsetX) / scale;
       const isoY = (canvasY - offsetY) / scale;
 
-      // Offset by half tile height so clicks align with diamond visual center
-      // (gridToScreen returns the top vertex, but users click the face center)
-      const { row, col } = screenToGrid(isoX, isoY - TILE_H / 2, rotation);
+      // Use height-aware detection that checks top-face diamonds of stacked blocks,
+      // falling back to ground-plane detection for empty cells
+      const { row, col } = screenToGridWithHeight(isoX, isoY - TILE_H / 2, rotation, grid);
 
       if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
         return { row, col };
       }
       return null;
     },
-    [rotation, canvasSize, dpr],
+    [rotation, canvasSize, dpr, grid],
   );
 
   // ---- Single render function (stored in ref to avoid restarting animation loop) ----

@@ -1,5 +1,6 @@
-import { GRID_SIZE } from "./constants";
-import { TILE_W, TILE_H } from "./sprites";
+import { GRID_SIZE, MAX_HEIGHT } from "./constants";
+import { TILE_W, TILE_H, BLOCK_H, FLOOR_H } from "./sprites";
+import type { Grid } from "./types";
 
 export type Rotation = 0 | 1 | 2 | 3;
 
@@ -77,4 +78,72 @@ export function getDrawOrder(rotation: Rotation): [number, number][] {
   }
 
   return order;
+}
+
+/**
+ * Test if a point (px, py) is inside a diamond defined by 4 vertices.
+ * Uses cross-product winding for convex polygon.
+ */
+function pointInDiamond(px: number, py: number, pts: [number, number][]): boolean {
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    const ex = pts[j][0] - pts[i][0];
+    const ey = pts[j][1] - pts[i][1];
+    const tx = px - pts[i][0];
+    const ty = py - pts[i][1];
+    if (ex * ty - ey * tx < 0) return false;
+  }
+  return true;
+}
+
+/**
+ * Height-aware screen-to-grid conversion.
+ * Checks all grid cells from tallest stack to shortest, testing if the
+ * screen point lands on the top face diamond of each stack. Falls back
+ * to standard screenToGrid() if nothing hit.
+ */
+export function screenToGridWithHeight(
+  screenX: number,
+  screenY: number,
+  rotation: Rotation,
+  grid: Grid,
+): { row: number; col: number } {
+  // Build list of cells with their visual height, sorted tallest first
+  const cells: { row: number; col: number; heightPx: number }[] = [];
+  for (let r = 0; r < GRID_SIZE; r++) {
+    for (let c = 0; c < GRID_SIZE; c++) {
+      const stack = grid[r]?.[c];
+      if (!stack) continue;
+      let heightPx = 0;
+      for (let h = 0; h < MAX_HEIGHT; h++) {
+        const block = stack[h];
+        if (!block || block === "empty" || block === "air") break;
+        heightPx += block === "floor" ? FLOOR_H : BLOCK_H;
+      }
+      if (heightPx > 0) {
+        cells.push({ row: r, col: c, heightPx });
+      }
+    }
+  }
+  // Sort tallest first so we check topmost faces first
+  cells.sort((a, b) => b.heightPx - a.heightPx);
+
+  for (const { row, col, heightPx } of cells) {
+    const { x, y } = gridToScreen(row, col, rotation);
+    // Top face diamond of the topmost block, offset upward by stack height
+    const topY = y - heightPx;
+    const diamond: [number, number][] = [
+      [x, topY],                              // top vertex
+      [x + TILE_W / 2, topY + TILE_H / 2],   // right vertex
+      [x, topY + TILE_H],                     // bottom vertex
+      [x - TILE_W / 2, topY + TILE_H / 2],   // left vertex
+    ];
+    if (pointInDiamond(screenX, screenY, diamond)) {
+      return { row, col };
+    }
+  }
+
+  // Fallback: standard ground-plane detection
+  return screenToGrid(screenX, screenY, rotation);
 }

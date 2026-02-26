@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { BlockType } from "@/lib/types";
 import { BLOCK_COLORS, BLOCK_LABELS } from "@/lib/constants";
 
@@ -168,7 +169,85 @@ function AirIcon() {
 
 // ─── block order ────────────────────────────────────────────────────────────
 
-const BLOCK_ORDER: BlockType[] = ["wall", "floor", "roof", "window", "door", "plant", "table", "air", "empty"];
+const BLOCK_ORDER: BlockType[] = [
+  "wall", "floor", "roof", "window", "door",
+  "plant", "table", "metal", "concrete", "barrel", "pipe",
+  "air", "empty",
+];
+
+// ─── block descriptions ──────────────────────────────────────────────────────
+
+const BLOCK_DESCRIPTIONS: Record<BlockType, string> = {
+  wall: "Walls & structure",
+  floor: "Ground & paths",
+  roof: "Building tops",
+  window: "Glass windows",
+  door: "Entrances (2-high)",
+  plant: "Landscaping",
+  table: "Furniture",
+  metal: "Industrial surfaces",
+  concrete: "Foundations",
+  barrel: "Storage drums",
+  pipe: "Plumbing & pipes",
+  air: "Invisible scaffold",
+  empty: "Erase blocks",
+};
+
+// ─── block legend popup ──────────────────────────────────────────────────────
+
+function BlockLegend({ onClose }: { onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.2 }}
+      className="absolute bottom-full left-0 right-0 mb-2 bg-[#2a2520]/95 rounded-xl backdrop-blur-sm p-3 shadow-lg ring-1 ring-[#b89f65]/30 z-50"
+    >
+      <div className="flex items-center justify-between mb-2">
+        <span className="font-[family-name:var(--font-pixel)] text-[9px] text-[#b89f65] uppercase tracking-wider">
+          Block Types
+        </span>
+        <button
+          onClick={onClose}
+          className="text-[#e8e0d0]/60 hover:text-[#e8e0d0] text-xs px-1"
+          type="button"
+        >
+          X
+        </button>
+      </div>
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
+        {BLOCK_ORDER.filter((b) => b !== "empty").map((blockType) => {
+          const color = BLOCK_COLORS[blockType];
+          const label = BLOCK_LABELS[blockType];
+          const desc = BLOCK_DESCRIPTIONS[blockType];
+          return (
+            <div
+              key={blockType}
+              className="flex items-center gap-1.5 bg-white/5 rounded-md px-1.5 py-1"
+            >
+              <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center">
+                {blockType === "air" ? (
+                  <AirIcon />
+                ) : (
+                  <MiniBlock color={color} />
+                )}
+              </div>
+              <div className="min-w-0">
+                <div className="font-[family-name:var(--font-pixel)] text-[7px] text-[#e8e0d0] leading-tight truncate">
+                  {label}
+                </div>
+                <div className="font-[family-name:var(--font-pixel)] text-[6px] text-[#e8e0d0]/50 leading-tight truncate">
+                  {desc}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
 
 // ─── main component ──────────────────────────────────────────────────────────
 
@@ -178,13 +257,34 @@ interface BlockPaletteProps {
 }
 
 export default function BlockPalette({ selected, onSelect }: BlockPaletteProps) {
+  const [showLegend, setShowLegend] = useState(false);
+
   return (
     <div
-      className="bg-[#4a3728]/90 rounded-xl backdrop-blur-sm px-3 py-2"
+      className="relative bg-[#4a3728]/90 rounded-xl backdrop-blur-sm px-3 py-2 overflow-x-auto"
       role="toolbar"
       aria-label="Block palette"
     >
-      <div className="flex flex-row gap-1 items-center justify-center">
+      <AnimatePresence>
+        {showLegend && <BlockLegend onClose={() => setShowLegend(false)} />}
+      </AnimatePresence>
+      <div className="flex flex-row gap-1 items-center justify-start min-w-max">
+        {/* Legend toggle button */}
+        <button
+          onClick={() => setShowLegend((s) => !s)}
+          className={[
+            "flex items-center justify-center rounded-lg px-1.5 py-1.5 min-w-[32px] min-h-[48px]",
+            "transition-colors duration-150 font-[family-name:var(--font-pixel)] text-sm",
+            showLegend
+              ? "bg-[#b89f65]/25 ring-2 ring-[#b89f65] text-[#b89f65]"
+              : "bg-transparent hover:bg-white/10 text-[#e8e0d0]/60",
+          ].join(" ")}
+          title="Block type legend"
+          type="button"
+          aria-label="Toggle block legend"
+        >
+          ?
+        </button>
         {BLOCK_ORDER.map((blockType) => {
           const isSelected = selected === blockType;
           const label = BLOCK_LABELS[blockType];
