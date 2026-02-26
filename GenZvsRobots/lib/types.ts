@@ -1,9 +1,9 @@
 // === Block Types ===
-export type BlockType = "wall" | "floor" | "roof" | "window" | "door" | "plant" | "table" | "air" | "empty";
+export type BlockType = "wall" | "floor" | "roof" | "window" | "door" | "plant" | "table" | "metal" | "concrete" | "barrel" | "pipe" | "air" | "empty";
 
 // === Grid ===
 export type Cell = BlockType;
-export type Grid = Cell[][][]; // 8x8xMAX_HEIGHT, grid[row][col][height]
+export type Grid = Cell[][][]; // 6x6xMAX_HEIGHT, grid[row][col][height]
 
 // === Players ===
 export type Role = "architect" | "builder";
@@ -28,6 +28,7 @@ export interface Team {
   round2Score: number | null;
   designGrid: Grid | null; // saved from design phase
   roundTarget: Grid | null; // the target this team must recreate
+  aiActionLog: { row: number; col: number; block: BlockType; timestamp: number }[];
 }
 
 // === Game Phases ===
@@ -59,9 +60,10 @@ export type ClientMessage =
   | { type: "join"; name: string; isHost?: boolean; reconnectToken?: string }
   | { type: "placeBlock"; row: number; col: number; block: BlockType }
   | { type: "chat"; text: string }
-  | { type: "hostAction"; action: HostAction }
+  | { type: "hostAction"; action: HostAction; targetPlayerId?: string }
   | { type: "aiChat"; text: string }
-  | { type: "setTeamName"; name: string };
+  | { type: "setTeamName"; name: string }
+  | { type: "leaveGame" };
 
 export type HostAction =
   | "startRound"
@@ -74,7 +76,8 @@ export type HostAction =
   | "startDemo"
   | "endDemo"
   | "startDesign"
-  | "endDesign";
+  | "endDesign"
+  | "kickPlayer";
 
 export type ServerMessage =
   | { type: "state"; state: RoomState }
@@ -86,7 +89,8 @@ export type ServerMessage =
   | { type: "error"; message: string }
   | { type: "playerJoined"; player: Player }
   | { type: "reconnected"; player: Player }
-  | { type: "scores"; teams: { teamId: string; teamName: string; score: number; round: 1 | 2 }[] };
+  | { type: "scores"; teams: { teamId: string; teamName: string; score: number; round: 1 | 2 }[] }
+  | { type: "kicked"; message: string };
 
 export interface BuildAction {
   row: number;
