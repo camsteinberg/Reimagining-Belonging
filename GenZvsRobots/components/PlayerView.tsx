@@ -145,24 +145,94 @@ function WaitingFinalReveal({ team }: { team?: Team }) {
   );
 }
 
-function WaitingSummary() {
+function WaitingSummary({ team, player, allPlayers }: {
+  team?: Team;
+  player?: Player;
+  allPlayers?: Record<string, Player>;
+}) {
+  const teamPlayerDesigns = team && allPlayers
+    ? team.players
+        .map(pid => allPlayers[pid])
+        .filter((p): p is Player => p != null && p.designGrid != null)
+    : [];
+
   return (
-    <div className="flex flex-col items-center justify-center flex-1 gap-6 px-6 text-center bg-[#1a1510]">
-      <span className="font-[family-name:var(--font-pixel)] text-[10px] tracking-[0.2em] uppercase text-[#6b8f71]">
-        Thank You For Playing
-      </span>
-      <p className="font-[family-name:var(--font-serif)] text-base leading-relaxed text-[#e8e0d0]/80 max-w-sm italic">
-        500 Acres is building AI-powered pipelines so Gen Z can construct real homes &mdash;
-        using CNC-cut Skylark 250 blocks and the same kind of AI collaboration you just experienced.
-      </p>
-      <a
-        href="https://500acres.org"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="font-[family-name:var(--font-pixel)] text-[10px] tracking-wider text-[#6b8f71] underline underline-offset-4"
-      >
-        500acres.org
-      </a>
+    <div className="flex flex-col flex-1 overflow-y-auto bg-[#1a1510]">
+      <div className="flex flex-col items-center gap-5 px-4 py-6">
+        <span className="font-[family-name:var(--font-pixel)] text-[10px] tracking-[0.2em] uppercase text-[#6b8f71]">
+          Game Complete
+        </span>
+
+        {/* Team scores side by side */}
+        {team && team.round1Score != null && team.round2Score != null && (
+          <div className="w-full max-w-xs">
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#e8e0d0]/40 text-center mb-2">
+              {team.name} &mdash; Scores
+            </p>
+            <div className="flex justify-around gap-4 px-4 py-3 rounded-lg border border-white/10 bg-white/5">
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#8b5e3c]/70">Round 1</span>
+                <span className="font-[family-name:var(--font-pixel)] text-2xl text-[#b89f65]">{team.round1Score}%</span>
+              </div>
+              <div className="flex flex-col items-center justify-center">
+                <span className="text-[#e8e0d0]/20 text-lg">&rarr;</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <span className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#6b8f71]">Round 2</span>
+                <span className="font-[family-name:var(--font-pixel)] text-2xl text-[#6b8f71]">{team.round2Score}%</span>
+              </div>
+            </div>
+            {(team.round2Score ?? 0) > (team.round1Score ?? 0) && (
+              <p className="font-[family-name:var(--font-pixel)] text-[9px] text-[#b89f65] text-center mt-2">
+                +{(team.round2Score ?? 0) - (team.round1Score ?? 0)}% improvement!
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Target preview */}
+        {team?.roundTarget && (
+          <div className="w-full max-w-xs">
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#e8e0d0]/40 text-center mb-2">Target</p>
+            <div className="h-32 rounded-lg border border-white/10 bg-white/5 p-1">
+              <VoxelGrid grid={team.roundTarget} readOnly className="w-full h-full" />
+            </div>
+          </div>
+        )}
+
+        {/* Player designs gallery — horizontal scroll */}
+        {teamPlayerDesigns.length > 0 && (
+          <div className="w-full max-w-sm">
+            <p className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-[#e8e0d0]/40 text-center mb-2">Player Designs</p>
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+              {teamPlayerDesigns.map((p) => (
+                <div key={p.id} className="flex flex-col items-center gap-1 shrink-0">
+                  <div className="w-32 h-28 rounded-lg border border-white/10 bg-white/5 p-1">
+                    <VoxelGrid grid={p.designGrid!} readOnly className="w-full h-full" />
+                  </div>
+                  <span className="font-[family-name:var(--font-pixel)] text-[8px] text-[#e8e0d0]/60">{p.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 500 Acres closing — smaller footer */}
+        <div className="mt-4 pt-4 border-t border-white/10 w-full max-w-xs text-center">
+          <p className="font-[family-name:var(--font-serif)] text-xs leading-relaxed text-[#e8e0d0]/50 italic">
+            500 Acres is building AI-powered pipelines so Gen Z can construct real homes &mdash;
+            using the same kind of AI collaboration you just experienced.
+          </p>
+          <a
+            href="https://500acres.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-[family-name:var(--font-pixel)] text-[9px] tracking-wider text-[#6b8f71] underline underline-offset-4 mt-2 inline-block"
+          >
+            500acres.org
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
@@ -535,7 +605,7 @@ export default function PlayerView({
       <div className="flex flex-col h-dvh overflow-hidden bg-[#1a1510]">
         <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
         {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={true} />}
-        <WaitingSummary />
+        <WaitingSummary team={team} player={player} allPlayers={state.players} />
       </div>
     );
   }
