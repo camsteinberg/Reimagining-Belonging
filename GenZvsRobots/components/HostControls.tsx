@@ -7,6 +7,7 @@ interface HostControlsProps {
   phase: GamePhase;
   send: (msg: ClientMessage) => void;
   hasDesigns?: boolean;
+  disabled?: boolean;
 }
 
 function HostButton({
@@ -45,7 +46,7 @@ function HostButton({
   );
 }
 
-export default function HostControls({ phase, send, hasDesigns }: HostControlsProps) {
+export default function HostControls({ phase, send, hasDesigns, disabled }: HostControlsProps) {
   return (
     <motion.div
       key={phase}
@@ -58,9 +59,9 @@ export default function HostControls({ phase, send, hasDesigns }: HostControlsPr
         <>
           <HostButton label="Practice Round" action="startDemo" send={send} variant="secondary" />
           {hasDesigns ? (
-            <HostButton label="Start Round 1" action="startRound" send={send} variant="primary" />
+            <HostButton label="Start Round 1" action="startRound" send={send} variant={disabled ? "secondary" : "primary"} />
           ) : (
-            <HostButton label="Start Design Phase" action="startDesign" send={send} variant="primary" />
+            <HostButton label="Start Design Phase" action="startDesign" send={send} variant={disabled ? "secondary" : "primary"} />
           )}
         </>
       )}

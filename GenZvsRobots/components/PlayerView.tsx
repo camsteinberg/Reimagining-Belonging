@@ -15,6 +15,58 @@ interface PlayerViewProps {
   onMessage: (listener: (msg: ServerMessage) => void) => () => void;
 }
 
+// --- Exit button with confirmation ---
+
+function ExitButton({ send }: { send: (msg: ClientMessage) => void }) {
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setShowConfirm(true)}
+        className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-xs opacity-50 hover:opacity-100 hover:bg-black/10 transition-all"
+        title="Leave game"
+        type="button"
+        aria-label="Leave game"
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3" />
+          <path d="M10 11l3-3-3-3" />
+          <path d="M13 8H6" />
+        </svg>
+      </button>
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowConfirm(false)}>
+          <div className="bg-[#f5f1ea] rounded-xl p-6 mx-4 max-w-xs text-center shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <p className="font-[family-name:var(--font-pixel)] text-sm text-[#2a2520] mb-4">
+              Leave this game?
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 rounded font-[family-name:var(--font-pixel)] text-[10px] tracking-wide uppercase bg-[#8b5e3c]/10 text-[#8b5e3c] hover:bg-[#8b5e3c]/20 transition-colors"
+                type="button"
+              >
+                Stay
+              </button>
+              <button
+                onClick={() => {
+                  send({ type: "leaveGame" });
+                  window.location.href = "/";
+                }}
+                className="px-4 py-2 rounded font-[family-name:var(--font-pixel)] text-[10px] tracking-wide uppercase bg-[#c45d3e] text-white hover:bg-[#8b5e3c] transition-colors"
+                type="button"
+              >
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // --- Waiting state components ---
 
 function WaitingReveal({ teamName, score }: { teamName?: string; score?: number | null }) {
@@ -263,6 +315,7 @@ export default function PlayerView({
 
   const isPlaying = phase === "round1" || phase === "round2";
   const isDemo = phase === "demo";
+  const isDesign = phase === "design";
   const isRound2 = phase === "round2";
   const isBuilder = role === "builder";
   const isArchitect = role === "architect";
@@ -275,13 +328,14 @@ export default function PlayerView({
     setAiThinking(false);
   }, [phase]);
 
-  // Show tutorial overlay when a round starts (once per session)
+  // Show tutorial walkthrough when a new phase starts
   useEffect(() => {
-    if (isPlaying && !sessionStorage.getItem("tutorialSeen")) {
+    const key = `tutorial_${phase}`;
+    if ((isPlaying || isDesign) && !sessionStorage.getItem(key)) {
       setShowTutorial(true);
-      sessionStorage.setItem("tutorialSeen", "true");
+      sessionStorage.setItem(key, "true");
     }
-  }, [isPlaying]);
+  }, [isPlaying, isDesign, phase]);
 
   // Clean up cell timeouts on unmount
   useEffect(() => {
@@ -351,8 +405,6 @@ export default function PlayerView({
     return unsubscribe;
   }, [onMessage, teamId]);
 
-  const isDesign = phase === "design";
-
   const handleCellClick = useCallback(
     (row: number, col: number) => {
       // Allow placement in demo or design (all players) or during play (builders only)
@@ -385,6 +437,7 @@ export default function PlayerView({
             teamId,
             playerId,
             targetGrid: team?.roundTarget ?? state.currentTarget,
+            aiActionLog: team?.aiActionLog?.slice(-10),
           }),
         }).catch(() => {
           setAiThinking(false);
@@ -398,7 +451,7 @@ export default function PlayerView({
   const targetGrid = team?.roundTarget ?? state.currentTarget;
   const teamName = team?.name;
 
-  const showChat = phase === "round1" || phase === "round2";
+  const showChat = phase === "round1" || phase === "round2" || phase === "design";
 
   // --- Waiting states for non-active phases ---
   if (phase === "reveal1") {
@@ -445,7 +498,14 @@ export default function PlayerView({
   if (phase === "lobby") {
     return (
       <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
-        <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        <div className="flex items-center">
+          <div className="flex-1">
+            <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+          </div>
+          <div className="pr-2">
+            <ExitButton send={send} />
+          </div>
+        </div>
         {team && player ? (
           <PlayerLobbyView team={team} player={player} allPlayers={state.players} send={send} />
         ) : (
@@ -461,30 +521,50 @@ export default function PlayerView({
   if (isDesign) {
     return (
       <div className="flex flex-col h-screen overflow-hidden bg-[#f0ebe0]">
-        <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+        <div className="flex items-center">
+          <div className="flex-1">
+            <GameHeader phase={phase} teamName={teamName} role={role} timerEnd={state.timerEnd} />
+          </div>
+          <div className="pr-2">
+            <ExitButton send={send} />
+          </div>
+        </div>
         {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={false} />}
-        <div className="flex flex-col flex-1 min-h-0 p-3 gap-2">
-          <div className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-center py-1 px-2 rounded text-[#8b5e3c]/70 bg-[#8b5e3c]/10">
-            Design your building! Another team will try to recreate it.
+        <div className="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
+          <div className="flex flex-col flex-1 min-h-0 min-w-0 p-3 gap-2">
+            <div className="font-[family-name:var(--font-pixel)] text-[8px] tracking-wider uppercase text-center py-1 px-2 rounded text-[#8b5e3c]/70 bg-[#8b5e3c]/10">
+              Design your building! Another team will try to recreate it.
+            </div>
+            <div className="flex-1 min-h-0 flex items-center justify-center">
+              {teamGrid ? (
+                <VoxelGrid
+                  grid={teamGrid}
+                  onCellClick={handleCellClick}
+                  selectedBlock={selectedBlock}
+                  readOnly={false}
+                  newCells={newCells}
+                  className="w-full h-full max-h-[45vh] md:max-h-full"
+                />
+              ) : (
+                <div className="font-[family-name:var(--font-pixel)] text-[10px] text-[#2a2520]/40">
+                  Loading...
+                </div>
+              )}
+            </div>
+            <div className="shrink-0">
+              <BlockPalette selected={selectedBlock} onSelect={setSelectedBlock} />
+            </div>
           </div>
-          <div className="flex-1 min-h-0 flex items-center justify-center">
-            {teamGrid ? (
-              <VoxelGrid
-                grid={teamGrid}
-                onCellClick={handleCellClick}
-                selectedBlock={selectedBlock}
-                readOnly={false}
-                newCells={newCells}
-                className="w-full h-full max-h-[45vh] md:max-h-full"
-              />
-            ) : (
-              <div className="font-[family-name:var(--font-pixel)] text-[10px] text-[#2a2520]/40">
-                Loading...
-              </div>
-            )}
-          </div>
-          <div className="shrink-0">
-            <BlockPalette selected={selectedBlock} onSelect={setSelectedBlock} />
+          {/* Chat panel in design phase */}
+          <div className="shrink-0 h-48 md:h-auto md:w-80 p-3 pt-0 md:pt-3">
+            <ChatPanel
+              messages={messages}
+              onSend={handleSendChat}
+              isRound2={false}
+              disabled={false}
+              teamName={teamName}
+              role={role}
+            />
           </div>
         </div>
       </div>
@@ -540,16 +620,24 @@ export default function PlayerView({
           role={role}
           isRound2={isRound2}
           onDismiss={() => setShowTutorial(false)}
+          phase={phase as "round1" | "round2" | "design"}
         />
       )}
 
       {/* Header */}
-      <GameHeader
-        phase={phase}
-        teamName={teamName}
-        role={role}
-        timerEnd={state.timerEnd}
-      />
+      <div className="flex items-center">
+        <div className="flex-1">
+          <GameHeader
+            phase={phase}
+            teamName={teamName}
+            role={role}
+            timerEnd={state.timerEnd}
+          />
+        </div>
+        <div className="pr-2">
+          <ExitButton send={send} />
+        </div>
+      </div>
       {team && player && <TeamInfoBar team={team} player={player} allPlayers={state.players} isRound2={isRound2} />}
 
       {/* Main content area */}

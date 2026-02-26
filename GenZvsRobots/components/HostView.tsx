@@ -78,6 +78,11 @@ function LobbyView({
   const players = Object.values(state.players);
   const hostname =
     typeof window !== "undefined" ? window.location.hostname : "join";
+  const isOddPlayers = players.length > 0 && players.length % 2 !== 0;
+
+  function handleKick(playerId: string) {
+    send({ type: "hostAction", action: "kickPlayer", targetPlayerId: playerId });
+  }
 
   return (
     <div className="flex flex-col h-full bg-charcoal text-cream overflow-hidden">
@@ -88,6 +93,15 @@ function LobbyView({
         </span>
         <ConnectionDot connected={connected} />
       </div>
+
+      {/* Odd player warning */}
+      {isOddPlayers && (
+        <div className="px-6 py-2 bg-[#b89f65]/20 border-b border-[#b89f65]/30 text-center">
+          <span className="font-[family-name:var(--font-pixel)] text-[9px] tracking-wider text-[#b89f65]">
+            Odd number of players — teams need 2 players each
+          </span>
+        </div>
+      )}
 
       {/* Center: room code */}
       <div className="flex-1 flex flex-col items-center justify-center gap-6 px-6">
@@ -116,7 +130,7 @@ function LobbyView({
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             <AnimatePresence>
               {players.map((p, i) => (
-                <PlayerPip key={p.id} player={p} index={i} teams={state.teams} />
+                <PlayerPip key={p.id} player={p} index={i} teams={state.teams} onKick={handleKick} />
               ))}
             </AnimatePresence>
           </div>
@@ -125,7 +139,7 @@ function LobbyView({
 
       {/* Bottom controls */}
       <div className="px-6 py-5 border-t border-white/10 flex items-center justify-center">
-        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} />
+        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.teams).some(t => t.roundTarget != null)} disabled={isOddPlayers} />
       </div>
     </div>
   );
@@ -135,10 +149,12 @@ function PlayerPip({
   player,
   index,
   teams,
+  onKick,
 }: {
   player: Player;
   index: number;
   teams: RoomState["teams"];
+  onKick?: (playerId: string) => void;
 }) {
   const teamName = teams[player.teamId]?.name ?? "—";
 
@@ -159,7 +175,7 @@ function PlayerPip({
       <span className="w-7 h-7 rounded-full bg-bark/60 flex items-center justify-center font-bold text-xs text-cream shrink-0">
         {player.name.charAt(0).toUpperCase()}
       </span>
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="text-xs font-semibold text-cream truncate leading-tight">
           {player.name}
         </div>
@@ -167,6 +183,16 @@ function PlayerPip({
           {teamName}
         </div>
       </div>
+      {onKick && (
+        <button
+          onClick={() => onKick(player.id)}
+          className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-cream/40 hover:text-ember hover:bg-ember/20 transition-colors text-xs"
+          title={`Remove ${player.name}`}
+          type="button"
+        >
+          X
+        </button>
+      )}
     </motion.div>
   );
 }

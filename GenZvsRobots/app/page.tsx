@@ -1,12 +1,24 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { generateRoomCode } from "@/lib/constants";
 import TerrainBackground from "@/components/TerrainBackground";
 
 export default function Home() {
   const [joinCode, setJoinCode] = useState("");
   const [joinError, setJoinError] = useState("");
+  const [kickedMessage, setKickedMessage] = useState("");
+
+  // Check for kicked redirect (URL param or sessionStorage)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const kicked = params.get("kicked");
+    if (kicked) {
+      setKickedMessage(kicked);
+      // Clean the URL
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
 
   function handleHost() {
     const code = generateRoomCode();
@@ -39,6 +51,15 @@ export default function Home() {
         style={{ position: "relative", zIndex: 1 }}
         className="w-full max-w-md flex flex-col items-center gap-8 animate-fade-in-up"
       >
+        {/* Kicked message */}
+        {kickedMessage && (
+          <div className="w-full px-4 py-3 rounded-xl bg-[#c45d3e]/10 border border-[#c45d3e]/30 text-center">
+            <p className="font-[family-name:var(--font-pixel)] text-[10px] text-[#c45d3e]">
+              {kickedMessage}
+            </p>
+          </div>
+        )}
+
         {/* Logo / title block */}
         <div className="text-center flex flex-col items-center gap-4">
           <span

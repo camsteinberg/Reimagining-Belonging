@@ -32,11 +32,14 @@ export default function PlayPage() {
     }
   }, [connected, playerName, send]);
 
-  // Handle "reconnected" server message to set playerId
+  // Handle "reconnected" and "kicked" server messages
   useEffect(() => {
     const unsubscribe = onMessage((msg) => {
       if (msg.type === "reconnected") {
         setPlayerId(msg.player.id);
+      }
+      if (msg.type === "kicked") {
+        window.location.href = `/?kicked=${encodeURIComponent(msg.message)}`;
       }
     });
     return unsubscribe;

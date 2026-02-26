@@ -37,9 +37,9 @@ describe("calculateDetailedScore", () => {
     const target = createEmptyGrid();
     const build = createEmptyGrid();
 
-    // Target has a wall at (0,0); build has a wall at (7,7) — no overlap
+    // Target has a wall at (0,0); build has a wall at (5,5) — no overlap
     const targetGrid = setCell(target, 0, 0, "wall");
-    const buildGrid = setCell(build, 7, 7, "wall");
+    const buildGrid = setCell(build, 5, 5, "wall");
 
     const result = calculateDetailedScore(buildGrid, targetGrid);
 
@@ -183,14 +183,14 @@ describe("calculateDetailedScore", () => {
 
   it("includes extra-block cell results with correct=false", () => {
     const targetGrid = createEmptyGrid();
-    const buildGrid = setCell(createEmptyGrid(), 4, 6, "door");
+    const buildGrid = setCell(createEmptyGrid(), 4, 5, "door");
 
     const result = calculateDetailedScore(buildGrid, targetGrid);
 
     expect(result.cells).toHaveLength(1);
     const cell = result.cells[0];
     expect(cell.row).toBe(4);
-    expect(cell.col).toBe(6);
+    expect(cell.col).toBe(5);
     expect(cell.expected).toBe("empty");
     expect(cell.actual).toBe("door");
     expect(cell.correct).toBe(false);
