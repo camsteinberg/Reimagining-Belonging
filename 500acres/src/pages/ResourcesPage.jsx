@@ -128,24 +128,6 @@ const RESOURCES = [
   },
 ];
 
-const PARTNERS = [
-  {
-    name: "Architectural Digest",
-    link: "https://www.architecturaldigest.com/",
-  },
-  {
-    name: "VUILD",
-    link: "https://vuild.com/",
-  },
-  {
-    name: "Diamond Pier Foundations",
-    link: "https://www.diamondpiers.com/",
-  },
-  {
-    name: "BSU Foundation",
-    link: "https://boisestatefoundation.org/",
-  },
-];
 
 /* ───────────────────────────── Component ───────────────────────────── */
 
@@ -313,37 +295,6 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      {/* Partners section */}
-      <section className="py-24 md:py-36 bg-charcoal diagonal-top">
-        <div className="page-container text-center">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/60 mb-4">
-            Our Partners
-          </p>
-          <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            Our partners.
-          </h2>
-          <p className="reveal-up stagger-2 font-serif text-lg text-cream/70 max-w-xl mx-auto mb-16">
-            We work with organizations that share our commitment to innovative
-            housing, digital fabrication, and expanding opportunity for the next generation.
-          </p>
-          <div className="reveal-up stagger-3 grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10 items-stretch">
-            {PARTNERS.map((partner) => (
-              <a
-                key={partner.name}
-                href={partner.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group font-sans text-sm uppercase tracking-widest text-cream/80 py-12 px-8 border border-cream/15 rounded-xl
-                  hover:border-cream/40 hover:bg-cream/[0.04] transition-all duration-300 flex items-center justify-center text-center"
-              >
-                <span className="group-hover:text-cream transition-colors duration-300">
-                  {partner.name}
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

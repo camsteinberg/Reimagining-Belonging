@@ -11,6 +11,7 @@ const NAV_LINKS = [
     children: [
       { to: "/about/mission", label: "Our Mission" },
       { to: "/about/team", label: "Our Team" },
+      { to: "/about/sponsors", label: "Our Sponsors" },
     ],
   },
   { to: "/stories", label: "Stories", num: "03" },
