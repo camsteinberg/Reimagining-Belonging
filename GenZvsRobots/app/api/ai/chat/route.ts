@@ -101,6 +101,7 @@ export async function POST(req: NextRequest) {
         teamId,
         text: parsed.text,
         actions: parsed.actions,
+        role,
       }),
     });
     if (!pushRes.ok) {

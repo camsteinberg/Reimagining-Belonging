@@ -87,9 +87,11 @@ export default class GameRoom implements Party.Server {
           // Token didn't match — fall through to normal join
           const player = addPlayer(this.state, sender.id, msg.name);
           this.broadcast({ type: "playerJoined", player });
+          this.send(sender, { type: "joined", playerId: sender.id, reconnectToken: player.reconnectToken } as unknown as ServerMessage);
         } else {
           const player = addPlayer(this.state, sender.id, msg.name);
           this.broadcast({ type: "playerJoined", player });
+          this.send(sender, { type: "joined", playerId: sender.id, reconnectToken: player.reconnectToken } as unknown as ServerMessage);
         }
         this.broadcastState();
         break;
@@ -100,6 +102,9 @@ export default class GameRoom implements Party.Server {
         if (!player) return;
         // Validate block type
         if (!VALID_BLOCK_TYPES.has(msg.block)) return;
+        // Reject placement when the game is paused (timed phase but timer stopped)
+        const timedPhases = ["round1", "round2", "design", "demo"];
+        if (timedPhases.includes(this.state.phase) && this.state.timerEnd === null) return;
         // During demo or design, all players can place blocks; otherwise only builders
         // Exception: solo player on a team can always build
         if (this.state.phase !== "demo" && this.state.phase !== "design" && player.role !== "builder") {
@@ -138,23 +143,34 @@ export default class GameRoom implements Party.Server {
               });
             }
           } else {
-            this.broadcast({
+            const gridMsg: ServerMessage = {
               type: "gridUpdate",
               teamId: player.teamId,
               row: msg.row,
               col: msg.col,
               height,
               block: msg.block,
-            });
+            };
+            this.broadcastToTeam(player.teamId, gridMsg);
+            // Also send to host so the projector view stays in sync
+            if (this.hostId) {
+              const hostConn = this.room.getConnection(this.hostId);
+              if (hostConn) this.send(hostConn, gridMsg);
+            }
             if (secondHeight !== undefined) {
-              this.broadcast({
+              const gridMsg2: ServerMessage = {
                 type: "gridUpdate",
                 teamId: player.teamId,
                 row: msg.row,
                 col: msg.col,
                 height: secondHeight,
                 block: msg.block,
-              });
+              };
+              this.broadcastToTeam(player.teamId, gridMsg2);
+              if (this.hostId) {
+                const hostConn = this.room.getConnection(this.hostId);
+                if (hostConn) this.send(hostConn, gridMsg2);
+              }
             }
           }
         }
@@ -234,6 +250,7 @@ export default class GameRoom implements Party.Server {
         const leavingPlayer = this.state.players[sender.id];
         if (!leavingPlayer) return;
         const leavingTeamId = leavingPlayer.teamId;
+        const wasArchitect = leavingPlayer.role === "architect";
         // removePlayer marks disconnected but keeps in team.players for reconnect.
         // For explicit leave, also remove from team.players and delete from state.players.
         removePlayer(this.state, sender.id);
@@ -242,6 +259,15 @@ export default class GameRoom implements Party.Server {
           leavingTeam.players = leavingTeam.players.filter(pid => pid !== sender.id);
           if (leavingTeam.players.filter(pid => this.state.players[pid]?.connected).length === 0) {
             delete this.state.teams[leavingTeamId];
+          } else if (wasArchitect) {
+            // Reassign architect if the leaving player was the architect
+            const hasArchitect = leavingTeam.players.some(pid =>
+              this.state.players[pid]?.role === "architect" && this.state.players[pid]?.connected
+            );
+            if (!hasArchitect) {
+              const next = leavingTeam.players.find(pid => this.state.players[pid]?.connected);
+              if (next) this.state.players[next].role = "architect";
+            }
           }
         }
         delete this.state.players[sender.id];
@@ -283,6 +309,7 @@ export default class GameRoom implements Party.Server {
       teamId: string;
       text: string;
       actions: { row: number; col: number; block: string }[];
+      role?: string;
     };
 
     try {
@@ -299,10 +326,11 @@ export default class GameRoom implements Party.Server {
       return new Response("Round ended", { status: 409, headers: this.corsHeaders() });
     }
 
-    const { teamId, text, actions } = body;
+    const { teamId, text, actions, role } = body;
 
-    // Apply AI build actions to the team's grid (validate each action)
-    const validActions = actions.filter(
+    // Architect's Scout must NOT place blocks — only describe/coach
+    // Skip all block placement if the requesting player is an architect
+    const validActions = role === "architect" ? [] : actions.filter(
       (a) =>
         VALID_BLOCK_TYPES.has(a.block) &&
         typeof a.row === "number" && a.row >= 0 && a.row < GRID_SIZE &&
@@ -388,6 +416,17 @@ export default class GameRoom implements Party.Server {
           this.state.timerEnd = Date.now() + this.pausedRemainingMs;
           this.pausedRemainingMs = null;
           this.startTimer();
+        } else if (this.pausedRemainingMs != null && this.pausedRemainingMs === 0) {
+          // Timer expired during pause — trigger the appropriate phase end
+          this.pausedRemainingMs = null;
+          if (this.state.phase === "design") {
+            endDesign(this.state);
+          } else if (this.state.phase === "demo") {
+            endDemo(this.state);
+          } else if (this.state.phase === "round1" || this.state.phase === "round2") {
+            calculateAllScores(this.state);
+            endRound(this.state);
+          }
         }
         break;
       }
@@ -415,8 +454,10 @@ export default class GameRoom implements Party.Server {
       }
       case "startDemo": {
         this.pausedRemainingMs = null;
-        startDemo(this.state);
-        this.startTimer();
+        const demoStarted = startDemo(this.state);
+        if (demoStarted) {
+          this.startTimer();
+        }
         break;
       }
       case "endDemo": {
@@ -426,8 +467,10 @@ export default class GameRoom implements Party.Server {
       }
       case "startDesign": {
         this.pausedRemainingMs = null;
-        startDesign(this.state);
-        this.startTimer();
+        const designStarted = startDesign(this.state);
+        if (designStarted) {
+          this.startTimer();
+        }
         break;
       }
       case "endDesign": {

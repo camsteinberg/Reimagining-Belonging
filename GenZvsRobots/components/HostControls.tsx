@@ -68,7 +68,7 @@ export default function HostControls({ phase, send, hasDesigns, disabled, timerE
     >
       {phase === "lobby" && (
         <>
-          <HostButton label="Practice Round" action="startDemo" send={send} variant="secondary" />
+          <HostButton label="Practice Round" action="startDemo" send={send} variant="secondary" disabled={disabled} />
           {hasDesigns ? (
             <HostButton label="Start Round 1" action="startRound" send={send} variant={disabled ? "secondary" : "primary"} disabled={disabled} />
           ) : (

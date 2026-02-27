@@ -75,10 +75,12 @@ function LobbyView({
   send: (msg: ClientMessage) => void;
   connected: boolean;
 }) {
-  const players = Object.values(state.players);
+  const allPlayers = Object.values(state.players);
+  const players = allPlayers.filter((p) => p.connected);
   const hostname =
     typeof window !== "undefined" ? window.location.host : "join";
   const isOddPlayers = players.length > 0 && players.length % 2 !== 0;
+  const disableStart = players.length === 0 || players.length % 2 !== 0;
 
   function handleKick(playerId: string) {
     send({ type: "hostAction", action: "kickPlayer", targetPlayerId: playerId });
@@ -154,7 +156,7 @@ function LobbyView({
 
       {/* Bottom controls */}
       <div className="px-6 py-5 border-t border-white/10 flex items-center justify-center">
-        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.players).some(p => p.designGrid != null)} disabled={isOddPlayers} />
+        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.players).some(p => p.designGrid != null)} disabled={disableStart} />
       </div>
     </div>
   );
@@ -498,13 +500,8 @@ function InterstitialView({
 }) {
   return (
     <div className="flex flex-col h-full bg-charcoal text-cream">
-      {/* RoundTransition is fixed-position overlay — renders on top */}
+      {/* RoundTransition is fixed-position overlay with Start Round 2 button */}
       <RoundTransition onComplete={() => send({ type: "hostAction", action: "startRound" })} />
-
-      {/* Fallback controls behind the overlay */}
-      <div className="flex-1 flex items-center justify-center">
-        <HostControls phase={state.phase} send={send} hasDesigns={Object.values(state.players).some(p => p.designGrid != null)} />
-      </div>
     </div>
   );
 }

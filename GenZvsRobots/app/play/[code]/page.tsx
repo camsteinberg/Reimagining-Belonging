@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { usePartySocket } from "@/lib/usePartySocket";
 import PlayerView from "@/components/PlayerView";
@@ -11,7 +11,6 @@ export default function PlayPage() {
 
   const [playerName, setPlayerName] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
-  const joinSentRef = useRef(false);
 
   // Retrieve name from sessionStorage on mount
   useEffect(() => {
@@ -23,20 +22,28 @@ export default function PlayPage() {
     code ? code.toLowerCase() : null
   );
 
-  // Send join message once connected and name is available
+  // Send join message every time we (re)connect and name is available.
+  // On first join, reconnectToken will be absent — server creates a new player.
+  // On reconnect, token will be present — server reconnects to the existing player.
   useEffect(() => {
-    if (connected && playerName && !joinSentRef.current) {
-      joinSentRef.current = true;
+    if (connected && playerName) {
       const token = sessionStorage.getItem("reconnectToken") || undefined;
       send({ type: "join", name: playerName, reconnectToken: token });
     }
   }, [connected, playerName, send]);
 
-  // Handle "reconnected" and "kicked" server messages
+  // Handle "joined", "reconnected", and "kicked" server messages
   useEffect(() => {
     const unsubscribe = onMessage((msg) => {
       if (msg.type === "reconnected") {
         setPlayerId(msg.player.id);
+      }
+      // "joined" is sent by the server after addPlayer; the type is added
+      // server-side by another agent and may not be in ServerMessage yet.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const raw = msg as any;
+      if (raw.type === "joined" && raw.playerId) {
+        setPlayerId(raw.playerId);
       }
       if (msg.type === "kicked") {
         window.location.href = `/?kicked=${encodeURIComponent(msg.message)}`;

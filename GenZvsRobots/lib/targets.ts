@@ -30,12 +30,16 @@ function parse3DTarget(layers: string[][]): Grid {
   }
 
   // Door auto-expansion: if a cell has "door" on layer L and layer L+1 is empty,
-  // auto-fill L+1 with "door" to create 2-high doorways
+  // auto-fill L+1 with "door" to create 2-high doorways.
+  // Track which cells we auto-expand to prevent cascade (door at L -> L+1 -> L+2 etc.)
+  const autoExpanded = new Set<string>();
   for (let r = 0; r < GRID_SIZE; r++) {
     for (let c = 0; c < GRID_SIZE; c++) {
       for (let h = 0; h < MAX_HEIGHT - 1; h++) {
-        if (grid[r][c][h] === "door" && grid[r][c][h + 1] === "empty") {
+        const key = `${r},${c},${h}`;
+        if (grid[r][c][h] === "door" && !autoExpanded.has(key) && grid[r][c][h + 1] === "empty") {
           grid[r][c][h + 1] = "door";
+          autoExpanded.add(`${r},${c},${h + 1}`);
         }
       }
     }

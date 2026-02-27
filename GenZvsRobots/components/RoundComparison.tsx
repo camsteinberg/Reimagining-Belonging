@@ -106,6 +106,10 @@ const panelVariants = {
 export default function RoundComparison({ team }: RoundComparisonProps) {
   const round2Target = team.roundTarget;
   const round1Target = team.round1Target ?? round2Target;
+  const targetsDiffer =
+    round1Target != null &&
+    round2Target != null &&
+    JSON.stringify(round1Target) !== JSON.stringify(round2Target);
   if (!round2Target) {
     return (
       <div className="flex items-center justify-center h-full bg-charcoal text-cream/40">
@@ -164,27 +168,65 @@ export default function RoundComparison({ team }: RoundComparisonProps) {
           </motion.div>
 
           {/* Target — center, smaller & ghosted */}
-          <motion.div
-            custom={1}
-            variants={panelVariants}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col items-center gap-2 shrink-0"
-            style={{ width: "25%", maxWidth: 160, opacity: 0.55 }}
-          >
-            <span className="font-[family-name:var(--font-pixel)] text-[7px] text-gold/50 uppercase tracking-widest">
-              Target
-            </span>
-            <div className="w-full rounded-lg overflow-hidden border border-gold/20 bg-white/5 ring-1 ring-gold/10">
-              <div className="aspect-square">
-                <VoxelGrid
-                  grid={round2Target}
-                  readOnly
-                  className="w-full h-full"
-                />
+          {targetsDiffer ? (
+            <motion.div
+              custom={1}
+              variants={panelVariants}
+              initial="hidden"
+              animate="visible"
+              className="flex flex-col items-center gap-1 shrink-0"
+              style={{ width: "25%", maxWidth: 160, opacity: 0.55 }}
+            >
+              {/* R1 Target */}
+              <span className="font-[family-name:var(--font-pixel)] text-[7px] text-gold/50 uppercase tracking-widest">
+                R1 Target
+              </span>
+              <div className="w-full rounded-lg overflow-hidden border border-gold/20 bg-white/5 ring-1 ring-gold/10">
+                <div className="aspect-square">
+                  <VoxelGrid
+                    grid={round1Target!}
+                    readOnly
+                    className="w-full h-full"
+                  />
+                </div>
               </div>
-            </div>
-          </motion.div>
+              {/* R2 Target */}
+              <span className="font-[family-name:var(--font-pixel)] text-[7px] text-gold/50 uppercase tracking-widest mt-1">
+                R2 Target
+              </span>
+              <div className="w-full rounded-lg overflow-hidden border border-gold/20 bg-white/5 ring-1 ring-gold/10">
+                <div className="aspect-square">
+                  <VoxelGrid
+                    grid={round2Target}
+                    readOnly
+                    className="w-full h-full"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              custom={1}
+              variants={panelVariants}
+              initial="hidden"
+              animate="visible"
+              className="flex flex-col items-center gap-2 shrink-0"
+              style={{ width: "25%", maxWidth: 160, opacity: 0.55 }}
+            >
+              <span className="font-[family-name:var(--font-pixel)] text-[7px] text-gold/50 uppercase tracking-widest">
+                Target
+              </span>
+              <div className="w-full rounded-lg overflow-hidden border border-gold/20 bg-white/5 ring-1 ring-gold/10">
+                <div className="aspect-square">
+                  <VoxelGrid
+                    grid={round2Target}
+                    readOnly
+                    className="w-full h-full"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* Round 2 */}
           <motion.div

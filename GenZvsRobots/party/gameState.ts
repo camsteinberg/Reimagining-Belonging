@@ -221,8 +221,8 @@ export function advancePhase(state: RoomState): void {
   if (next) state.phase = next;
 }
 
-export function startDemo(state: RoomState): void {
-  if (state.phase !== "lobby") return;
+export function startDemo(state: RoomState): boolean {
+  if (state.phase !== "lobby") return false;
   state.phase = "demo";
   state.timerEnd = Date.now() + 60_000; // 60 seconds
 
@@ -230,6 +230,7 @@ export function startDemo(state: RoomState): void {
   for (const team of Object.values(state.teams)) {
     team.grid = createEmptyGrid();
   }
+  return true;
 }
 
 export function endDemo(state: RoomState): void {
@@ -331,8 +332,8 @@ export function calculateAllScores(state: RoomState): void {
   }
 }
 
-export function startDesign(state: RoomState): void {
-  if (state.phase !== "lobby") return;
+export function startDesign(state: RoomState): boolean {
+  if (state.phase !== "lobby") return false;
 
   state.phase = "design";
   state.timerEnd = Date.now() + DESIGN_DURATION_MS;
@@ -341,6 +342,7 @@ export function startDesign(state: RoomState): void {
   for (const player of Object.values(state.players)) {
     player.designGrid = createEmptyGrid();
   }
+  return true;
 }
 
 export function endDesign(state: RoomState): boolean {

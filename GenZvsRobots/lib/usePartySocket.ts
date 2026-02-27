@@ -33,11 +33,31 @@ export function usePartySocket(roomCode: string | null) {
 
     socket.addEventListener("message", (e) => {
       try {
-        const msg: ServerMessage = JSON.parse(e.data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const raw: any = JSON.parse(e.data);
+
+        // Handle "joined" message (sent by server after addPlayer).
+        // This type is added server-side by the other agent; we handle it
+        // before narrowing to ServerMessage so TypeScript stays happy.
+        if (raw.type === "joined") {
+          if (typeof window !== "undefined" && raw.reconnectToken) {
+            sessionStorage.setItem("reconnectToken", raw.reconnectToken);
+          }
+          // Still broadcast to listeners so play page can extract playerId
+          for (const listener of listenersRef.current) {
+            listener(raw);
+          }
+          return; // early return — not a standard ServerMessage yet
+        }
+
+        const msg: ServerMessage = raw;
         if (msg.type === "state") {
           setState(msg.state);
         } else if (msg.type === "reconnected") {
-          // No local state update needed — a full state broadcast follows
+          // Store the reconnect token from the reconnected player object
+          if (typeof window !== "undefined" && msg.player.reconnectToken) {
+            sessionStorage.setItem("reconnectToken", msg.player.reconnectToken);
+          }
         } else if (msg.type === "designGridUpdate") {
           // Apply individual block placements to player's design grid
           setState((prev) => {

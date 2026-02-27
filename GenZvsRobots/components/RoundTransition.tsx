@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 // ---------------------------------------------------------------------------
 // RoundTransition — Full-screen cinematic interstitial between Round 1 and 2.
 // Shows a dramatic title card with staggered text, floating particles, and a
-// pulsing sage border glow. Auto-dismisses after ~5 s or on click/tap.
+// pulsing sage border glow. Host clicks "Start Round 2" button to proceed.
 // ---------------------------------------------------------------------------
 
 interface RoundTransitionProps {
@@ -47,12 +47,20 @@ function generateParticles(count: number): ParticleDef[] {
 
 const LINES = [
   {
-    text: "Same challenge.",
+    text: "New roles.",
     font: "var(--font-pixel)",
     size: "clamp(1.4rem, 4vw, 2.25rem)",
     color: "#b89f65",
     weight: "400",
     letterSpacing: "0.08em",
+  },
+  {
+    text: "Architects are now Builders. Builders are now Architects.",
+    font: "var(--font-serif)",
+    size: "clamp(0.9rem, 2vw, 1.15rem)",
+    color: "rgba(232, 224, 208, 0.7)",
+    weight: "400",
+    letterSpacing: "0.01em",
   },
   {
     text: "New tools.",
@@ -94,10 +102,8 @@ const LINES = [
 // ---------------------------------------------------------------------------
 
 export default function RoundTransition({ onComplete }: RoundTransitionProps) {
-  const [visible, setVisible] = useState(true);
   const [viewHeight, setViewHeight] = useState(900);
   const particles = useRef<ParticleDef[]>(generateParticles(28));
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // SSR-safe viewport height
   useEffect(() => {
@@ -107,49 +113,26 @@ export default function RoundTransition({ onComplete }: RoundTransitionProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Auto-dismiss after 5 s
-  useEffect(() => {
-    timerRef.current = setTimeout(() => {
-      setVisible(false);
-    }, 5000);
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
-
-  function handleDismiss() {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setVisible(false);
-  }
-
   return (
-    <AnimatePresence onExitComplete={onComplete}>
-      {visible && (
-        <motion.div
-          key="round-transition"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          onClick={handleDismiss}
-          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleDismiss(); }}
-          role="button"
-          tabIndex={0}
-          aria-label="Round 2 transition screen — tap to skip"
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 9999,
-            backgroundColor: "#2a2520",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            overflow: "hidden",
-            outline: "none",
-          }}
-        >
+    <motion.div
+      key="round-transition"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeInOut" }}
+      aria-label="Round 2 transition screen"
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        backgroundColor: "#2a2520",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        outline: "none",
+      }}
+    >
           {/* ── Pulsing sage border glow ─────────────────────────────── */}
           <motion.div
             style={{
@@ -245,11 +228,11 @@ export default function RoundTransition({ onComplete }: RoundTransitionProps) {
                   color: line.color,
                   fontWeight: line.weight,
                   letterSpacing: line.letterSpacing,
-                  lineHeight: i < 3 ? 1.1 : 1.6,
+                  lineHeight: line.font === "var(--font-pixel)" ? 1.1 : 1.6,
                   margin: 0,
                   fontStyle: ("italic" in line && line.italic) ? "italic" : "normal",
                   textShadow:
-                    i === 2
+                    i === 3
                       ? "0 0 40px rgba(107, 143, 113, 0.6), 0 0 80px rgba(107, 143, 113, 0.3)"
                       : i === 0
                       ? "0 0 30px rgba(184, 159, 101, 0.5)"
@@ -260,25 +243,33 @@ export default function RoundTransition({ onComplete }: RoundTransitionProps) {
               </motion.p>
             ))}
 
-            {/* Tap to continue hint */}
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 0.5, 0.5, 0] }}
-              transition={{ delay: 3.2, duration: 1.5, ease: "easeInOut" }}
+            {/* Start Round 2 button */}
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.0, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              onClick={() => onComplete?.()}
               style={{
                 fontFamily: "var(--font-pixel)",
-                fontSize: "0.55rem",
-                color: "rgba(232, 224, 208, 0.45)",
-                letterSpacing: "0.15em",
+                fontSize: "clamp(1rem, 2.5vw, 1.4rem)",
+                color: "#b89f65",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                marginTop: "0.5rem",
+                marginTop: "clamp(1.5rem, 4vh, 3rem)",
+                padding: "clamp(0.75rem, 2vh, 1.25rem) clamp(2rem, 5vw, 3.5rem)",
+                background: "rgba(184, 159, 101, 0.12)",
+                border: "2px solid rgba(184, 159, 101, 0.5)",
+                borderRadius: "0.5rem",
+                cursor: "pointer",
+                outline: "none",
+                textShadow: "0 0 20px rgba(184, 159, 101, 0.5)",
               }}
+              whileHover={{ scale: 1.06, borderColor: "rgba(184, 159, 101, 0.8)" }}
+              whileTap={{ scale: 0.96 }}
             >
-              tap to continue
-            </motion.span>
+              Start Round 2
+            </motion.button>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </motion.div>
   );
 }

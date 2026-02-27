@@ -387,6 +387,9 @@ export default function PlayerView({
   // Keep a ref to team grid so handleSendChat can read it without being a dependency
   const teamGridRef = useRef(team?.grid);
   teamGridRef.current = team?.grid;
+  // Keep a ref to messages so handleSendChat can read history without stale closures
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
   const role = player?.role;
   const phase = state.phase;
 
@@ -561,6 +564,13 @@ export default function PlayerView({
             teamGrid: teamGridRef.current,
             targetGrid: team?.roundTarget ?? state.currentTarget,
             aiActionLog: team?.aiActionLog?.slice(-10),
+            history: messagesRef.current
+              .filter(m => m.senderId !== "system")
+              .slice(-10)
+              .map(m => ({
+                role: m.isAI ? "assistant" as const : "user" as const,
+                content: m.text,
+              })),
           }),
         }).then((res) => {
           if (!res.ok) {
