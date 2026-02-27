@@ -10,6 +10,9 @@ import hsRocio from "../assets/headshots/rocio-loberza.webp";
 import hsRoy from "../assets/headshots/roy-nelson.webp";
 import hsCam from "../assets/headshots/cam-steinberg.webp";
 import hsYuchun from "../assets/headshots/yuchun-zhang.webp";
+import hsCole from "../assets/headshots/cole-kreilig.webp";
+import hsMo from "../assets/headshots/fengming-mo.webp";
+import hsSpozami from "../assets/headshots/spozami-kakar.webp";
 
 const ACCENT_COLORS = ["bg-forest", "bg-sage", "bg-amber", "bg-bark", "bg-clay", "bg-moss", "bg-ember"];
 
@@ -17,9 +20,9 @@ const TEAM_MEMBERS = [
   { name: "Michelle Crosby", role: "CEO", photo: hsMichelle },
   { name: "John Seidl", role: "Chairman", photo: hsJohn },
   { name: "Mikey Thomas", role: "Superintendent", photo: hsMikey },
-  { name: "Fengming Mo", role: "Financial Analyst" },
+  { name: "Fengming Mo", role: "Financial Analyst", photo: hsMo },
   { name: "Aiden Miller", role: "AI & Data Strategy Fellow" },
-  { name: "Cole Kreilig", role: "Machine Learning & Systems Fellow" },
+  { name: "Cole Kreilig", role: "Machine Learning & Systems Fellow", photo: hsCole },
   { name: "Cam Steinberg", role: "Project Manager", photo: hsCam },
   { name: "Rocio Loberza", role: "Architectural Designer", photo: hsRocio },
   { name: "Yuchun Zhang", role: "Urban Design Intern", photo: hsYuchun },
@@ -31,7 +34,7 @@ const CONSULTANTS = [
   { name: "Roy Nelson", role: "Tax Consultant", photo: hsRoy },
   { name: "Melanie Birch", role: "Book Keeper" },
   { name: "Araman Kakar", role: "Financial Controller" },
-  { name: "Spozami Kakar", role: "Board Secretary / Accounts Manager" },
+  { name: "Spozami Kakar", role: "Board Secretary / Accounts Manager", photo: hsSpozami },
 ];
 
 export default function OurTeamPage() {
