@@ -383,6 +383,10 @@ export default function PlayerView({
   const player = state.players[playerId];
   const teamId = player?.teamId;
   const team = teamId ? state.teams[teamId] : undefined;
+
+  // Keep a ref to team grid so handleSendChat can read it without being a dependency
+  const teamGridRef = useRef(team?.grid);
+  teamGridRef.current = team?.grid;
   const role = player?.role;
   const phase = state.phase;
 
@@ -554,7 +558,7 @@ export default function PlayerView({
             teamId,
             playerId,
             role,
-            teamGrid: team?.grid,
+            teamGrid: teamGridRef.current,
             targetGrid: team?.roundTarget ?? state.currentTarget,
             aiActionLog: team?.aiActionLog?.slice(-10),
           }),
@@ -592,7 +596,7 @@ export default function PlayerView({
         });
       }
     },
-    [send, isRound2, state.code, teamId, playerId, role, team?.grid, team?.roundTarget, state.currentTarget, team?.aiActionLog]
+    [send, isRound2, state.code, teamId, playerId, role, team?.roundTarget, state.currentTarget, team?.aiActionLog]
   );
 
   const teamGrid = team?.grid ?? null;

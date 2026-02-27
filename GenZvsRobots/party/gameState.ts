@@ -77,17 +77,8 @@ export function removePlayer(state: RoomState, id: string): void {
   player.connected = false;
 
   // Do NOT remove from team.players — keep the entry so reconnection can find and remap it.
-  const team = state.teams[player.teamId];
-  if (team) {
-    if (player.role === "architect") {
-      // Demote the disconnecting architect so reconnection doesn't create duplicates
-      player.role = "builder";
-      const nextArchitect = team.players.find(pid => pid !== id && state.players[pid]?.connected);
-      if (nextArchitect) {
-        state.players[nextArchitect].role = "architect";
-      }
-    }
-  }
+  // Do NOT demote the architect here — reconnectPlayer() handles duplicate-architect checks.
+  // Demoting on disconnect causes permanent role swaps on brief WiFi drops.
 
   // Keep player in state.players (marked disconnected) so reconnection can find them.
   // Only delete if they have no reconnect token (shouldn't happen, but defensive).
