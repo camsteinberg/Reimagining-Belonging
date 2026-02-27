@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
+import heroConstruction from "../assets/photos/getinvolved-hero-crane.webp";
+import cardApply from "../assets/photos/card-apply.webp";
+import cardAttend from "../assets/photos/card-attend.webp";
+import cardBuild from "../assets/photos/card-build.webp";
 
 const ENGAGEMENT_STEPS = [
   {
@@ -12,6 +16,7 @@ const ENGAGEMENT_STEPS = [
     linkTo: "#volunteer-form",
     linkLabel: "Express interest",
     isAnchor: true,
+    image: cardApply,
   },
   {
     num: "02",
@@ -22,6 +27,7 @@ const ENGAGEMENT_STEPS = [
     linkTo: "/resources",
     linkLabel: "See upcoming events",
     isExternal: false,
+    image: cardAttend,
   },
   {
     num: "03",
@@ -32,6 +38,7 @@ const ENGAGEMENT_STEPS = [
     linkTo: "#build",
     linkLabel: "Learn more",
     isAnchor: true,
+    image: cardBuild,
   },
 ];
 
@@ -74,6 +81,7 @@ export default function GetInvolvedPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero -- immersive full-bleed */}
       <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28 bg-charcoal overflow-hidden">
+        <img src={heroConstruction} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
         {/* Animated gradient blobs */}
         <div className="absolute top-[20%] left-[10%] w-[30vw] h-[30vw] bg-bark/20 blob pointer-events-none blur-3xl" />
         <div className="absolute bottom-[10%] right-[15%] w-[25vw] h-[25vw] bg-amber/15 blob pointer-events-none blur-3xl" style={{ animationDelay: "-3s" }} />
@@ -111,6 +119,9 @@ export default function GetInvolvedPage() {
             {ENGAGEMENT_STEPS.map((step, i) => {
               const cardContent = (
                 <>
+                  <div className="w-full aspect-video rounded-xl overflow-hidden mb-6">
+                    <img src={step.image} alt={step.title} className="w-full h-full object-cover" />
+                  </div>
                   <span className={`block font-sans text-6xl font-bold ${step.color} opacity-15 mb-6`}>
                     {step.num}
                   </span>

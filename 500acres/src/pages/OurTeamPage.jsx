@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
+import teamHero from "../assets/photos/team-hero-firepit.webp";
 
 const ACCENT_COLORS = ["bg-forest", "bg-sage", "bg-amber", "bg-bark", "bg-clay", "bg-moss", "bg-ember"];
 
@@ -31,6 +32,8 @@ export default function OurTeamPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero */}
       <section className="relative min-h-[60vh] flex flex-col justify-end pb-20 md:pb-28">
+        <img src={teamHero} alt="" className="absolute inset-0 w-full h-full object-cover opacity-15" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         {/* Decorative blobs */}
         <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-sage/8 blob pointer-events-none" />
         <div className="absolute bottom-[20%] left-[-5%] w-[30vw] h-[30vw] bg-clay/6 blob pointer-events-none" style={{ animationDelay: "-4s" }} />

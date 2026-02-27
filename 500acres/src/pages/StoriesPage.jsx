@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { participants } from "../data/participants";
 import useReveal from "../hooks/useReveal";
+import storiesHero from "../assets/photos/stories-hero-barn.webp";
 
 export default function StoriesPage() {
   const ref = useReveal();
@@ -9,6 +10,8 @@ export default function StoriesPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero */}
       <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28">
+        <img src={storiesHero} alt="" className="absolute inset-0 w-full h-full object-cover opacity-15" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <div className="absolute top-[20%] right-[5%] w-[35vw] h-[35vw] bg-clay/5 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10">

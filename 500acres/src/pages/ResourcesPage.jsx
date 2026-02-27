@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import useReveal from "../hooks/useReveal";
+import resourcesHero from "../assets/photos/resources-hero-ranch.webp";
 
 /* ───────────────────────────── Constants ───────────────────────────── */
 
@@ -162,6 +163,8 @@ export default function ResourcesPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero */}
       <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28">
+        <img src={resourcesHero} alt="" className="absolute inset-0 w-full h-full object-cover opacity-12" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <div className="absolute top-[15%] left-[-8%] w-[40vw] h-[40vw] bg-sage/5 blob pointer-events-none" />
         <div className="absolute bottom-[10%] right-[-5%] w-[25vw] h-[25vw] bg-forest/5 blob pointer-events-none" style={{ animationDelay: "-3s" }} />
 

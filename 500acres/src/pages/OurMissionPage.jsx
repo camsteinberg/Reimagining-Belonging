@@ -2,6 +2,12 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import useReveal from "../hooks/useReveal";
 import Logo from "../components/shared/Logo";
+import originClassroom from "../assets/photos/origin-classroom.webp";
+import pullquoteBarndo from "../assets/photos/pullquote-barndo-storm.webp";
+import missionWorkbench from "../assets/photos/mission-team-workbench.webp";
+import timelineResearch from "../assets/photos/timeline-research.webp";
+import timelinePrototype from "../assets/photos/timeline-prototype.webp";
+import timelineDeploy from "../assets/photos/timeline-deploy.webp";
 
 export default function OurMissionPage() {
   const ref = useReveal();
@@ -69,6 +75,9 @@ export default function OurMissionPage() {
               <br />Shelter becomes skill.
               <br />Skill becomes wealth.
             </h2>
+            <div className="reveal-left stagger-2 mt-10 aspect-[3/4] rounded-2xl overflow-hidden hidden md:block">
+              <img src={missionWorkbench} alt="Fellowship team at construction workbench" className="w-full h-full object-cover" />
+            </div>
           </div>
           <div className="md:col-span-6 md:col-start-6 flex flex-col justify-center">
             <p className="reveal-right font-serif text-lg text-charcoal/70 leading-[1.8] mb-6">
@@ -181,6 +190,8 @@ export default function OurMissionPage() {
 
       {/* Pull quote — full-width dramatic */}
       <section className="relative py-28 md:py-40 bg-charcoal diagonal-top diagonal-bottom overflow-hidden">
+        <img src={pullquoteBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+        <div className="absolute inset-0 bg-charcoal/70" />
         <div className="absolute inset-0 opacity-5">
           <Logo className="absolute -right-[10%] top-1/2 -translate-y-1/2 w-[60vw] h-[60vw]" showText={false} />
         </div>
@@ -209,6 +220,7 @@ export default function OurMissionPage() {
               {
                 num: "01",
                 title: "Research & Design",
+                image: timelineResearch,
                 color: "bg-amber",
                 textColor: "text-charcoal",
                 desc: "Published the Habitable White Paper. Completed the Reimagining Belonging study with seven Gen Z participants. Ran fellowship pilots, assembled core team, and identified site pipeline near Grand Canyon, Yellowstone, Bryce, and Olympic.",
@@ -216,6 +228,7 @@ export default function OurMissionPage() {
               {
                 num: "02",
                 title: "Prototype & Train",
+                image: timelinePrototype,
                 color: "bg-bark",
                 textColor: "text-cream",
                 desc: "Set up ShopBot CNC production in Boise. Designed and revealed the Camp Pod kit with CWI students. Running the first 'Raise the Pod' prototype build. Developing the Six Steps workforce training curriculum.",
@@ -223,6 +236,7 @@ export default function OurMissionPage() {
               {
                 num: "03",
                 title: "Deploy & Scale",
+                image: timelineDeploy,
                 color: "bg-moss",
                 textColor: "text-cream",
                 desc: "Producing four housing kits and deploying to Grand Canyon. Scaling into A-Frame production. Expanding fellowship cohorts and matched savings programs. Opening site pipeline across national park gateway communities.",
@@ -232,6 +246,9 @@ export default function OurMissionPage() {
                 key={step.num}
                 className={`reveal-up stagger-${i + 1} group relative p-10 md:p-14 rounded-2xl ${step.color} transition-transform duration-500 hover:-translate-y-2`}
               >
+                <div className="w-full aspect-video rounded-xl overflow-hidden mb-8">
+                  <img src={step.image} alt={step.title} className="w-full h-full object-cover" />
+                </div>
                 <span className={`block font-sans text-6xl md:text-7xl font-bold ${step.textColor} opacity-10 mb-8`}>
                   {step.num}
                 </span>
@@ -261,7 +278,7 @@ export default function OurMissionPage() {
         <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
           <div className="md:col-span-5 md:col-start-1 relative">
             <div className="reveal-scale aspect-square bg-charcoal/5 rounded-2xl flex items-center justify-center overflow-hidden">
-              <Logo className="w-2/3 h-2/3" showText={true} />
+              <img src={originClassroom} alt="Fellowship learning session in barn classroom" className="w-full h-full object-cover" />
             </div>
             {/* Decorative dot */}
             <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-sage/20 rounded-full" />
