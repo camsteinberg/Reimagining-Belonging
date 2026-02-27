@@ -76,34 +76,34 @@ const ROUND1_BUILDER_TIPS = {
 };
 
 const ROUND2_ARCHITECT_TIPS = {
-  heading: "Scout can help describe YOUR design!",
+  heading: "Describe YOUR design \u2014 Scout can help!",
   tips: [
-    "Scout can see your design \u2014 ask it to describe for your teammate",
-    "Tell Scout to build entire sections at once",
-    "You can also direct Scout with coordinates",
-    "Combine: let Scout build while you guide on details",
+    "Scout can see your design \u2014 ask it to help describe it",
+    "Use simple language: \u2018walls along the back edge\u2019",
+    "Go layer by layer: ground floor, then upper floors",
+    "Your teammate is building \u2014 guide them clearly!",
   ],
   prompts: [
     "Scout, describe my building to my teammate",
-    "Scout, build the entire ground floor",
-    "Scout, place walls from A1 to A6",
-    "Scout, place the roof on top",
+    "Scout, what does the ground floor look like?",
+    "The ground floor has walls around the edges",
+    "Now describe the second floor",
   ],
 };
 
 const ROUND2_BUILDER_TIPS = {
   heading: "Scout + your teammate can help you build!",
   tips: [
-    "Ask Scout to build whole rows or sections for you",
-    "Let Scout handle large sections while you do details",
-    "Ask Scout to fix or adjust what\u2019s already placed",
-    "Work together \u2014 you place blocks while Scout handles other areas",
+    "Say \u2018Scout, build...\u2019 to have Scout place blocks for you",
+    "Ask Scout to handle big sections while you do details",
+    "Ask Scout to fix or undo mistakes",
+    "Your teammate designed this \u2014 ask them for guidance too!",
   ],
   prompts: [
-    "Scout, what should I build first?",
-    "Scout, build the whole ground floor",
-    "Scout, fix the second floor",
-    "Scout, add windows to the second layer",
+    "Scout, build the ground floor",
+    "Scout, what should I build next?",
+    "Scout, fix the walls",
+    "Scout, undo the last action",
   ],
 };
 
@@ -206,11 +206,19 @@ export default function ChatPanel({
   phase,
 }: ChatPanelProps) {
   const [inputValue, setInputValue] = useState("");
+  const [showTips, setShowTips] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isAIThinking]);
+
+  // Auto-collapse tips when messages arrive
+  useEffect(() => {
+    if (messages.length > 0) {
+      setShowTips(false);
+    }
+  }, [messages.length]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -251,27 +259,48 @@ export default function ChatPanel({
           {teamName ? teamName : "Team Chat"}
         </span>
 
-        {isRound2 && (
-          <span className="flex items-center gap-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6b8f71] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#6b8f71]" />
+        <span className="flex items-center gap-1.5">
+          {isRound2 && (
+            <span className="flex items-center gap-1.5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#6b8f71] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#6b8f71]" />
+              </span>
+              <span
+                className="font-[family-name:var(--font-pixel)] text-[7px] tracking-wider"
+                style={{ color: "#6b8f71" }}
+              >
+                Scout online
+              </span>
             </span>
-            <span
-              className="font-[family-name:var(--font-pixel)] text-[7px] tracking-wider"
-              style={{ color: "#6b8f71" }}
+          )}
+          {!disabled && role && (
+            <button
+              type="button"
+              onClick={() => setShowTips((v) => !v)}
+              className={[
+                "ml-1 w-6 h-6 rounded-full text-[10px] font-bold transition-colors flex items-center justify-center",
+                isRound2
+                  ? showTips
+                    ? "bg-[#6b8f71] text-[#f5f1ea]"
+                    : "bg-[#6b8f71]/20 text-[#6b8f71] hover:bg-[#6b8f71]/30"
+                  : showTips
+                  ? "bg-[#8b5e3c] text-[#f5f1ea]"
+                  : "bg-[#8b5e3c]/15 text-[#8b5e3c] hover:bg-[#8b5e3c]/25",
+              ].join(" ")}
+              aria-label={showTips ? "Hide tips" : "Show tips"}
             >
-              Scout online
-            </span>
-          </span>
-        )}
+              ?
+            </button>
+          )}
+        </span>
       </div>
 
       {/* Message List */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 min-h-0">
-        {/* Communication tips — shown when no messages yet */}
+        {/* Communication tips — persistent, collapsible */}
         <AnimatePresence>
-          {messages.length === 0 && role && !disabled && (
+          {showTips && role && !disabled && (
             <ChatTips role={role} isRound2={isRound2} onSend={onSend} phase={phase} />
           )}
         </AnimatePresence>
