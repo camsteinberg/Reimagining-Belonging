@@ -1,6 +1,16 @@
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
 
+/* Photos */
+import heroBarndo from "../assets/photos/pullquote-barndo-storm.webp";
+import researchSession from "../assets/photos/timeline-research.webp";
+import firepit from "../assets/photos/team-hero-firepit.webp";
+import classroom from "../assets/photos/origin-classroom.webp";
+import prototype from "../assets/photos/timeline-prototype.webp";
+import workbench from "../assets/photos/mission-team-workbench.webp";
+import fellowship from "../assets/photos/card-apply.webp";
+import ranchLand from "../assets/photos/resources-hero-ranch.webp";
+
 /* ───────────────────────────── Data ───────────────────────────── */
 
 const IMPACT_TARGETS = [
@@ -158,7 +168,8 @@ export default function WhitePaperPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* ── Hero ── */}
       <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28">
-        <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/95 to-cream/80" />
+        <img src={heroBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/90 to-cream/70" />
         <div className="absolute top-[8%] right-[-12%] w-[55vw] h-[55vw] bg-forest/5 blob pointer-events-none" />
         <div className="absolute bottom-[15%] left-[-8%] w-[35vw] h-[35vw] bg-amber/5 blob pointer-events-none" style={{ animationDelay: "-4s" }} />
 
@@ -214,6 +225,9 @@ export default function WhitePaperPage() {
               trains local builders who teach others — especially in
               Opportunity Zones.
             </p>
+            <div className="reveal-left stagger-3 mt-10 aspect-[4/3] rounded-2xl overflow-hidden hidden md:block">
+              <img src={researchSession} alt="Team research and planning session" className="w-full h-full object-cover" />
+            </div>
           </div>
 
           <div className="md:col-span-6 md:col-start-7 flex flex-col gap-6">
@@ -245,9 +259,8 @@ export default function WhitePaperPage() {
 
       {/* ── The Problem — dark section ── */}
       <section className="relative py-28 md:py-40 bg-charcoal diagonal-top overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-[10%] left-[5%] w-[40vw] h-[40vw] bg-cream blob pointer-events-none" />
-        </div>
+        <img src={firepit} alt="" className="absolute inset-0 w-full h-full object-cover opacity-15" />
+        <div className="absolute inset-0 bg-charcoal/70" />
         <div className="page-container relative z-10 max-w-4xl mx-auto text-center">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/50 mb-8">
             The Crisis
@@ -273,6 +286,9 @@ export default function WhitePaperPage() {
             <h2 className="reveal-left stagger-1 font-serif text-3xl md:text-4xl font-bold text-charcoal leading-[1.15]">
               What is Housing Capacity?
             </h2>
+            <div className="reveal-left stagger-2 mt-10 aspect-square rounded-2xl overflow-hidden hidden md:block">
+              <img src={classroom} alt="Fellowship learning session" className="w-full h-full object-cover" />
+            </div>
           </div>
           <div className="md:col-span-7 md:col-start-6 flex flex-col justify-center">
             <p className="reveal-right font-serif text-lg text-charcoal/70 leading-[1.8] mb-6">
@@ -436,6 +452,9 @@ export default function WhitePaperPage() {
               of housing is built by humans — with robotic tools that multiply
               what humans can do.
             </p>
+            <div className="reveal-left stagger-3 mt-10 aspect-[4/3] rounded-2xl overflow-hidden hidden md:block">
+              <img src={prototype} alt="Housing prototype under construction with crane" className="w-full h-full object-cover" />
+            </div>
           </div>
           <div className="md:col-span-6 md:col-start-7 flex flex-col justify-center gap-8">
             {[
@@ -461,6 +480,8 @@ export default function WhitePaperPage() {
 
       {/* ── Pull Quote ── */}
       <section className="relative py-28 md:py-40 bg-charcoal diagonal-top diagonal-bottom overflow-hidden">
+        <img src={workbench} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+        <div className="absolute inset-0 bg-charcoal/70" />
         <div className="page-container relative z-10 text-center max-w-4xl mx-auto">
           <blockquote className="reveal-scale font-serif text-2xl md:text-4xl lg:text-5xl text-cream leading-[1.5] font-bold italic">
             "We don't just build housing. We build builders — and builders
@@ -485,6 +506,11 @@ export default function WhitePaperPage() {
               funding to support workforce development and reduce barriers for
               working adults.
             </p>
+          </div>
+
+          {/* Editorial image */}
+          <div className="reveal-up stagger-3 mb-14 aspect-[21/9] rounded-2xl overflow-hidden">
+            <img src={fellowship} alt="Fellows planning and organizing at workstation" className="w-full h-full object-cover" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14">
@@ -544,6 +570,9 @@ export default function WhitePaperPage() {
               HABITABLE proposes tying investment to measurable resident
               outcomes — skills, jobs, stability, and ownership.
             </p>
+            <div className="reveal-left stagger-3 aspect-[16/9] rounded-2xl overflow-hidden mb-8 hidden md:block">
+              <img src={ranchLand} alt="Idaho ranch land — potential housing site" className="w-full h-full object-cover" />
+            </div>
             <div className="reveal-left stagger-3 p-6 rounded-xl bg-sage/10 border border-sage/30">
               <p className="font-sans text-xs uppercase tracking-widest text-charcoal/60 mb-3">
                 Recommended launch sequence
