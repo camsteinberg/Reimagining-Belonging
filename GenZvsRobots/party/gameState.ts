@@ -50,6 +50,7 @@ export function addPlayer(state: RoomState, id: string, name: string): Player {
       players: [],
       grid: createEmptyGrid(),
       round1Grid: null,
+      round1Target: null,
       round1Score: null,
       round2Score: null,
       designGrid: null,
@@ -79,6 +80,8 @@ export function removePlayer(state: RoomState, id: string): void {
   const team = state.teams[player.teamId];
   if (team) {
     if (player.role === "architect") {
+      // Demote the disconnecting architect so reconnection doesn't create duplicates
+      player.role = "builder";
       const nextArchitect = team.players.find(pid => pid !== id && state.players[pid]?.connected);
       if (nextArchitect) {
         state.players[nextArchitect].role = "architect";
@@ -117,11 +120,22 @@ export function reconnectPlayer(
   const newPlayer: Player = { ...oldPlayer, id: newId, connected: true };
   state.players[newId] = newPlayer;
 
+  // Ensure no duplicate architects after reconnection
+  if (team) {
+    const connectedArchitects = team.players
+      .map(pid => state.players[pid])
+      .filter(p => p && p.connected && p.role === "architect");
+    if (connectedArchitects.length > 1) {
+      // Demote the reconnecting player — the promoted replacement keeps architect
+      newPlayer.role = "builder";
+    }
+  }
+
   return newPlayer;
 }
 
 export function startRound(state: RoomState): boolean {
-  const validStartPhases: GamePhase[] = ["lobby", "reveal1", "interstitial"];
+  const validStartPhases: GamePhase[] = ["lobby", "interstitial"];
   if (!validStartPhases.includes(state.phase)) return false;
 
   const playerCount = Object.values(state.players).filter((p) => p.connected).length;
@@ -134,8 +148,9 @@ export function startRound(state: RoomState): boolean {
 
   for (const team of Object.values(state.teams)) {
     if (isRound2) {
-      // Snapshot round 1 grid before resetting
+      // Snapshot round 1 grid and target before resetting
       team.round1Grid = team.grid.map(row => row.map(col => [...col]));
+      team.round1Target = team.roundTarget;
     }
     team.grid = createEmptyGrid();
   }
@@ -190,7 +205,6 @@ export function startRound(state: RoomState): boolean {
       // No design phase happened — use prepopulated targets
       const { target } = pickRandomTarget(isRound2 ? 2 : 1);
       team.roundTarget = target;
-      state.currentTarget = target;
     }
   }
 
@@ -210,7 +224,6 @@ export function endRound(state: RoomState): void {
 export function advancePhase(state: RoomState): void {
   const transitions: Partial<Record<GamePhase, GamePhase>> = {
     reveal1: "interstitial",
-    interstitial: "round2",
     finalReveal: "summary",
   };
   const next = transitions[state.phase];
@@ -361,14 +374,27 @@ export function resetToLobby(state: RoomState): void {
     team.designGrid = null;
     team.roundTarget = null;
     team.round1Grid = null;
+    team.round1Target = null;
     team.round1Score = null;
     team.round2Score = null;
     team.aiActionLog = [];
   }
 
-  // Clear player design grids
-  for (const player of Object.values(state.players)) {
-    player.designGrid = null;
+  // Remove disconnected players to prevent ghost team slots on "Play Again"
+  for (const [pid, player] of Object.entries(state.players)) {
+    if (!player.connected) {
+      delete state.players[pid];
+    } else {
+      player.designGrid = null;
+    }
+  }
+
+  // Clean disconnected players from team rosters and delete empty teams
+  for (const [tid, team] of Object.entries(state.teams)) {
+    team.players = team.players.filter(pid => state.players[pid]?.connected);
+    if (team.players.length === 0) {
+      delete state.teams[tid];
+    }
   }
 
   // Reset roles (first connected player = architect)

@@ -104,8 +104,9 @@ const panelVariants = {
 };
 
 export default function RoundComparison({ team }: RoundComparisonProps) {
-  const targetGrid = team.roundTarget;
-  if (!targetGrid) {
+  const round2Target = team.roundTarget;
+  const round1Target = team.round1Target ?? round2Target;
+  if (!round2Target) {
     return (
       <div className="flex items-center justify-center h-full bg-charcoal text-cream/40">
         No target available for this team.
@@ -155,7 +156,7 @@ export default function RoundComparison({ team }: RoundComparisonProps) {
                   grid={round1Grid}
                   readOnly
                   showScoring
-                  targetGrid={targetGrid}
+                  targetGrid={round1Target ?? undefined}
                   className="w-full h-full"
                 />
               </div>
@@ -177,7 +178,7 @@ export default function RoundComparison({ team }: RoundComparisonProps) {
             <div className="w-full rounded-lg overflow-hidden border border-gold/20 bg-white/5 ring-1 ring-gold/10">
               <div className="aspect-square">
                 <VoxelGrid
-                  grid={targetGrid}
+                  grid={round2Target}
                   readOnly
                   className="w-full h-full"
                 />
@@ -202,7 +203,7 @@ export default function RoundComparison({ team }: RoundComparisonProps) {
                   grid={round2Grid}
                   readOnly
                   showScoring
-                  targetGrid={targetGrid}
+                  targetGrid={round2Target}
                   className="w-full h-full"
                 />
               </div>

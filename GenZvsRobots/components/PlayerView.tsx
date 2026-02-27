@@ -96,7 +96,7 @@ function WaitingReveal({ teamName, score }: { teamName?: string; score?: number 
 }
 
 function WaitingInterstitial({ currentRole }: { currentRole?: "architect" | "builder" }) {
-  const newRole = currentRole === "architect" ? "Builder" : "Architect";
+  const newRole = currentRole ? (currentRole === "architect" ? "Builder" : "Architect") : "Player";
   return (
     <div className="flex flex-col items-center justify-center flex-1 gap-4 px-6 text-center bg-[#1a1510]">
       <span className="font-[family-name:var(--font-pixel)] text-[10px] tracking-[0.2em] uppercase text-[#6b8f71]">
@@ -554,6 +554,7 @@ export default function PlayerView({
             teamId,
             playerId,
             role,
+            teamGrid: team?.grid,
             targetGrid: team?.roundTarget ?? state.currentTarget,
             aiActionLog: team?.aiActionLog?.slice(-10),
           }),
@@ -561,14 +562,37 @@ export default function PlayerView({
           if (!res.ok) {
             clearTimeout(thinkingTimeout);
             setAiThinking(false);
+            // Show error message to user
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: `scout-error-${Date.now()}`,
+                senderId: "scout",
+                senderName: "Scout",
+                text: res.status === 429 ? "I'm busy — try again in a moment!" : "Something went wrong. Try again!",
+                isAI: true,
+                timestamp: Date.now(),
+              },
+            ]);
           }
         }).catch(() => {
           clearTimeout(thinkingTimeout);
           setAiThinking(false);
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `scout-error-${Date.now()}`,
+              senderId: "scout",
+              senderName: "Scout",
+              text: "Something went wrong. Try again!",
+              isAI: true,
+              timestamp: Date.now(),
+            },
+          ]);
         });
       }
     },
-    [send, isRound2, state.code, teamId, playerId, role, team?.roundTarget, state.currentTarget, team?.aiActionLog]
+    [send, isRound2, state.code, teamId, playerId, role, team?.grid, team?.roundTarget, state.currentTarget, team?.aiActionLog]
   );
 
   const teamGrid = team?.grid ?? null;

@@ -58,22 +58,22 @@ export async function POST(req: NextRequest) {
     // Add current message
     messages.push({ role: "user", content: text });
 
+    // C3: Set cooldown BEFORE the API call to prevent race with rapid messages
+    teamCooldowns.set(cooldownKey, Date.now());
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
     let response: Anthropic.Message;
     try {
       response = await anthropic.messages.create({
         model: "claude-sonnet-4-6",
-        max_tokens: 150,
+        max_tokens: 300,
         system: systemPrompt,
         messages,
       }, { signal: controller.signal });
     } finally {
       clearTimeout(timeoutId);
     }
-
-    // C3: Update cooldown timestamp after successful API call
-    teamCooldowns.set(cooldownKey, Date.now());
 
     const aiText = response.content
       .filter((block): block is Anthropic.TextBlock => block.type === "text")

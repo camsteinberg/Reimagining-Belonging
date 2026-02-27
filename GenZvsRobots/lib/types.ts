@@ -25,6 +25,7 @@ export interface Team {
   players: string[]; // player IDs
   grid: Grid;
   round1Grid: Grid | null; // snapshot after round 1
+  round1Target: Grid | null; // snapshot of round 1 target for final reveal
   round1Score: number | null;
   round2Score: number | null;
   designGrid: Grid | null; // saved from design phase

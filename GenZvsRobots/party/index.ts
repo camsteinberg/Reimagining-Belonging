@@ -22,7 +22,7 @@ import { GRID_SIZE } from "../lib/constants";
 
 const VALID_BLOCK_TYPES = new Set<string>([
   "wall", "floor", "roof", "window", "door", "plant", "table",
-  "metal", "concrete", "barrel", "pipe", "empty",
+  "metal", "concrete", "barrel", "pipe", "air", "empty",
 ]);
 
 export default class GameRoom implements Party.Server {
@@ -52,6 +52,7 @@ export default class GameRoom implements Party.Server {
         this.pausedRemainingMs = Math.max(0, this.state.timerEnd - Date.now());
       }
       this.stopTimer();
+      this.state.timerEnd = null;
     }
     removePlayer(this.state, conn.id);
     this.broadcastState();
