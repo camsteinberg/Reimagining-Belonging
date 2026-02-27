@@ -18,6 +18,7 @@ const GetInvolvedPage = lazy(() => import("./pages/GetInvolvedPage"));
 const StoriesPage = lazy(() => import("./pages/StoriesPage"));
 const StoryDetailPage = lazy(() => import("./pages/StoryDetailPage"));
 const OurSponsorsPage = lazy(() => import("./pages/OurSponsorsPage"));
+const WhitePaperPage = lazy(() => import("./pages/WhitePaperPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 function PageFallback() {
@@ -55,6 +56,7 @@ function App() {
             <Route path="/about/mission" element={<OurMissionPage />} />
             <Route path="/about/team" element={<OurTeamPage />} />
             <Route path="/about/sponsors" element={<OurSponsorsPage />} />
+            <Route path="/about/white-paper" element={<WhitePaperPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/get-involved" element={<GetInvolvedPage />} />
             <Route path="/stories" element={<StoriesPage />} />

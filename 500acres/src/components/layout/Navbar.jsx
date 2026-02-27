@@ -12,6 +12,7 @@ const NAV_LINKS = [
       { to: "/about/mission", label: "Our Mission" },
       { to: "/about/team", label: "Our Team" },
       { to: "/about/sponsors", label: "Our Sponsors" },
+      { to: "/about/white-paper", label: "White Paper" },
     ],
   },
   { to: "/stories", label: "Stories", num: "03" },

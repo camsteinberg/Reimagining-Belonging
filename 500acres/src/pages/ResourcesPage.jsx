@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
 import resourcesHero from "../assets/photos/resources-hero-ranch.webp";
 
@@ -19,7 +20,7 @@ const FEATURED_RESOURCE = {
   description:
     "The foundational white paper from 500 Acres exploring how underutilized land near national parks can be transformed into workforce housing through digital fabrication, fellowship training, and Qualified Opportunity Zone investment. Published December 2025.",
   type: "White Paper",
-  link: "#",
+  link: "/about/white-paper",
   accent: "bg-forest/10 border-forest/30",
   accentDot: "bg-forest",
   cta: "Read the paper",
@@ -172,10 +173,8 @@ export default function ResourcesPage() {
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-8">
             Featured
           </p>
-          <a
-            href={FEATURED_RESOURCE.link}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to={FEATURED_RESOURCE.link}
             className={`reveal-up stagger-1 group relative block p-10 md:p-16 lg:p-20 rounded-2xl border ${FEATURED_RESOURCE.accent}
               transition-all duration-500 hover:-translate-y-2 hover:shadow-xl`}
           >
@@ -207,7 +206,7 @@ export default function ResourcesPage() {
                 {FEATURED_RESOURCE.cta || "Read more"} <span aria-hidden="true">&rarr;</span>
               </span>
             </div>
-          </a>
+          </Link>
         </div>
       </section>
 
