@@ -14,6 +14,7 @@ import hsCole from "../assets/headshots/cole-kreilig.webp";
 import hsMo from "../assets/headshots/fengming-mo.webp";
 import hsSpozami from "../assets/headshots/spozami-kakar.webp";
 import hsAraman from "../assets/headshots/araman-kakar.webp";
+import hsKyleAntonio from "../assets/headshots/kyle-antonio.webp";
 
 const ACCENT_COLORS = ["bg-forest", "bg-sage", "bg-amber", "bg-bark", "bg-clay", "bg-moss", "bg-ember"];
 
@@ -28,7 +29,7 @@ const TEAM_MEMBERS = [
   { name: "Rocio Loberza", role: "Architectural Designer", photo: hsRocio },
   { name: "Yuchun Zhang", role: "Urban Design Intern", photo: hsYuchun },
   { name: "Lex", role: "Artist in Residence" },
-  { name: "Kyle & Antonio", role: "Artists in Residence" },
+  { name: "Kyle & Antonio", role: "Artists in Residence", photo: hsKyleAntonio },
 ];
 
 const CONSULTANTS = [
