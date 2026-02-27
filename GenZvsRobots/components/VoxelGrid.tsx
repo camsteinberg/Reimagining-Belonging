@@ -311,61 +311,59 @@ export default function VoxelGrid({
         aria-hidden="true"
       />
 
-      {/* View + Rotation controls */}
-      {(
+      {/* View controls — top-right row */}
+      <div className="absolute top-2 right-2 flex gap-2 z-10">
+        {/* Top-down / 3D view toggle */}
+        <button
+          onClick={() => setTopDown((v) => !v)}
+          className={[
+            "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-[family-name:var(--font-pixel)] transition-all duration-200 shadow-md",
+            topDown
+              ? "bg-[#b89f65]/90 hover:bg-[#b89f65] text-[#2a2520] ring-1 ring-[#b89f65]"
+              : "bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] ring-1 ring-[#b89f65]/40",
+          ].join(" ")}
+          title={topDown ? "Switch to 3D isometric view" : "Switch to 2D top-down view"}
+          type="button"
+        >
+          <span className="text-sm">{topDown ? "3D" : "2D"}</span>
+        </button>
+
+        {/* Rotate toggle */}
+        <button
+          onClick={() => setRotationLocked((l) => !l)}
+          className={[
+            "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-[family-name:var(--font-pixel)] transition-all duration-200 shadow-md",
+            rotationLocked
+              ? "bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] ring-1 ring-[#b89f65]/40 animate-[pulse_3s_ease-in-out_2]"
+              : "bg-[#b89f65]/90 hover:bg-[#b89f65] text-[#2a2520] ring-1 ring-[#b89f65]",
+          ].join(" ")}
+          title={rotationLocked ? "Unlock to rotate the building view" : "Lock rotation"}
+          type="button"
+        >
+          <span className="text-sm">{rotationLocked ? "🔒" : "🔓"}</span>
+          <span>{rotationLocked ? "Rotate" : "Lock"}</span>
+        </button>
+      </div>
+
+      {/* Rotation arrows — visible when unlocked */}
+      {!rotationLocked && (
         <>
-          {/* Top-down / 3D view toggle — next to rotation button */}
           <button
-            onClick={() => setTopDown((v) => !v)}
-            className={[
-              "absolute top-2 right-28 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-[family-name:var(--font-pixel)] transition-all duration-200 shadow-md",
-              topDown
-                ? "bg-[#b89f65]/90 hover:bg-[#b89f65] text-[#2a2520] ring-1 ring-[#b89f65]"
-                : "bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] ring-1 ring-[#b89f65]/40",
-            ].join(" ")}
-            title={topDown ? "Switch to 3D isometric view" : "Switch to 2D top-down view"}
+            onClick={rotateLeft}
+            className="absolute bottom-2 left-2 bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] rounded-lg px-3 py-2 text-base font-mono transition-colors shadow-md ring-1 ring-[#b89f65]/30"
+            title="Rotate left"
             type="button"
           >
-            <span className="text-sm">{topDown ? "3D" : "2D"}</span>
+            ◀
           </button>
-
-          {/* Rotate toggle — prominent labeled button */}
           <button
-            onClick={() => setRotationLocked((l) => !l)}
-            className={[
-              "absolute top-2 right-2 flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-[family-name:var(--font-pixel)] transition-all duration-200 shadow-md",
-              rotationLocked
-                ? "bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] ring-1 ring-[#b89f65]/40 animate-[pulse_3s_ease-in-out_2]"
-                : "bg-[#b89f65]/90 hover:bg-[#b89f65] text-[#2a2520] ring-1 ring-[#b89f65]",
-            ].join(" ")}
-            title={rotationLocked ? "Unlock to rotate the building view" : "Lock rotation"}
+            onClick={rotateRight}
+            className="absolute bottom-2 right-2 bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] rounded-lg px-3 py-2 text-base font-mono transition-colors shadow-md ring-1 ring-[#b89f65]/30"
+            title="Rotate right"
             type="button"
           >
-            <span className="text-sm">{rotationLocked ? "🔒" : "🔓"}</span>
-            <span>{rotationLocked ? "Rotate" : "Lock"}</span>
+            ▶
           </button>
-
-          {/* Rotation arrows — visible when unlocked */}
-          {!rotationLocked && (
-            <>
-              <button
-                onClick={rotateLeft}
-                className="absolute bottom-2 left-2 bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] rounded-lg px-3 py-2 text-base font-mono transition-colors shadow-md ring-1 ring-[#b89f65]/30"
-                title="Rotate left"
-                type="button"
-              >
-                ◀
-              </button>
-              <button
-                onClick={rotateRight}
-                className="absolute bottom-2 right-2 bg-[#4a3728]/80 hover:bg-[#4a3728] text-[#e8e0d0] rounded-lg px-3 py-2 text-base font-mono transition-colors shadow-md ring-1 ring-[#b89f65]/30"
-                title="Rotate right"
-                type="button"
-              >
-                ▶
-              </button>
-            </>
-          )}
         </>
       )}
     </div>
