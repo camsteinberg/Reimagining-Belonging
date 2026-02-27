@@ -15,7 +15,14 @@ const NAV_LINKS = [
       { to: "/about/white-paper", label: "White Paper" },
     ],
   },
-  { to: "/stories", label: "Stories", num: "03" },
+  {
+    label: "Stories & Games",
+    num: "03",
+    children: [
+      { to: "/stories", label: "Stories" },
+      { to: "https://blueprint-telephone.vercel.app", label: "Blueprint Telephone", external: true },
+    ],
+  },
   { to: "/resources", label: "Resources", num: "04" },
   { to: "/get-involved", label: "Get Involved", num: "05" },
 ];
@@ -257,14 +264,16 @@ export default function Navbar({ isHomepage }) {
               // Expandable item (has children)
               if (link.children) {
                 const isExpanded = expandedItem === i;
-                const isAboutActive = location.pathname.startsWith("/about");
+                const isGroupActive = link.children.some(
+                  (child) => !child.external && (location.pathname === child.to || location.pathname.startsWith(child.to + "/"))
+                );
                 return (
                   <div key={link.label}>
                     <button
                       ref={(el) => setLinkRef(el, i)}
                       onClick={() => setExpandedItem(isExpanded ? null : i)}
                       className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 cursor-pointer ${
-                        isAboutActive ? "text-forest" : "text-cream hover:text-forest"
+                        isGroupActive ? "text-forest" : "text-cream hover:text-forest"
                       }`}
                     >
                       <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
@@ -285,26 +294,56 @@ export default function Navbar({ isHomepage }) {
                       <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
                     </button>
                     <div className={`overflow-hidden transition-all duration-400 ${isExpanded ? "max-h-96 mt-2" : "max-h-0"}`}>
-                      {link.children.map((child, j) => (
-                        <Link
-                          key={child.to}
-                          ref={(el) => { subLinksRef.current[j] = el; }}
-                          to={child.to}
-                          onClick={(e) => handleNavClick(e, child.to)}
-                          aria-current={location.pathname === child.to ? "page" : undefined}
-                          className={`group flex items-baseline gap-4 md:gap-6 pl-10 md:pl-16 py-1 transition-all duration-300 ${
-                            isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                          } ${
-                            location.pathname === child.to ? "text-forest" : "text-cream/80 hover:text-forest"
-                          }`}
-                          style={{ transitionDelay: isExpanded ? `${j * 60}ms` : "0ms" }}
-                        >
-                          <span className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
-                            {child.label}
-                          </span>
-                          <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
-                        </Link>
-                      ))}
+                      {link.children.map((child, j) => {
+                        const childCls = `group flex items-baseline gap-4 md:gap-6 pl-10 md:pl-16 py-1 transition-all duration-300 ${
+                          isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                        } ${
+                          !child.external && location.pathname === child.to ? "text-forest" : "text-cream/80 hover:text-forest"
+                        }`;
+                        const childStyle = { transitionDelay: isExpanded ? `${j * 60}ms` : "0ms" };
+                        const childInner = (
+                          <>
+                            <span className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                              {child.label}
+                            </span>
+                            {child.external && (
+                              <svg className="w-4 h-4 md:w-5 md:h-5 opacity-40 group-hover:opacity-100 transition-opacity self-center" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                              </svg>
+                            )}
+                            <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                          </>
+                        );
+
+                        if (child.external) {
+                          return (
+                            <a
+                              key={child.to}
+                              href={child.to}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={childCls}
+                              style={childStyle}
+                            >
+                              {childInner}
+                            </a>
+                          );
+                        }
+
+                        return (
+                          <Link
+                            key={child.to}
+                            ref={(el) => { subLinksRef.current[j] = el; }}
+                            to={child.to}
+                            onClick={(e) => handleNavClick(e, child.to)}
+                            aria-current={location.pathname === child.to ? "page" : undefined}
+                            className={childCls}
+                            style={childStyle}
+                          >
+                            {childInner}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 );
