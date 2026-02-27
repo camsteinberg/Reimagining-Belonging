@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     try {
       response = await anthropic.messages.create({
         model: "claude-sonnet-4-6",
-        max_tokens: 500,
+        max_tokens: 150,
         system: systemPrompt,
         messages,
       }, { signal: controller.signal });
