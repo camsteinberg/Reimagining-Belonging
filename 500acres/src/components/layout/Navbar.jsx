@@ -104,7 +104,6 @@ export default function Navbar({ isHomepage }) {
       const links = linksRef.current.filter(Boolean);
       gsap.set(links, { opacity: 0, y: 80, rotateX: -15 });
       gsap.set(".menu-footer", { opacity: 0, y: 30 });
-      gsap.set(subLinksRef.current.filter(Boolean), { opacity: 0, y: 30 });
 
       const tl = gsap.timeline();
       tlRef.current = tl;
