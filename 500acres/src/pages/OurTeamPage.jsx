@@ -12,9 +12,6 @@ const TEAM_MEMBERS = [
   { name: "Cole Kreilig", role: "Machine Learning & Systems Fellow" },
   { name: "Cam Steinberg", role: "Project Manager" },
   { name: "Rocio Loberza", role: "Architectural Designer" },
-];
-
-const FELLOWS = [
   { name: "Yuchun Zhang", role: "Urban Design Intern" },
   { name: "Lex", role: "Artist in Residence" },
   { name: "Kyle & Antonio", role: "Artists in Residence" },
@@ -85,49 +82,6 @@ export default function OurTeamPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
             {TEAM_MEMBERS.map((member, i) => (
-              <div
-                key={member.name}
-                className={`reveal-up stagger-${(i % 3) + 1} group text-center`}
-              >
-                <div className="relative w-40 h-40 mx-auto mb-10">
-                  <div className="w-full h-full rounded-full bg-charcoal/5 flex items-center justify-center overflow-hidden">
-                    <span className="font-serif text-4xl font-bold text-charcoal/20">
-                      {member.name.split(" ").map((n) => n[0]).join("")}
-                    </span>
-                  </div>
-                  <div className={`absolute -bottom-1 -right-1 w-8 h-8 ${ACCENT_COLORS[i % ACCENT_COLORS.length]} rounded-full`} />
-                </div>
-                <h3 className="font-serif text-xl font-bold text-charcoal mb-1">
-                  {member.name}
-                </h3>
-                <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/60">
-                  {member.role}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
-
-      {/* Fellows Section */}
-      <section className="py-24 md:py-36">
-        <div className="page-container">
-          <div className="text-center mb-20 md:mb-24">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-              Fellows
-            </p>
-            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal">
-              Fellows
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-            {FELLOWS.map((member, i) => (
               <div
                 key={member.name}
                 className={`reveal-up stagger-${(i % 3) + 1} group text-center`}
