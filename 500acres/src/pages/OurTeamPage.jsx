@@ -13,6 +13,7 @@ import hsYuchun from "../assets/headshots/yuchun-zhang.webp";
 import hsCole from "../assets/headshots/cole-kreilig.webp";
 import hsMo from "../assets/headshots/fengming-mo.webp";
 import hsSpozami from "../assets/headshots/spozami-kakar.webp";
+import hsAraman from "../assets/headshots/araman-kakar.webp";
 
 const ACCENT_COLORS = ["bg-forest", "bg-sage", "bg-amber", "bg-bark", "bg-clay", "bg-moss", "bg-ember"];
 
@@ -33,7 +34,7 @@ const TEAM_MEMBERS = [
 const CONSULTANTS = [
   { name: "Roy Nelson", role: "Tax Consultant", photo: hsRoy },
   { name: "Melanie Birch", role: "Book Keeper" },
-  { name: "Araman Kakar", role: "Financial Controller" },
+  { name: "Araman Kakar", role: "Financial Controller", photo: hsAraman },
   { name: "Spozami Kakar", role: "Board Secretary / Accounts Manager", photo: hsSpozami },
 ];
 
