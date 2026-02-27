@@ -543,6 +543,8 @@ export default function PlayerView({
       const isScoutMessage = text.trim().toLowerCase().startsWith("scout");
       if (isRound2 && isScoutMessage && state.code) {
         setAiThinking(true);
+        // Safety timeout: clear thinking indicator after 20s even if no response
+        const thinkingTimeout = setTimeout(() => setAiThinking(false), 20000);
         fetch("/api/ai/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -555,7 +557,13 @@ export default function PlayerView({
             targetGrid: team?.roundTarget ?? state.currentTarget,
             aiActionLog: team?.aiActionLog?.slice(-10),
           }),
+        }).then((res) => {
+          if (!res.ok) {
+            clearTimeout(thinkingTimeout);
+            setAiThinking(false);
+          }
         }).catch(() => {
+          clearTimeout(thinkingTimeout);
           setAiThinking(false);
         });
       }

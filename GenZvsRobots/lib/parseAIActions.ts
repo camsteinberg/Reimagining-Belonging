@@ -6,11 +6,13 @@ const VALID_BLOCKS = new Set<string>(["wall", "floor", "roof", "window", "door",
 export function parseAIResponse(text: string): AIResponse {
   const actions: BuildAction[] = [];
 
-  // Extract <actions> JSON
-  const actionsMatch = text.match(/<actions>([\s\S]*?)<\/actions>/);
-  if (actionsMatch) {
+  // Extract ALL <actions> blocks (there may be multiple)
+  const actionsRegex = /<actions>([\s\S]*?)<\/actions>/g;
+  let match;
+  while ((match = actionsRegex.exec(text)) !== null) {
     try {
-      const parsed = JSON.parse(actionsMatch[1]);
+      const jsonStr = match[1].trim();
+      const parsed = JSON.parse(jsonStr);
       if (Array.isArray(parsed)) {
         for (const item of parsed) {
           if (
@@ -30,11 +32,11 @@ export function parseAIResponse(text: string): AIResponse {
         }
       }
     } catch {
-      // Invalid JSON, ignore actions
+      // Invalid JSON in this block, skip it
     }
   }
 
-  // Clean text (remove <actions> tags from display text)
+  // Clean text (remove all <actions> tags from display text)
   const cleanText = text.replace(/<actions>[\s\S]*?<\/actions>/g, "").trim();
 
   return { text: cleanText, actions };

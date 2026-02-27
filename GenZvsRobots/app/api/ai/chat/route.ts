@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
       .join("");
 
     const parsed = parseAIResponse(aiText);
+    console.log(`[AI] Room=${roomCode} Team=${teamId} Actions=${parsed.actions.length} TextLen=${parsed.text.length}`);
 
     // Push AI response into the Partykit room via HTTP
     const partyHost =
@@ -103,7 +104,27 @@ export async function POST(req: NextRequest) {
       }),
     });
     if (!pushRes.ok) {
-      console.error("PartyKit push failed:", pushRes.status, await pushRes.text());
+      const errText = await pushRes.text();
+      console.error("PartyKit push failed:", pushRes.status, errText);
+      // Send fallback error message so player sees something
+      try {
+        await fetch(`${partyProtocol}://${partyHost}/party/${roomCode.toLowerCase()}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-party-secret": process.env.PARTY_SECRET || "dev-secret",
+          },
+          body: JSON.stringify({
+            type: "aiResponse",
+            teamId,
+            text: parsed.text || "I had trouble with that request. Try again!",
+            actions: [],
+          }),
+        });
+      } catch {
+        // Fallback also failed
+      }
+      return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ success: true });

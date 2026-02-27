@@ -85,4 +85,31 @@ describe("parseAIResponse", () => {
     const result = parseAIResponse(text);
     expect(result.actions).toHaveLength(0);
   });
+
+  it("handles whitespace and newlines inside actions tags", () => {
+    const text = `Done! <actions>
+    [
+      {"row": 0, "col": 0, "block": "wall"},
+      {"row": 0, "col": 1, "block": "wall"}
+    ]
+    </actions>`;
+    const result = parseAIResponse(text);
+    expect(result.actions).toHaveLength(2);
+    expect(result.text).toBe("Done!");
+  });
+
+  it("handles multiple actions blocks by merging them", () => {
+    const text = 'Walls first! <actions>[{"row":0,"col":0,"block":"wall"}]</actions> Now the floor. <actions>[{"row":1,"col":1,"block":"floor"}]</actions>';
+    const result = parseAIResponse(text);
+    expect(result.actions).toHaveLength(2);
+    expect(result.actions[0].block).toBe("wall");
+    expect(result.actions[1].block).toBe("floor");
+    expect(result.text).toBe("Walls first!  Now the floor.");
+  });
+
+  it("handles actions tags with extra spaces around JSON", () => {
+    const text = '<actions>  [{"row":0,"col":0,"block":"wall"}]  </actions>';
+    const result = parseAIResponse(text);
+    expect(result.actions).toHaveLength(1);
+  });
 });
