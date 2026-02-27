@@ -193,21 +193,40 @@ function drawHoverPreview(
 // Chess-notation axis labels (A-F columns, 1-6 rows)
 function drawAxisLabels(ctx: CanvasRenderingContext2D, rotation: Rotation): void {
   ctx.save();
-  ctx.fillStyle = "rgba(42, 37, 32, 0.35)";
-  ctx.font = "bold 8px monospace";
+  ctx.font = "bold 11px monospace";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // Column letters along top-left edge (row = -0.7, varying col)
+  // Column letters along top-left edge (row = -1.1, varying col)
   for (let col = 0; col < GRID_SIZE; col++) {
-    const { x, y } = gridToScreen(-0.7, col, rotation);
-    ctx.fillText(colToLetter(col), x, y + TILE_H / 2);
+    const { x, y } = gridToScreen(-1.1, col, rotation);
+    const ty = y + TILE_H / 2;
+    // Background pill for readability
+    ctx.fillStyle = "rgba(245, 241, 234, 0.85)";
+    const tw = 12;
+    const th = 12;
+    ctx.beginPath();
+    ctx.roundRect(x - tw / 2, ty - th / 2, tw, th, 3);
+    ctx.fill();
+    // Label text
+    ctx.fillStyle = "#2a2520";
+    ctx.fillText(colToLetter(col), x, ty);
   }
 
-  // Row numbers along top-right edge (col = -0.7, varying row)
+  // Row numbers along top-right edge (col = -1.1, varying row)
   for (let row = 0; row < GRID_SIZE; row++) {
-    const { x, y } = gridToScreen(row, -0.7, rotation);
-    ctx.fillText(String(rowToNumber(row)), x, y + TILE_H / 2);
+    const { x, y } = gridToScreen(row, -1.1, rotation);
+    const ty = y + TILE_H / 2;
+    // Background pill for readability
+    ctx.fillStyle = "rgba(245, 241, 234, 0.85)";
+    const tw = 12;
+    const th = 12;
+    ctx.beginPath();
+    ctx.roundRect(x - tw / 2, ty - th / 2, tw, th, 3);
+    ctx.fill();
+    // Label text
+    ctx.fillStyle = "#2a2520";
+    ctx.fillText(String(rowToNumber(row)), x, ty);
   }
 
   ctx.restore();
