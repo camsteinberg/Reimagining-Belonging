@@ -2,24 +2,31 @@ import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
 import teamHero from "../assets/photos/team-hero-firepit.webp";
 
+/* Headshots (where available) */
+import hsMichelle from "../assets/headshots/michelle-crosby.webp";
+import hsJohn from "../assets/headshots/john-seidl.webp";
+import hsMikey from "../assets/headshots/mikey-thomas.webp";
+import hsRocio from "../assets/headshots/rocio-loberza.webp";
+import hsRoy from "../assets/headshots/roy-nelson.webp";
+
 const ACCENT_COLORS = ["bg-forest", "bg-sage", "bg-amber", "bg-bark", "bg-clay", "bg-moss", "bg-ember"];
 
 const TEAM_MEMBERS = [
-  { name: "Michelle Crosby", role: "CEO" },
-  { name: "John Seidl", role: "Chairman" },
-  { name: "Mikey Thomas", role: "Superintendent" },
+  { name: "Michelle Crosby", role: "CEO", photo: hsMichelle },
+  { name: "John Seidl", role: "Chairman", photo: hsJohn },
+  { name: "Mikey Thomas", role: "Superintendent", photo: hsMikey },
   { name: "Fengming Mo", role: "Financial Analyst" },
   { name: "Aiden Miller", role: "AI & Data Strategy Fellow" },
   { name: "Cole Kreilig", role: "Machine Learning & Systems Fellow" },
   { name: "Cam Steinberg", role: "Project Manager" },
-  { name: "Rocio Loberza", role: "Architectural Designer" },
+  { name: "Rocio Loberza", role: "Architectural Designer", photo: hsRocio },
   { name: "Yuchun Zhang", role: "Urban Design Intern" },
   { name: "Lex", role: "Artist in Residence" },
   { name: "Kyle & Antonio", role: "Artists in Residence" },
 ];
 
 const CONSULTANTS = [
-  { name: "Roy Nelson", role: "Tax Consultant" },
+  { name: "Roy Nelson", role: "Tax Consultant", photo: hsRoy },
   { name: "Melanie Birch", role: "Book Keeper" },
   { name: "Araman Kakar", role: "Financial Controller" },
   { name: "Spozami Kakar", role: "Board Secretary / Accounts Manager" },
@@ -91,9 +98,17 @@ export default function OurTeamPage() {
               >
                 <div className="relative w-40 h-40 mx-auto mb-10">
                   <div className="w-full h-full rounded-full bg-charcoal/5 flex items-center justify-center overflow-hidden">
-                    <span className="font-serif text-4xl font-bold text-charcoal/20">
-                      {member.name.split(" ").map((n) => n[0]).join("")}
-                    </span>
+                    {member.photo ? (
+                      <img
+                        src={member.photo}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-serif text-4xl font-bold text-charcoal/20">
+                        {member.name.split(" ").map((n) => n[0]).join("")}
+                      </span>
+                    )}
                   </div>
                   <div className={`absolute -bottom-1 -right-1 w-8 h-8 ${ACCENT_COLORS[i % ACCENT_COLORS.length]} rounded-full`} />
                 </div>
@@ -134,9 +149,17 @@ export default function OurTeamPage() {
               >
                 <div className="relative w-40 h-40 mx-auto mb-10">
                   <div className="w-full h-full rounded-full bg-charcoal/5 flex items-center justify-center overflow-hidden">
-                    <span className="font-serif text-4xl font-bold text-charcoal/20">
-                      {member.name.split(" ").map((n) => n[0]).join("")}
-                    </span>
+                    {member.photo ? (
+                      <img
+                        src={member.photo}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="font-serif text-4xl font-bold text-charcoal/20">
+                        {member.name.split(" ").map((n) => n[0]).join("")}
+                      </span>
+                    )}
                   </div>
                   <div className={`absolute -bottom-1 -right-1 w-8 h-8 ${ACCENT_COLORS[i % ACCENT_COLORS.length]} rounded-full`} />
                 </div>
