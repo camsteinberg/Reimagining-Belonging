@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from "../shared/Logo";
 
 const FOOTER_LINKS = [
-  { to: "/about", label: "About" },
+  { to: "/about/mission", label: "About" },
   { to: "/stories", label: "Stories" },
   { to: "/resources", label: "Resources" },
   { to: "/get-involved", label: "Get Involved" },

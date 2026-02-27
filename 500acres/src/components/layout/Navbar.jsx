@@ -5,7 +5,14 @@ import Logo from "../shared/Logo";
 
 const NAV_LINKS = [
   { to: "/", label: "Home", num: "01" },
-  { to: "/about", label: "About", num: "02" },
+  {
+    label: "About",
+    num: "02",
+    children: [
+      { to: "/about/mission", label: "Our Mission" },
+      { to: "/about/team", label: "Our Team" },
+    ],
+  },
   { to: "/stories", label: "Stories", num: "03" },
   { to: "/resources", label: "Resources", num: "04" },
   { to: "/get-involved", label: "Get Involved", num: "05" },
@@ -14,6 +21,8 @@ const NAV_LINKS = [
 export default function Navbar({ isHomepage }) {
   const [isOpen, setIsOpen] = useState(false);
   const [overDark, setOverDark] = useState(isHomepage);
+  const [expandedItem, setExpandedItem] = useState(null);
+  const subLinksRef = useRef([]);
   const location = useLocation();
   const navigate = useNavigate();
   const overlayRef = useRef(null);
@@ -26,6 +35,7 @@ export default function Navbar({ isHomepage }) {
   useEffect(() => {
     if (!navigatingRef.current) {
       setIsOpen(false);
+      setExpandedItem(null);
     }
   }, [location]);
 
@@ -94,6 +104,7 @@ export default function Navbar({ isHomepage }) {
       const links = linksRef.current.filter(Boolean);
       gsap.set(links, { opacity: 0, y: 80, rotateX: -15 });
       gsap.set(".menu-footer", { opacity: 0, y: 30 });
+      gsap.set(subLinksRef.current.filter(Boolean), { opacity: 0, y: 30 });
 
       const tl = gsap.timeline();
       tlRef.current = tl;
@@ -241,26 +252,85 @@ export default function Navbar({ isHomepage }) {
           style={{ paddingLeft: "max(3rem, 8vw)", paddingRight: "max(3rem, 8vw)" }}
         >
           <nav aria-label="Main navigation" className="flex flex-col gap-2 md:gap-4">
-            {NAV_LINKS.map((link, i) => (
-              <Link
-                key={link.to}
-                ref={(el) => setLinkRef(el, i)}
-                to={link.to}
-                onClick={(e) => handleNavClick(e, link.to)}
-                aria-current={location.pathname === link.to ? "page" : undefined}
-                className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
-                  location.pathname === link.to ? "text-forest" : "text-cream hover:text-forest"
-                }`}
-              >
-                <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
-                  {link.num}
-                </span>
-                <span className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
-                  {link.label}
-                </span>
-                <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
-              </Link>
-            ))}
+            {NAV_LINKS.map((link, i) => {
+              // Expandable item (has children)
+              if (link.children) {
+                const isExpanded = expandedItem === i;
+                const isAboutActive = location.pathname.startsWith("/about");
+                return (
+                  <div key={link.label}>
+                    <button
+                      ref={(el) => setLinkRef(el, i)}
+                      onClick={() => setExpandedItem(isExpanded ? null : i)}
+                      className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 cursor-pointer ${
+                        isAboutActive ? "text-forest" : "text-cream hover:text-forest"
+                      }`}
+                    >
+                      <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
+                        {link.num}
+                      </span>
+                      <span className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                        {link.label}
+                      </span>
+                      <svg
+                        className={`w-5 h-5 md:w-7 md:h-7 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                      <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-400 ${isExpanded ? "max-h-96 mt-2" : "max-h-0"}`}>
+                      {link.children.map((child, j) => (
+                        <Link
+                          key={child.to}
+                          ref={(el) => { subLinksRef.current[j] = el; }}
+                          to={child.to}
+                          onClick={(e) => handleNavClick(e, child.to)}
+                          aria-current={location.pathname === child.to ? "page" : undefined}
+                          className={`group flex items-baseline gap-4 md:gap-6 pl-10 md:pl-16 py-1 transition-all duration-300 ${
+                            isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                          } ${
+                            location.pathname === child.to ? "text-forest" : "text-cream/80 hover:text-forest"
+                          }`}
+                          style={{ transitionDelay: isExpanded ? `${j * 60}ms` : "0ms" }}
+                        >
+                          <span className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                            {child.label}
+                          </span>
+                          <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+
+              // Regular link (no children)
+              return (
+                <Link
+                  key={link.to}
+                  ref={(el) => setLinkRef(el, i)}
+                  to={link.to}
+                  onClick={(e) => handleNavClick(e, link.to)}
+                  aria-current={location.pathname === link.to ? "page" : undefined}
+                  className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
+                    location.pathname === link.to ? "text-forest" : "text-cream hover:text-forest"
+                  }`}
+                >
+                  <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
+                    {link.num}
+                  </span>
+                  <span className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                    {link.label}
+                  </span>
+                  <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="menu-footer mt-16 md:mt-20 flex flex-col md:flex-row md:items-end justify-between gap-8 opacity-0">

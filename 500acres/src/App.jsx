@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import ScrollToTop from "./components/layout/ScrollToTop";
@@ -11,7 +11,8 @@ import ErrorBoundary from "./components/shared/ErrorBoundary";
 import HomePage from "./pages/HomePage";
 
 // Lazy-load inner pages for performance
-const AboutPage = lazy(() => import("./pages/AboutPage"));
+const OurMissionPage = lazy(() => import("./pages/OurMissionPage"));
+const OurTeamPage = lazy(() => import("./pages/OurTeamPage"));
 const ResourcesPage = lazy(() => import("./pages/ResourcesPage"));
 const GetInvolvedPage = lazy(() => import("./pages/GetInvolvedPage"));
 const StoriesPage = lazy(() => import("./pages/StoriesPage"));
@@ -49,7 +50,9 @@ function App() {
         <Suspense fallback={<PageFallback />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
+            <Route path="/about" element={<Navigate to="/about/mission" replace />} />
+            <Route path="/about/mission" element={<OurMissionPage />} />
+            <Route path="/about/team" element={<OurTeamPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/get-involved" element={<GetInvolvedPage />} />
             <Route path="/stories" element={<StoriesPage />} />
