@@ -15,6 +15,7 @@ import hsMo from "../assets/headshots/fengming-mo.webp";
 import hsSpozami from "../assets/headshots/spozami-kakar.webp";
 import hsAraman from "../assets/headshots/araman-kakar.webp";
 import hsKyleAntonio from "../assets/headshots/kyle-antonio.webp";
+import hsAidan from "../assets/headshots/aidan-miller.webp";
 
 const ACCENT_COLORS = ["bg-forest", "bg-sage", "bg-amber", "bg-bark", "bg-clay", "bg-moss", "bg-ember"];
 
@@ -23,12 +24,12 @@ const TEAM_MEMBERS = [
   { name: "John Seidl", role: "Chairman", photo: hsJohn },
   { name: "Mikey Thomas", role: "Superintendent", photo: hsMikey },
   { name: "Fengming Mo", role: "Financial Analyst", photo: hsMo },
-  { name: "Aiden Miller", role: "AI & Data Strategy Fellow" },
+  { name: "Aidan Miller", role: "AI & Data Strategy Fellow", photo: hsAidan },
   { name: "Cole Kreilig", role: "Machine Learning & Systems Fellow", photo: hsCole },
   { name: "Cam Steinberg", role: "Project Manager", photo: hsCam },
   { name: "Rocio Loberza", role: "Architectural Designer", photo: hsRocio },
   { name: "Yuchun Zhang", role: "Urban Design Intern", photo: hsYuchun },
-  { name: "Lex", role: "Artist in Residence" },
+  { name: "Lex Quintos", role: "Artist in Residence" },
   { name: "Kyle & Antonio", role: "Artists in Residence", photo: hsKyleAntonio },
 ];
 
