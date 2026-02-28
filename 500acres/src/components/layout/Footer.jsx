@@ -3,7 +3,17 @@ import { Link } from "react-router-dom";
 import Logo from "../shared/Logo";
 
 const FOOTER_LINKS = [
-  { to: "/about/mission", label: "About" },
+  { to: "/", label: "Home" },
+  {
+    to: "/about",
+    label: "About",
+    children: [
+      { to: "/about/mission", label: "Mission" },
+      { to: "/about/team", label: "Team" },
+      { to: "/about/sponsors", label: "Sponsors" },
+      { to: "/about/white-paper", label: "White Paper" },
+    ],
+  },
   { to: "/stories", label: "Stories" },
   { to: "/resources", label: "Resources" },
   { to: "/get-involved", label: "Get Involved" },
@@ -97,15 +107,29 @@ export default function Footer() {
               Navigate
             </p>
             <nav aria-label="Footer navigation">
-              <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-4">
                 {FOOTER_LINKS.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit"
-                  >
-                    {link.label}
-                  </Link>
+                  <div key={link.to}>
+                    <Link
+                      to={link.to}
+                      className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit"
+                    >
+                      {link.label}
+                    </Link>
+                    {link.children && (
+                      <div className="flex flex-col gap-3 mt-3 pl-4">
+                        {link.children.map((child) => (
+                          <Link
+                            key={child.to}
+                            to={child.to}
+                            className="creative-link font-serif text-sm text-cream/50 hover:text-cream/80 transition-colors w-fit"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </nav>

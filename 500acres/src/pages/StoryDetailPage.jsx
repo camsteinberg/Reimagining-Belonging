@@ -49,6 +49,7 @@ export default function StoryDetailPage() {
         <div
           className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] blob pointer-events-none opacity-10 blur-2xl"
           style={{ backgroundColor: accentColor }}
+          aria-hidden="true"
         />
 
         {/* Back link */}
@@ -63,29 +64,43 @@ export default function StoryDetailPage() {
 
         {/* Content */}
         <div className="page-container relative z-10 grid grid-cols-1 md:grid-cols-12 gap-10 items-end">
-          {/* SVG portrait — large */}
+          {/* SVG portrait — enlarged for visual prominence */}
           <div className="md:col-span-5 flex justify-center md:justify-start">
             <img
               src={svgUrl}
-              alt={participant.name}
-              loading="lazy"
-              className="reveal-scale w-56 h-36 md:w-72 md:h-48 object-contain"
+              alt={`Portrait illustration of ${participant.name}`}
+              className="reveal-scale w-72 h-48 md:w-96 md:h-64 object-contain"
             />
           </div>
 
           {/* Name + info */}
           <div className="md:col-span-7">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/50 mb-4">
-              Participant {String(currentIndex + 1).padStart(2, "0")} / {String(participants.length).padStart(2, "0")}
-            </p>
+            {/* Progress indicator */}
+            <div className="reveal-up flex items-center gap-3 mb-4">
+              <p className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/50">
+                Participant {currentIndex + 1} of {participants.length}
+              </p>
+              <div className="flex gap-1.5">
+                {participants.map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-2 h-2 rounded-full transition-colors duration-300"
+                    style={{
+                      backgroundColor: i === currentIndex ? accentColor : "rgba(42,37,32,0.15)",
+                    }}
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
+            </div>
             <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-5">
               {participant.name}
             </h1>
             <div className="reveal-up stagger-2 flex flex-wrap items-center gap-4">
               <span className="font-sans text-sm text-charcoal/60">{participant.age} years old</span>
-              <span className="w-1 h-1 rounded-full bg-charcoal/20" />
+              <span className="w-1 h-1 rounded-full bg-charcoal/20" aria-hidden="true" />
               <span className="font-sans text-sm text-charcoal/60">{participant.location}</span>
-              <span className="w-1 h-1 rounded-full bg-charcoal/20" />
+              <span className="w-1 h-1 rounded-full bg-charcoal/20" aria-hidden="true" />
               <span className="font-sans text-sm text-charcoal/60">{participant.occupation}</span>
             </div>
           </div>
@@ -96,7 +111,7 @@ export default function StoryDetailPage() {
       <section className="py-20 md:py-28 border-t border-charcoal/10">
         <div className="page-container max-w-4xl mx-auto">
           <blockquote className="reveal-up">
-            <span className="block font-serif text-6xl md:text-8xl leading-none opacity-10" style={{ color: accentColor }}>"</span>
+            <span className="block font-serif text-6xl md:text-8xl leading-none opacity-10" style={{ color: accentColor }} aria-hidden="true">"</span>
             <p className="font-serif text-xl md:text-3xl lg:text-4xl text-charcoal italic leading-[1.5] -mt-8 md:-mt-12">
               {participant.belongingQuote}
             </p>
@@ -142,6 +157,7 @@ export default function StoryDetailPage() {
                 <div
                   className="w-8 h-[2px] mb-4"
                   style={{ backgroundColor: accentColor }}
+                  aria-hidden="true"
                 />
                 <p className="font-serif text-lg italic leading-[1.7]" style={{ color: accentColor }}>
                   {quote}
@@ -172,6 +188,7 @@ export default function StoryDetailPage() {
                   src={idealHomeUrl}
                   alt={`${participant.name}'s ideal home: ${participant.idealHomeTitle}`}
                   loading="lazy"
+                  decoding="async"
                   className="w-full max-h-[60vh] object-contain p-6 md:p-10"
                 />
               </div>
@@ -184,41 +201,63 @@ export default function StoryDetailPage() {
         </div>
       </section>
 
-      {/* Navigation — prev/next with hover effects */}
+      {/* Visual Navigation — thumbnail + name cards */}
       <section className="border-t border-charcoal/10">
         <div className="grid grid-cols-1 sm:grid-cols-2">
           {prev ? (
-            <Link
-              to={`/stories/${prev.slug}`}
-              className="group page-container py-12 md:py-16 hover:bg-charcoal/5 transition-colors"
-            >
-              <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 mb-2">
-                Previous
-              </p>
-              <p className="font-serif text-lg md:text-2xl font-bold text-charcoal group-hover:text-forest transition-colors">
-                ← {prev.name}
-              </p>
-            </Link>
+            <NavCard participant={prev} direction="prev" accentColor={ACCENT_COLORS[currentIndex - 1]} />
           ) : (
             <div />
           )}
           {next ? (
-            <Link
-              to={`/stories/${next.slug}`}
-              className="group page-container py-12 md:py-16 text-right hover:bg-charcoal/5 transition-colors border-l border-charcoal/10"
-            >
-              <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 mb-2">
-                Next
-              </p>
-              <p className="font-serif text-lg md:text-2xl font-bold text-charcoal group-hover:text-forest transition-colors">
-                {next.name} →
-              </p>
-            </Link>
+            <NavCard participant={next} direction="next" accentColor={ACCENT_COLORS[currentIndex + 1]} />
           ) : (
             <div />
           )}
         </div>
       </section>
     </div>
+  );
+}
+
+function NavCard({ participant, direction, accentColor }) {
+  const svgUrl = new URL(
+    `../assets/svg/${participant.svgIndex}inline.svg`,
+    import.meta.url
+  ).href;
+  const isPrev = direction === "prev";
+
+  return (
+    <Link
+      to={`/stories/${participant.slug}`}
+      className={`group page-container py-12 md:py-16 hover:bg-charcoal/5 transition-colors ${
+        !isPrev ? "border-l border-charcoal/10 text-right" : ""
+      }`}
+    >
+      <div className={`flex items-center gap-6 ${!isPrev ? "flex-row-reverse" : ""}`}>
+        {/* Thumbnail SVG */}
+        <div
+          className="flex-shrink-0 w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden flex items-center justify-center transition-all duration-300 group-hover:scale-105"
+          style={{ backgroundColor: `${accentColor}15` }}
+        >
+          <img
+            src={svgUrl}
+            alt={`Portrait of ${participant.name}`}
+            loading="lazy"
+            decoding="async"
+            className="w-14 h-10 md:w-16 md:h-11 object-contain"
+          />
+        </div>
+
+        <div>
+          <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 mb-1">
+            {isPrev ? "Previous" : "Next"}
+          </p>
+          <p className="font-serif text-lg md:text-2xl font-bold text-charcoal group-hover:text-forest transition-colors">
+            {isPrev ? `← ${participant.name}` : `${participant.name} →`}
+          </p>
+        </div>
+      </div>
+    </Link>
   );
 }

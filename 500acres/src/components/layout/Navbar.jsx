@@ -3,6 +3,29 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
 import Logo from "../shared/Logo";
 
+const STICKY_NAV_LINKS = [
+  { to: "/", label: "Home" },
+  {
+    label: "About",
+    children: [
+      { to: "/about", label: "About" },
+      { to: "/about/mission", label: "Our Mission" },
+      { to: "/about/team", label: "Our Team" },
+      { to: "/about/sponsors", label: "Our Sponsors" },
+      { to: "/about/white-paper", label: "White Paper" },
+    ],
+  },
+  {
+    label: "Stories & Games",
+    children: [
+      { to: "/stories", label: "Stories" },
+      { to: "https://blueprint-telephone.vercel.app", label: "Blueprint Telephone", external: true },
+    ],
+  },
+  { to: "/resources", label: "Resources" },
+  { to: "/get-involved", label: "Get Involved" },
+];
+
 const NAV_LINKS = [
   { to: "/", label: "Home", num: "01" },
   {
@@ -31,6 +54,8 @@ export default function Navbar({ isHomepage }) {
   const [isOpen, setIsOpen] = useState(false);
   const [overDark, setOverDark] = useState(isHomepage);
   const [expandedItem, setExpandedItem] = useState(null);
+  const [showSticky, setShowSticky] = useState(false);
+  const [stickyDropdown, setStickyDropdown] = useState(null);
   const subLinksRef = useRef([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -104,6 +129,29 @@ export default function Navbar({ isHomepage }) {
     };
   }, [isOpen]);
 
+  // Sticky desktop header — show after scrolling past hero on inner pages
+  useEffect(() => {
+    if (isHomepage) {
+      setShowSticky(false);
+      return;
+    }
+    const threshold = window.innerHeight * 0.85;
+    const onScroll = () => {
+      setShowSticky(window.scrollY > threshold);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHomepage, location]);
+
+  // Close sticky dropdown when clicking outside
+  useEffect(() => {
+    if (!stickyDropdown) return;
+    const close = () => setStickyDropdown(null);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [stickyDropdown]);
+
   // GSAP animation for menu open/close
   useEffect(() => {
     if (!overlayRef.current) return;
@@ -122,7 +170,7 @@ export default function Navbar({ isHomepage }) {
         { clipPath: "circle(0% at calc(100% - 3rem) 2.5rem)" },
         {
           clipPath: "circle(150% at calc(100% - 3rem) 2.5rem)",
-          duration: 0.6,
+          duration: 0.4,
           ease: "power3.inOut",
         }
       );
@@ -247,6 +295,104 @@ export default function Navbar({ isHomepage }) {
         </div>
       </button>
 
+      {/* Sticky desktop header — inner pages only */}
+      {!isHomepage && (
+        <header
+          className={`fixed top-0 left-0 right-0 z-[230] hidden md:block transition-all duration-300 ${
+            showSticky && !isOpen
+              ? "translate-y-0 opacity-100"
+              : "-translate-y-full opacity-0 pointer-events-none"
+          }`}
+          style={{ height: "60px", backgroundColor: "rgba(232, 224, 208, 0.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+        >
+          <div className="page-container h-full flex items-center justify-between">
+            <Link to="/" className="font-serif text-lg font-bold text-charcoal hover:text-forest transition-colors">
+              500 Acres
+            </Link>
+            <nav aria-label="Sticky navigation" className="flex items-center gap-8">
+              {STICKY_NAV_LINKS.map((link) => {
+                if (link.children) {
+                  const isActive = link.children.some(
+                    (child) => !child.external && (location.pathname === child.to || location.pathname.startsWith(child.to + "/"))
+                  );
+                  const isDropOpen = stickyDropdown === link.label;
+                  return (
+                    <div key={link.label} className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setStickyDropdown(isDropOpen ? null : link.label);
+                        }}
+                        aria-expanded={isDropOpen}
+                        aria-controls={`sticky-submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
+                        className={`font-sans text-sm tracking-wide transition-colors cursor-pointer ${
+                          isActive ? "text-forest" : "text-charcoal/70 hover:text-charcoal"
+                        }`}
+                      >
+                        {link.label}
+                        <svg className={`inline-block w-3 h-3 ml-1 transition-transform duration-200 ${isDropOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      {isDropOpen && (
+                        <div
+                          id={`sticky-submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
+                          role="region"
+                          aria-label={`${link.label} submenu`}
+                          className="absolute top-full left-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[180px]"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {link.children.map((child) =>
+                            child.external ? (
+                              <a
+                                key={child.to}
+                                href={child.to}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors"
+                              >
+                                {child.label}
+                                <svg className="inline-block w-3 h-3 ml-1 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                                </svg>
+                              </a>
+                            ) : (
+                              <Link
+                                key={child.to}
+                                to={child.to}
+                                onClick={() => setStickyDropdown(null)}
+                                aria-current={location.pathname === child.to ? "page" : undefined}
+                                className={`block px-4 py-2 font-sans text-sm transition-colors ${
+                                  location.pathname === child.to ? "text-forest" : "text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5"
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    aria-current={location.pathname === link.to ? "page" : undefined}
+                    className={`font-sans text-sm tracking-wide transition-colors ${
+                      location.pathname === link.to ? "text-forest" : "text-charcoal/70 hover:text-charcoal"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        </header>
+      )}
+
       {/* Full-screen menu overlay */}
       <div
         ref={overlayRef}
@@ -272,6 +418,8 @@ export default function Navbar({ isHomepage }) {
                     <button
                       ref={(el) => setLinkRef(el, i)}
                       onClick={() => setExpandedItem(isExpanded ? null : i)}
+                      aria-expanded={isExpanded}
+                      aria-controls={`submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                       className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 cursor-pointer ${
                         isGroupActive ? "text-forest" : "text-cream hover:text-forest"
                       }`}
@@ -293,7 +441,12 @@ export default function Navbar({ isHomepage }) {
                       </svg>
                       <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
                     </button>
-                    <div className={`overflow-hidden transition-all duration-400 ${isExpanded ? "max-h-96 mt-2" : "max-h-0"}`}>
+                    <div
+                      id={`submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
+                      role="region"
+                      aria-label={`${link.label} submenu`}
+                      className={`overflow-hidden transition-all duration-400 ${isExpanded ? "max-h-96 mt-2" : "max-h-0"}`}
+                    >
                       {link.children.map((child, j) => {
                         const childCls = `group flex items-baseline gap-4 md:gap-6 pl-10 md:pl-16 py-1 transition-all duration-300 ${
                           isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"

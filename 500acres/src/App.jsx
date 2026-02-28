@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import ScrollToTop from "./components/layout/ScrollToTop";
@@ -19,6 +19,7 @@ const StoriesPage = lazy(() => import("./pages/StoriesPage"));
 const StoryDetailPage = lazy(() => import("./pages/StoryDetailPage"));
 const OurSponsorsPage = lazy(() => import("./pages/OurSponsorsPage"));
 const WhitePaperPage = lazy(() => import("./pages/WhitePaperPage"));
+const AboutLandingPage = lazy(() => import("./pages/AboutLandingPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 function PageFallback() {
@@ -52,7 +53,7 @@ function App() {
         <Suspense fallback={<PageFallback />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<Navigate to="/about/mission" replace />} />
+            <Route path="/about" element={<AboutLandingPage />} />
             <Route path="/about/mission" element={<OurMissionPage />} />
             <Route path="/about/team" element={<OurTeamPage />} />
             <Route path="/about/sponsors" element={<OurSponsorsPage />} />

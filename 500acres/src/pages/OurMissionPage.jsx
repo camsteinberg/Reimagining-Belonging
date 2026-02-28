@@ -24,11 +24,10 @@ export default function OurMissionPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero — generous spacing, clears logo */}
+      {/* Hero */}
       <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28">
-        {/* Decorative blob */}
-        <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-sage/8 blob pointer-events-none" />
-        <div className="absolute bottom-[20%] left-[-5%] w-[30vw] h-[30vw] bg-clay/6 blob pointer-events-none" style={{ animationDelay: "-4s" }} />
+        <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-sage/8 blob pointer-events-none" aria-hidden="true" />
+        <div className="absolute bottom-[20%] left-[-5%] w-[30vw] h-[30vw] bg-clay/6 blob pointer-events-none" aria-hidden="true" style={{ animationDelay: "-4s" }} />
 
         <div className="page-container relative z-10">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
@@ -76,7 +75,7 @@ export default function OurMissionPage() {
               <br />Skill becomes wealth.
             </h2>
             <div className="reveal-left stagger-2 mt-10 aspect-[3/4] rounded-2xl overflow-hidden hidden md:block">
-              <img src={missionWorkbench} alt="Fellowship team at construction workbench" className="w-full h-full object-cover" />
+              <img src={missionWorkbench} alt="Fellowship team at construction workbench" className="w-full h-full object-cover" loading="lazy" decoding="async" />
             </div>
           </div>
           <div className="md:col-span-6 md:col-start-6 flex flex-col justify-center">
@@ -100,7 +99,7 @@ export default function OurMissionPage() {
         </div>
       </section>
 
-      {/* Values Section */}
+      {/* Values Section — bento-style staggered grid with featured cards */}
       <section className="py-24 md:py-36 bg-warm-white">
         <div className="page-container">
           <div className="text-center mb-20 md:mb-24">
@@ -112,87 +111,90 @@ export default function OurMissionPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-14">
-            {[
-              {
-                icon: (
-                  <svg className="w-10 h-10 text-ember" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 36c-6 0-14-4-14-14C6 12 20 4 20 4s14 8 14 18c0 10-8 14-14 14z" />
-                    <path d="M20 36c-2 0-6-2-6-8 0-6 6-10 6-10s6 4 6 10c0 6-4 8-6 8z" />
-                  </svg>
-                ),
-                title: "Build Homes, Build Hope",
-                color: "bg-hearth/10",
-                accent: "bg-ember",
-                desc: "We deliver habitable capacity quickly and affordably — camp pods, nesting kits, and A-frames. Each structure is a training site and revenue asset that reduces housing costs and creates pathways to ownership.",
-              },
-              {
-                icon: (
-                  <svg className="w-10 h-10 text-forest" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 4L10 18h6l-5 10h6l-5 10h16l-5-10h6l-5-10h6L20 4z" />
-                    <line x1="20" y1="34" x2="20" y2="38" />
-                  </svg>
-                ),
-                title: "Grow People, Close Gaps",
-                color: "bg-sage/10",
-                accent: "bg-forest",
-                desc: "Our Six Steps fellowship curriculum teaches digital fabrication, timber framing, and small-business skills so participants can increase wages and launch micro-enterprises. We track completion, placement, and verified wage uplift.",
-              },
-              {
-                icon: (
-                  <svg className="w-10 h-10 text-gold" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="20" cy="20" r="14" />
-                    <line x1="20" y1="6" x2="20" y2="34" />
-                    <path d="M14 14c0 0 3-2 6-2s6 2 6 2" />
-                    <path d="M14 26c0 0 3 2 6 2s6-2 6-2" />
-                  </svg>
-                ),
-                title: "Social Repair",
-                color: "bg-amber/10",
-                accent: "bg-gold",
-                desc: "We invest in community trust through transparent communication and facilitated mediation built into every site's governance. Better relationships reduce turnover, speed builds, and improve long-term outcomes.",
-              },
-              {
-                icon: (
-                  <svg className="w-10 h-10 text-bark" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M8 32L20 8l12 24" />
-                    <line x1="12" y1="26" x2="28" y2="26" />
-                    <line x1="20" y1="8" x2="20" y2="32" />
-                    <circle cx="14" cy="20" r="2" />
-                    <circle cx="26" cy="20" r="2" />
-                  </svg>
-                ),
-                title: "Design & Stewardship",
-                color: "bg-clay/10",
-                accent: "bg-bark",
-                desc: "Every housing unit is scored for form, comfort, and connection to place. Stewardship of land — low-impact siting, native planting, and site maintenance — is built into project budgets and fellow responsibilities.",
-              },
-            ].map((value, i) => (
-              <div
-                key={value.title}
-                className={`reveal-up stagger-${i + 1} group relative p-8 md:p-10 rounded-2xl ${value.color} transition-transform duration-500 hover:-translate-y-2`}
-              >
-                <div className={`w-12 h-12 rounded-xl ${value.color} flex items-center justify-center mb-6`}>
-                  {value.icon}
-                </div>
-                <div className={`w-8 h-[3px] ${value.accent} rounded-full mb-5`} />
-                <h3 className="font-serif text-lg md:text-xl font-bold text-charcoal mb-4">
-                  {value.title}
-                </h3>
-                <p className="font-serif text-sm text-charcoal/70 leading-[1.8] card-prose">
-                  {value.desc}
-                </p>
+          {/* Bento grid: first two cards are featured/larger */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-8 md:mb-10">
+            {/* Featured value 1 */}
+            <div className="reveal-up stagger-1 group relative p-10 md:p-14 rounded-2xl bg-hearth/10 transition-transform duration-500 hover:-translate-y-2">
+              <div className="w-14 h-14 rounded-xl bg-hearth/10 flex items-center justify-center mb-8">
+                <svg className="w-10 h-10 text-ember" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 36c-6 0-14-4-14-14C6 12 20 4 20 4s14 8 14 18c0 10-8 14-14 14z" />
+                  <path d="M20 36c-2 0-6-2-6-8 0-6 6-10 6-10s6 4 6 10c0 6-4 8-6 8z" />
+                </svg>
               </div>
-            ))}
+              <div className="w-10 h-[3px] bg-ember rounded-full mb-6" />
+              <h3 className="font-serif text-2xl md:text-3xl font-bold text-charcoal mb-6">
+                Build Homes, Build Hope
+              </h3>
+              <p className="font-serif text-base text-charcoal/70 leading-[1.8]">
+                We deliver habitable capacity quickly and affordably — camp pods, nesting kits, and A-frames. Each structure is a training site and revenue asset that reduces housing costs and creates pathways to ownership.
+              </p>
+            </div>
+
+            {/* Featured value 2 */}
+            <div className="reveal-up stagger-2 group relative p-10 md:p-14 rounded-2xl bg-sage/10 transition-transform duration-500 hover:-translate-y-2">
+              <div className="w-14 h-14 rounded-xl bg-sage/10 flex items-center justify-center mb-8">
+                <svg className="w-10 h-10 text-forest" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 4L10 18h6l-5 10h6l-5 10h16l-5-10h6l-5-10h6L20 4z" />
+                  <line x1="20" y1="34" x2="20" y2="38" />
+                </svg>
+              </div>
+              <div className="w-10 h-[3px] bg-forest rounded-full mb-6" />
+              <h3 className="font-serif text-2xl md:text-3xl font-bold text-charcoal mb-6">
+                Grow People, Close Gaps
+              </h3>
+              <p className="font-serif text-base text-charcoal/70 leading-[1.8]">
+                Our Six Steps fellowship curriculum teaches digital fabrication, timber framing, and small-business skills so participants can increase wages and launch micro-enterprises. We track completion, placement, and verified wage uplift.
+              </p>
+            </div>
+          </div>
+
+          {/* Secondary values — smaller */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-10">
+            <div className="reveal-up stagger-3 group relative p-8 md:p-10 rounded-2xl bg-amber/10 transition-transform duration-500 hover:-translate-y-2">
+              <div className="w-12 h-12 rounded-xl bg-amber/10 flex items-center justify-center mb-6">
+                <svg className="w-10 h-10 text-gold" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="20" cy="20" r="14" />
+                  <line x1="20" y1="6" x2="20" y2="34" />
+                  <path d="M14 14c0 0 3-2 6-2s6 2 6 2" />
+                  <path d="M14 26c0 0 3 2 6 2s6-2 6-2" />
+                </svg>
+              </div>
+              <div className="w-8 h-[3px] bg-gold rounded-full mb-5" />
+              <h3 className="font-serif text-lg md:text-xl font-bold text-charcoal mb-4">
+                Social Repair
+              </h3>
+              <p className="font-serif text-sm text-charcoal/70 leading-[1.8]">
+                We invest in community trust through transparent communication and facilitated mediation built into every site's governance. Better relationships reduce turnover, speed builds, and improve long-term outcomes.
+              </p>
+            </div>
+
+            <div className="reveal-up stagger-4 group relative p-8 md:p-10 rounded-2xl bg-clay/10 transition-transform duration-500 hover:-translate-y-2">
+              <div className="w-12 h-12 rounded-xl bg-clay/10 flex items-center justify-center mb-6">
+                <svg className="w-10 h-10 text-bark" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 32L20 8l12 24" />
+                  <line x1="12" y1="26" x2="28" y2="26" />
+                  <line x1="20" y1="8" x2="20" y2="32" />
+                  <circle cx="14" cy="20" r="2" />
+                  <circle cx="26" cy="20" r="2" />
+                </svg>
+              </div>
+              <div className="w-8 h-[3px] bg-bark rounded-full mb-5" />
+              <h3 className="font-serif text-lg md:text-xl font-bold text-charcoal mb-4">
+                Design & Stewardship
+              </h3>
+              <p className="font-serif text-sm text-charcoal/70 leading-[1.8]">
+                Every housing unit is scored for form, comfort, and connection to place. Stewardship of land — low-impact siting, native planting, and site maintenance — is built into project budgets and fellow responsibilities.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Pull quote — full-width dramatic */}
       <section className="relative py-28 md:py-40 bg-charcoal diagonal-top diagonal-bottom overflow-hidden">
-        <img src={pullquoteBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+        <img src={pullquoteBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-charcoal/70" />
-        <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 opacity-5" aria-hidden="true">
           <Logo className="absolute -right-[10%] top-1/2 -translate-y-1/2 w-[60vw] h-[60vw]" showText={false} />
         </div>
         <div className="page-container relative z-10 text-center max-w-4xl mx-auto">
@@ -205,7 +207,7 @@ export default function OurMissionPage() {
         </div>
       </section>
 
-      {/* Vision Timeline — horizontal stepped cards */}
+      {/* Vision Timeline — redesigned with connecting lines and varied heights */}
       <section className="py-24 md:py-36">
         <div className="page-container">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -215,55 +217,77 @@ export default function OurMissionPage() {
             2024 &rarr; 2026 &rarr; Beyond
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-14">
-            {[
-              {
-                num: "01",
-                title: "Research & Design",
-                image: timelineResearch,
-                color: "bg-amber",
-                textColor: "text-charcoal",
-                desc: "Published the Habitable White Paper. Completed the Reimagining Belonging study with seven Gen Z participants. Ran fellowship pilots, assembled core team, and identified site pipeline near Grand Canyon, Yellowstone, Bryce, and Olympic.",
-              },
-              {
-                num: "02",
-                title: "Prototype & Train",
-                image: timelinePrototype,
-                color: "bg-bark",
-                textColor: "text-cream",
-                desc: "Set up ShopBot CNC production in Boise. Designed and revealed the Camp Pod kit with CWI students. Running the first 'Raise the Pod' prototype build. Developing the Six Steps workforce training curriculum.",
-              },
-              {
-                num: "03",
-                title: "Deploy & Scale",
-                image: timelineDeploy,
-                color: "bg-moss",
-                textColor: "text-cream",
-                desc: "Producing four housing kits and deploying to Grand Canyon. Scaling into A-Frame production. Expanding fellowship cohorts and matched savings programs. Opening site pipeline across national park gateway communities.",
-              },
-            ].map((step, i) => (
-              <div
-                key={step.num}
-                className={`reveal-up stagger-${i + 1} group relative p-10 md:p-14 rounded-2xl ${step.color} transition-transform duration-500 hover:-translate-y-2`}
-              >
-                <div className="w-full aspect-video rounded-xl overflow-hidden mb-8">
-                  <img src={step.image} alt={step.title} className="w-full h-full object-cover" />
+          {/* Desktop: horizontal with connecting lines */}
+          <div className="relative">
+            {/* Horizontal connector line (desktop only) */}
+            <div className="hidden md:block absolute top-6 left-[5%] right-[5%] h-[2px] bg-charcoal/10 z-0" aria-hidden="true" />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8 relative z-10">
+              {[
+                {
+                  num: "01",
+                  title: "Research & Design",
+                  year: "2024",
+                  image: timelineResearch,
+                  color: "bg-amber",
+                  textColor: "text-charcoal",
+                  dotColor: "bg-amber",
+                  desc: "Published the Habitable White Paper. Completed the Reimagining Belonging study with seven Gen Z participants. Ran fellowship pilots, assembled core team, and identified site pipeline near Grand Canyon, Yellowstone, Bryce, and Olympic.",
+                  height: "min-h-[480px]",
+                },
+                {
+                  num: "02",
+                  title: "Prototype & Train",
+                  year: "2025",
+                  image: timelinePrototype,
+                  color: "bg-bark",
+                  textColor: "text-cream",
+                  dotColor: "bg-bark",
+                  desc: "Set up ShopBot CNC production in Boise. Designed and revealed the Camp Pod kit with CWI students. Running the first 'Raise the Pod' prototype build. Developing the Six Steps workforce training curriculum.",
+                  height: "min-h-[520px]",
+                },
+                {
+                  num: "03",
+                  title: "Deploy & Scale",
+                  year: "2026+",
+                  image: timelineDeploy,
+                  color: "bg-moss",
+                  textColor: "text-cream",
+                  dotColor: "bg-moss",
+                  desc: "Producing four housing kits and deploying to Grand Canyon. Scaling into A-Frame production. Expanding fellowship cohorts and matched savings programs. Opening site pipeline across national park gateway communities.",
+                  height: "min-h-[460px]",
+                },
+              ].map((step, i) => (
+                <div
+                  key={step.num}
+                  className={`reveal-up stagger-${i + 1} flex flex-col`}
+                >
+                  {/* Timeline node */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className={`w-12 h-12 rounded-full ${step.dotColor} flex items-center justify-center`}>
+                      <span className="font-sans text-xs font-bold text-cream">{step.year}</span>
+                    </div>
+                    <div className="hidden md:block h-[2px] flex-1 bg-charcoal/10" aria-hidden="true" />
+                  </div>
+
+                  {/* Card with varied height */}
+                  <div className={`group relative p-8 md:p-12 rounded-2xl ${step.color} ${step.height} transition-transform duration-500 hover:-translate-y-2 flex flex-col`}>
+                    <div className="w-full aspect-video rounded-xl overflow-hidden mb-6">
+                      <img src={step.image} alt={step.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                    </div>
+                    <span className={`block font-sans text-5xl md:text-6xl font-bold ${step.textColor} opacity-10 mb-4`}>
+                      {step.num}
+                    </span>
+                    <h3 className={`font-serif text-2xl md:text-3xl font-bold ${step.textColor} mb-6`}>
+                      {step.title}
+                    </h3>
+                    <p className={`font-serif text-base ${step.textColor} opacity-80 leading-[1.85] flex-1`}>
+                      {step.desc}
+                    </p>
+                  </div>
                 </div>
-                <span className={`block font-sans text-6xl md:text-7xl font-bold ${step.textColor} opacity-10 mb-8`}>
-                  {step.num}
-                </span>
-                <h3 className={`font-serif text-2xl md:text-3xl font-bold ${step.textColor} mb-8`}>
-                  {step.title}
-                </h3>
-                <p className={`font-serif text-base ${step.textColor} opacity-80 leading-[1.85]`}>
-                  {step.desc}
-                </p>
-                {/* Connecting line */}
-                {i < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 w-8 h-[2px] bg-charcoal/20" />
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -278,10 +302,10 @@ export default function OurMissionPage() {
         <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
           <div className="md:col-span-5 md:col-start-1 relative">
             <div className="reveal-scale aspect-square bg-charcoal/5 rounded-2xl flex items-center justify-center overflow-hidden">
-              <img src={originClassroom} alt="Fellowship learning session in barn classroom" className="w-full h-full object-cover" />
+              <img src={originClassroom} alt="Fellowship learning session in barn classroom" className="w-full h-full object-cover" loading="lazy" decoding="async" />
             </div>
             {/* Decorative dot */}
-            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-sage/20 rounded-full" />
+            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-sage/20 rounded-full" aria-hidden="true" />
           </div>
           <div className="md:col-span-6 md:col-start-7">
             <p className="reveal-right font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -315,10 +339,10 @@ export default function OurMissionPage() {
       <section className="py-24 md:py-32 bg-night overflow-hidden">
         <div className="page-container relative z-10 text-center max-w-2xl mx-auto">
           {/* Decorative stars */}
-          <div className="absolute top-8 left-[15%] w-1 h-1 bg-starlight rounded-full opacity-40" />
-          <div className="absolute top-16 right-[20%] w-1.5 h-1.5 bg-starlight rounded-full opacity-30" />
-          <div className="absolute bottom-12 left-[25%] w-1 h-1 bg-starlight rounded-full opacity-25" />
-          <div className="absolute top-24 right-[35%] w-0.5 h-0.5 bg-starlight rounded-full opacity-50" />
+          <div className="absolute top-8 left-[15%] w-1 h-1 bg-starlight rounded-full opacity-40" aria-hidden="true" />
+          <div className="absolute top-16 right-[20%] w-1.5 h-1.5 bg-starlight rounded-full opacity-30" aria-hidden="true" />
+          <div className="absolute bottom-12 left-[25%] w-1 h-1 bg-starlight rounded-full opacity-25" aria-hidden="true" />
+          <div className="absolute top-24 right-[35%] w-0.5 h-0.5 bg-starlight rounded-full opacity-50" aria-hidden="true" />
 
           <h2 className="reveal-up font-serif text-3xl md:text-4xl font-bold text-cream mb-4">
             Stay Connected
