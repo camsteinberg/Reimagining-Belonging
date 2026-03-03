@@ -3,6 +3,7 @@ import { participants } from "../data/participants";
 import useReveal from "../hooks/useReveal";
 import storiesHero from "../assets/photos/stories-hero-barn.webp";
 import SectionDivider from "../components/shared/SectionDivider";
+import CTABand from "../components/shared/CTABand";
 
 /* Theme tags assigned per participant based on their story content */
 const THEME_TAGS = {
@@ -266,32 +267,16 @@ export default function StoriesPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 md:py-36 bg-bark diagonal-top">
-        <div className="page-container text-center">
-          <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            What does belonging mean to you?
-          </h2>
-          <p className="reveal-up stagger-1 font-serif text-lg text-cream/60 leading-[1.8] mb-10 max-w-xl mx-auto">
-            The Reimagining Belonging research continues. Your voice
-            helps shape what we build next.
-          </p>
-          <div className="reveal-up stagger-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/get-involved"
-              className="inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
-            >
-              Share your experience
-            </Link>
-            <Link
-              to="/about/white-paper"
-              className="inline-flex items-center gap-2 font-sans text-sm uppercase tracking-[0.2em] text-cream/70 hover:text-cream transition-colors duration-300"
-            >
-              Read the research <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <CTABand
+        bg="bg-bark"
+        diagonal
+        heading="What does belonging mean to you?"
+        description="The Reimagining Belonging research continues. Your voice helps shape what we build next."
+        ctas={[
+          { label: "Share your experience", to: "/get-involved" },
+          { label: "Read the research", to: "/about/white-paper", variant: "text" },
+        ]}
+      />
     </div>
   );
 }

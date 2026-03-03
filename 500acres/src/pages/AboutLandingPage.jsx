@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
 import Breadcrumbs from "../components/shared/Breadcrumbs";
+import SectionDivider from "../components/shared/SectionDivider";
 import pullquoteBarndo from "../assets/photos/pullquote-barndo-storm.webp";
 
 const ABOUT_CARDS = [
@@ -101,10 +102,7 @@ export default function AboutLandingPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider />
 
       {/* Entry-point cards */}
       <section className="py-24 md:py-36">

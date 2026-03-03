@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
+import CTABand from "../components/shared/CTABand";
 import resourcesHero from "../assets/photos/resources-hero-ranch.webp";
 
 /* ───────────────────────────── Constants ───────────────────────────── */
@@ -392,33 +393,15 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      {/* Bottom CTA band */}
-      <section className="relative py-24 md:py-36 bg-bark overflow-hidden">
-        <div className="page-container relative z-10 text-center">
-          <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            Ready to take action?
-          </h2>
-          <p className="reveal-up stagger-1 font-serif text-lg text-cream/70 mb-10 max-w-xl mx-auto">
-            These resources are just the beginning. Take the next step —
-            apply for a fellowship or learn from the stories that shaped
-            our mission.
-          </p>
-          <div className="reveal-up stagger-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/get-involved"
-              className="inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
-            >
-              Get Involved
-            </Link>
-            <Link
-              to="/stories"
-              className="inline-block bg-transparent border-2 border-cream text-cream px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-cream/10 transition-colors duration-300"
-            >
-              Read Stories
-            </Link>
-          </div>
-        </div>
-      </section>
+      <CTABand
+        bg="bg-bark"
+        heading="Ready to take action?"
+        description="These resources are just the beginning. Take the next step — apply for a fellowship or learn from the stories that shaped our mission."
+        ctas={[
+          { label: "Get Involved", to: "/get-involved" },
+          { label: "Read Stories", to: "/stories", variant: "outline" },
+        ]}
+      />
 
     </div>
   );

@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
 import SectionDivider from "../components/shared/SectionDivider";
+import SectionHeader from "../components/shared/SectionHeader";
+import CTABand from "../components/shared/CTABand";
 import teamHero from "../assets/photos/team-hero-firepit.webp";
 
 /* Headshots (where available) */
@@ -289,18 +290,13 @@ export default function OurTeamPage() {
       {/* Leadership — cream (default) */}
       <section className="py-24 md:py-36">
         <div className="page-container">
-          <div className="text-center mb-16 md:mb-20">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-              Leadership
-            </p>
-            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
-              Our Team
-            </h2>
-            <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl mx-auto">
-              The people building 500 Acres — from land acquisition and fund
-              management to on-site construction and digital fabrication.
-            </p>
-          </div>
+          <SectionHeader
+            label="Leadership"
+            title="Our Team"
+            description="The people building 500 Acres — from land acquisition and fund management to on-site construction and digital fabrication."
+            align="center"
+            className="mb-16 md:mb-20"
+          />
 
           {/* Featured leadership cards — span full width */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
@@ -341,18 +337,13 @@ export default function OurTeamPage() {
       {/* Trusted Advisors — cream (default) */}
       <section className="py-24 md:py-36">
         <div className="page-container">
-          <div className="text-center mb-16 md:mb-20">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-              Advisors
-            </p>
-            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
-              Trusted Advisors
-            </h2>
-            <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl mx-auto">
-              Experienced professionals who guide 500 Acres through financial
-              planning, governance, and operational excellence.
-            </p>
-          </div>
+          <SectionHeader
+            label="Advisors"
+            title="Trusted Advisors"
+            description="Experienced professionals who guide 500 Acres through financial planning, governance, and operational excellence."
+            align="center"
+            className="mb-16 md:mb-20"
+          />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
             {TRUSTED_ADVISORS.map((member, i) => (
@@ -362,24 +353,12 @@ export default function OurTeamPage() {
         </div>
       </section>
 
-      {/* CTA band */}
-      <section className="relative py-24 md:py-36 bg-charcoal overflow-hidden">
-        <div className="page-container relative z-10 text-center">
-          <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            Join the team.
-          </h2>
-          <p className="reveal-up stagger-1 font-serif text-lg text-cream/70 mb-10 max-w-xl mx-auto">
-            We're always looking for mission-driven people who want to build
-            homes, train the next generation, and create communities that last.
-          </p>
-          <Link
-            to="/get-involved"
-            className="reveal-up stagger-2 inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
-          >
-            Get Involved
-          </Link>
-        </div>
-      </section>
+      <CTABand
+        bg="bg-charcoal"
+        heading="Join the team."
+        description="We're always looking for mission-driven people who want to build homes, train the next generation, and create communities that last."
+        ctas={[{ label: "Get Involved", to: "/get-involved" }]}
+      />
     </div>
   );
 }

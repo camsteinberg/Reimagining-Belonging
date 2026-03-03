@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
+import SectionDivider from "../components/shared/SectionDivider";
+import SectionHeader from "../components/shared/SectionHeader";
+import CTABand from "../components/shared/CTABand";
 
 /* Logo imports (where available) */
 import logoAD from "../assets/logos/architectural-digest.png";
@@ -372,26 +374,17 @@ export default function OurSponsorsPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider />
 
       {/* Featured Partners -- bento grid with multi-column spans */}
       <section className="py-24 md:py-36">
         <div className="page-container">
-          <div className="mb-16 md:mb-20">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-              Key Partners
-            </p>
-            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
-              Featured Partnerships
-            </h2>
-            <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl">
-              These organizations form the core of our design, training, and
-              research infrastructure.
-            </p>
-          </div>
+          <SectionHeader
+            label="Key Partners"
+            title="Featured Partnerships"
+            description="These organizations form the core of our design, training, and research infrastructure."
+            className="mb-16 md:mb-20"
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
             {FEATURED_PARTNERS.map((sponsor, i) => (
@@ -422,24 +415,12 @@ export default function OurSponsorsPage() {
         </section>
       ))}
 
-      {/* CTA band */}
-      <section className="relative py-24 md:py-36 bg-bark overflow-hidden">
-        <div className="page-container relative z-10 text-center">
-          <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            Partner with us.
-          </h2>
-          <p className="reveal-up stagger-1 font-serif text-lg text-cream/70 mb-10 max-w-xl mx-auto">
-            Whether you're a company, university, or organization — there are
-            many ways to support the mission of building belonging.
-          </p>
-          <Link
-            to="/get-involved"
-            className="reveal-up stagger-2 inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
-          >
-            Get Involved
-          </Link>
-        </div>
-      </section>
+      <CTABand
+        bg="bg-bark"
+        heading="Partner with us."
+        description="Whether you're a company, university, or organization — there are many ways to support the mission of building belonging."
+        ctas={[{ label: "Get Involved", to: "/get-involved" }]}
+      />
     </div>
   );
 }

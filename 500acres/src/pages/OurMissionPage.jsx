@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import useReveal from "../hooks/useReveal";
+import SectionDivider from "../components/shared/SectionDivider";
+import SectionHeader from "../components/shared/SectionHeader";
+import CTABand from "../components/shared/CTABand";
 import originClassroom from "../assets/photos/origin-classroom.webp";
 import missionWorkbench from "../assets/photos/mission-team-workbench.webp";
 
@@ -42,10 +44,7 @@ export default function OurMissionPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider />
 
       {/* Mission — asymmetric two-column editorial */}
       <section className="py-24 md:py-36">
@@ -87,14 +86,12 @@ export default function OurMissionPage() {
       {/* Values Section — bento-style staggered grid with featured cards */}
       <section className="py-24 md:py-36 bg-warm-white">
         <div className="page-container">
-          <div className="text-center mb-20 md:mb-24">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-              What We Believe
-            </p>
-            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal">
-              Our Values
-            </h2>
-          </div>
+          <SectionHeader
+            label="What We Believe"
+            title="Our Values"
+            align="center"
+            className="mb-20 md:mb-24"
+          />
 
           {/* Bento grid: first two cards are featured/larger */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-8 md:mb-10">
@@ -202,10 +199,7 @@ export default function OurMissionPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider />
 
       {/* Origin — editorial image + text overlap */}
       <section className="py-24 md:py-36">
@@ -294,33 +288,15 @@ export default function OurMissionPage() {
         </div>
       </section>
 
-      {/* CTA band */}
-      <section className="relative py-24 md:py-36 bg-forest overflow-hidden">
-        <div className="page-container relative z-10 text-center">
-          <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            See the research behind the model.
-          </h2>
-          <p className="reveal-up stagger-1 font-serif text-lg text-cream/70 mb-10 max-w-xl mx-auto">
-            The HABITABLE white paper lays out the full vision — from Housing
-            Capacity Units to the Six Steps curriculum to Opportunity Zone
-            investment.
-          </p>
-          <div className="reveal-up stagger-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/about/white-paper"
-              className="inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
-            >
-              Read the White Paper
-            </Link>
-            <Link
-              to="/get-involved"
-              className="inline-flex items-center gap-2 font-sans text-sm uppercase tracking-[0.2em] text-cream/70 hover:text-cream transition-colors duration-300"
-            >
-              Or get involved <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <CTABand
+        bg="bg-forest"
+        heading="See the research behind the model."
+        description="The HABITABLE white paper lays out the full vision — from Housing Capacity Units to the Six Steps curriculum to Opportunity Zone investment."
+        ctas={[
+          { label: "Read the White Paper", to: "/about/white-paper" },
+          { label: "Or get involved", to: "/get-involved", variant: "text" },
+        ]}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
+import SectionDivider from "../components/shared/SectionDivider";
 
 const SUGGESTED_PAGES = [
   {
@@ -67,10 +68,7 @@ export default function NotFoundPage() {
         </Link>
       </div>
 
-      {/* Divider */}
-      <div className="page-container relative z-10">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider className="relative z-10" />
 
       {/* You might be looking for... */}
       <div className="relative z-10 page-container pb-32 pt-16">

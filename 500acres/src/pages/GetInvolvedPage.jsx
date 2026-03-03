@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
+import SectionHeader from "../components/shared/SectionHeader";
+import SectionDivider from "../components/shared/SectionDivider";
 import heroConstruction from "../assets/photos/getinvolved-hero-crane.webp";
 import cardApply from "../assets/photos/card-apply.webp";
 import cardAttend from "../assets/photos/card-attend.webp";
@@ -148,12 +150,11 @@ export default function GetInvolvedPage() {
       {/* Engagement funnel -- featured Apply card + 2-column grid */}
       <section className="py-24 md:py-36">
         <div className="page-container">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-            Your Journey
-          </p>
-          <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-20 md:mb-24">
-            Three ways in.
-          </h2>
+          <SectionHeader
+            label="Your Journey"
+            title="Three ways in."
+            className="mb-20 md:mb-24"
+          />
 
           {/* Featured Apply card — full width, horizontal layout */}
           {(() => {
@@ -242,22 +243,17 @@ export default function GetInvolvedPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider />
 
       {/* FAQ Accordion */}
       <section className="py-24 md:py-36">
         <div className="page-container max-w-3xl mx-auto">
-          <div className="text-center mb-16 md:mb-20">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-              Common Questions
-            </p>
-            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal">
-              Frequently Asked
-            </h2>
-          </div>
+          <SectionHeader
+            label="Common Questions"
+            title="Frequently Asked"
+            align="center"
+            className="mb-16 md:mb-20"
+          />
 
           <div className="space-y-4">
             {FAQ_ITEMS.map((item, i) => {
@@ -313,10 +309,7 @@ export default function GetInvolvedPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider />
 
       {/* Volunteer form -- editorial split layout */}
       <section id="volunteer-form" className="py-24 md:py-36 bg-warm-white">
@@ -506,10 +499,7 @@ export default function GetInvolvedPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider />
 
       {/* Newsletter signup */}
       <section className="py-24 md:py-36 bg-cream">

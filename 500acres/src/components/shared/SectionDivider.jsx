@@ -4,15 +4,17 @@
  * - "dot"       — centered dot
  * - "space"     — empty vertical spacer
  * - "editorial" — line with centered dot
+ *
+ * Accepts optional className for additional wrapper styling.
  */
-export default function SectionDivider({ variant = "line" }) {
+export default function SectionDivider({ variant = "line", className = "" }) {
   if (variant === "space") {
-    return <div className="h-16 md:h-24" />;
+    return <div className={`h-16 md:h-24 ${className}`} />;
   }
 
   if (variant === "dot") {
     return (
-      <div className="page-container flex justify-center py-8 md:py-12">
+      <div className={`page-container flex justify-center py-8 md:py-12 ${className}`}>
         <div className="w-1.5 h-1.5 rounded-full bg-charcoal/20" />
       </div>
     );
@@ -20,7 +22,7 @@ export default function SectionDivider({ variant = "line" }) {
 
   if (variant === "editorial") {
     return (
-      <div className="page-container flex items-center gap-4 py-8 md:py-12">
+      <div className={`page-container flex items-center gap-4 py-8 md:py-12 ${className}`}>
         <div className="flex-1 h-px bg-charcoal/10" />
         <div className="w-1.5 h-1.5 rounded-full bg-charcoal/20" />
         <div className="flex-1 h-px bg-charcoal/10" />
@@ -30,7 +32,7 @@ export default function SectionDivider({ variant = "line" }) {
 
   // Default: "line"
   return (
-    <div className="page-container">
+    <div className={`page-container ${className}`}>
       <div className="h-px bg-charcoal/10" />
     </div>
   );

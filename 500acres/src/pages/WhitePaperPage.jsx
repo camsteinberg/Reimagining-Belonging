@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
+import SectionDivider from "../components/shared/SectionDivider";
 
 /* Photos */
 import heroBarndo from "../assets/photos/pullquote-barndo-storm.webp";
@@ -264,8 +265,7 @@ export default function WhitePaperPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container"><div className="h-px bg-charcoal/10" /></div>
+      <SectionDivider />
 
       {/* Mobile TOC -- collapsible */}
       <div className="lg:hidden sticky top-0 z-40 bg-cream/95 backdrop-blur-sm border-b border-charcoal/10">
