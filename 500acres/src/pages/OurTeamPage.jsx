@@ -219,26 +219,24 @@ function MemberCard({ member, index }) {
   );
 }
 
-function TeamSection({ title, members, bgClass }) {
+function TeamSection({ title, members }) {
   const colors = SECTION_ACCENTS[title] || { bg: "", border: "", dot: "bg-charcoal" };
 
   return (
-    <div className={bgClass || ""}>
-      <div className={`${bgClass ? "page-container py-20 md:py-28" : "mb-20 md:mb-28 last:mb-0"}`}>
-        <div className="reveal-up flex items-center gap-3 mb-12 md:mb-16">
-          <div className={`w-2.5 h-2.5 rounded-full ${colors.dot}`} />
-          <h2 className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60">
-            {title}
-          </h2>
-          <div className="flex-1 h-px bg-charcoal/10 ml-4" />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-          {members.map((member, i) => (
-            <MemberCard key={member.name} member={member} index={i} />
-          ))}
-        </div>
+    <>
+      <div className="reveal-up flex items-center gap-3 mb-12 md:mb-16">
+        <div className={`w-2.5 h-2.5 rounded-full ${colors.dot}`} />
+        <h2 className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60">
+          {title}
+        </h2>
+        <div className="flex-1 h-px bg-charcoal/10 ml-4" />
       </div>
-    </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+        {members.map((member, i) => (
+          <MemberCard key={member.name} member={member} index={i} />
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -288,7 +286,7 @@ export default function OurTeamPage() {
         </div>
       </section>
 
-      {/* Leadership — featured large cards */}
+      {/* Leadership — cream (default) */}
       <section className="py-24 md:py-36">
         <div className="page-container">
           <div className="text-center mb-16 md:mb-20">
@@ -305,60 +303,64 @@ export default function OurTeamPage() {
           </div>
 
           {/* Featured leadership cards — span full width */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-24 md:mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {LEADERSHIP.map((member, i) => (
               <LeadershipCard key={member.name} member={member} index={i} />
             ))}
           </div>
-
-          {/* Design & Build — with tinted background */}
-          <TeamSection title="Design & Build" members={DESIGN_BUILD} />
         </div>
       </section>
 
-      {/* Technology & Strategy — cream (default) */}
+      {/* Design & Build — tinted */}
       <div className="bg-clay/[0.03]">
         <section className="py-20 md:py-28">
           <div className="page-container">
-            <TeamSection title="Technology & Strategy" members={TECH_STRATEGY} />
+            <TeamSection title="Design & Build" members={DESIGN_BUILD} />
           </div>
         </section>
       </div>
 
-      {/* Fellows & Artists — tinted background */}
+      {/* Technology & Strategy — cream (default) */}
       <section className="py-20 md:py-28">
         <div className="page-container">
-          <TeamSection title="Fellows & Artists" members={FELLOWS_ARTISTS} />
+          <TeamSection title="Technology & Strategy" members={TECH_STRATEGY} />
         </div>
       </section>
 
-      <SectionDivider variant="dot" />
-
-      {/* Trusted Advisors Section */}
+      {/* Fellows & Artists — tinted */}
       <div className="bg-sage/[0.03]">
-        <section className="py-24 md:py-36">
+        <section className="py-20 md:py-28">
           <div className="page-container">
-            <div className="text-center mb-16 md:mb-20">
-              <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-                Advisors
-              </p>
-              <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
-                Trusted Advisors
-              </h2>
-              <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl mx-auto">
-                Experienced professionals who guide 500 Acres through financial
-                planning, governance, and operational excellence.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
-              {TRUSTED_ADVISORS.map((member, i) => (
-                <MemberCard key={member.name} member={member} index={i} />
-              ))}
-            </div>
+            <TeamSection title="Fellows & Artists" members={FELLOWS_ARTISTS} />
           </div>
         </section>
       </div>
+
+      <SectionDivider variant="dot" />
+
+      {/* Trusted Advisors — cream (default) */}
+      <section className="py-24 md:py-36">
+        <div className="page-container">
+          <div className="text-center mb-16 md:mb-20">
+            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
+              Advisors
+            </p>
+            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
+              Trusted Advisors
+            </h2>
+            <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl mx-auto">
+              Experienced professionals who guide 500 Acres through financial
+              planning, governance, and operational excellence.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
+            {TRUSTED_ADVISORS.map((member, i) => (
+              <MemberCard key={member.name} member={member} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* CTA band */}
       <section className="relative py-24 md:py-36 bg-charcoal overflow-hidden">

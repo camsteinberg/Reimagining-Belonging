@@ -176,7 +176,7 @@ export default function OurMissionPage() {
       </section>
 
       {/* Three-Word Mantra Triptych */}
-      <section className="bg-charcoal py-20 md:py-28">
+      <section className="bg-charcoal py-20 md:py-28 overflow-hidden">
         <div className="page-container">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0">
             {[

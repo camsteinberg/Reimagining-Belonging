@@ -77,7 +77,7 @@ function FeaturedStoryCard({ participant, index }) {
 
         {/* Content */}
         <div className="flex flex-col flex-1">
-          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/25 mb-3" aria-hidden="true">
+          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/20 mb-3" aria-hidden="true">
             Participant {String(index + 1).padStart(2, "0")}
           </span>
 
@@ -138,7 +138,7 @@ function StoryCard({ participant, index }) {
 
       <div className="p-8 md:p-12 flex flex-col">
         {/* Participant number */}
-        <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/25 mb-auto" aria-hidden="true">
+        <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/20 mb-auto" aria-hidden="true">
           Participant {String(index + 1).padStart(2, "0")}
         </span>
 
