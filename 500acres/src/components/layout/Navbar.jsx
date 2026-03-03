@@ -80,6 +80,7 @@ export default function Navbar({ isHomepage }) {
       return;
     }
 
+    let rafId = null;
     const detect = () => {
       const btn = menuBtnRef.current;
       if (!btn || isOpen) return;
@@ -113,8 +114,18 @@ export default function Navbar({ isHomepage }) {
     };
 
     detect();
-    window.addEventListener("scroll", detect, { passive: true });
-    return () => window.removeEventListener("scroll", detect);
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        detect();
+        rafId = null;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [isHomepage, isOpen, location]);
 
   // Lock body scroll when menu open
@@ -127,6 +138,48 @@ export default function Navbar({ isHomepage }) {
     return () => {
       document.body.style.overflow = "";
     };
+  }, [isOpen]);
+
+  // Focus trap + Escape key when menu is open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+        menuBtnRef.current?.focus();
+        return;
+      }
+
+      if (e.key !== "Tab") return;
+
+      const overlay = overlayRef.current;
+      const menuBtn = menuBtnRef.current;
+      if (!overlay || !menuBtn) return;
+
+      const focusable = [
+        menuBtn,
+        ...overlay.querySelectorAll(
+          'a[href], button, [tabindex]:not([tabindex="-1"])'
+        ),
+      ].filter((el) => el.offsetParent !== null || el === menuBtn);
+
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
   // Sticky desktop header — show after scrolling past hero on inner pages
@@ -253,7 +306,7 @@ export default function Navbar({ isHomepage }) {
   return (
     <>
       {/* Fixed logo — hidden when menu is open */}
-      <div className={`fixed top-4 left-4 md:top-6 md:left-8 lg:left-12 z-[250] transition-opacity duration-300 ${isOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+      <div className={`fixed top-4 left-4 md:top-6 md:left-8 lg:left-12 z-[250] transition-opacity duration-300 ${isOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`} inert={isOpen || undefined}>
         <Link to="/" className="block group" aria-label="500 Acres Home">
           <Logo
             className="w-20 h-20 md:w-28 md:h-28 transition-transform duration-300 group-hover:scale-110"
@@ -298,12 +351,12 @@ export default function Navbar({ isHomepage }) {
       {/* Sticky desktop header — inner pages only */}
       {!isHomepage && (
         <header
-          className={`fixed top-0 left-0 right-0 z-[230] hidden md:block transition-all duration-300 ${
+          className={`fixed top-0 left-0 right-0 z-[230] hidden md:block transition-all duration-300 h-[60px] bg-cream/85 backdrop-blur-md ${
             showSticky && !isOpen
               ? "translate-y-0 opacity-100"
               : "-translate-y-full opacity-0 pointer-events-none"
           }`}
-          style={{ height: "60px", backgroundColor: "rgba(232, 224, 208, 0.85)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+          style={{ WebkitBackdropFilter: "blur(12px)" }}
         >
           <div className="page-container h-full flex items-center justify-between">
             <Link to="/" className="font-serif text-lg font-bold text-charcoal hover:text-forest transition-colors">

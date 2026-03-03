@@ -230,7 +230,7 @@ export default function WhitePaperPage() {
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* ── Hero ── */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28">
+      <section className="relative min-h-[65vh] flex flex-col justify-end pb-20 md:pb-28">
         <img src={heroBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/90 to-cream/70" />
         <div className="absolute top-[8%] right-[-12%] w-[55vw] h-[55vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" />
@@ -249,6 +249,9 @@ export default function WhitePaperPage() {
           <p className="reveal-up stagger-3 font-serif text-lg md:text-xl text-charcoal/60 max-w-xl leading-[1.6]">
             A 10-Year Framework to End the Working Homeless Crisis
           </p>
+          <span className="reveal-up stagger-4 inline-block mt-6 font-sans text-xs uppercase tracking-[0.3em] text-charcoal/40">
+            ~25 min read
+          </span>
         </div>
 
         <div className="reveal-up stagger-3 absolute bottom-16 right-[max(2.5rem,6vw)] flex flex-col items-center gap-2">

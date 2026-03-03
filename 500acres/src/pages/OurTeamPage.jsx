@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
+import SectionDivider from "../components/shared/SectionDivider";
 import teamHero from "../assets/photos/team-hero-firepit.webp";
 
 /* Headshots (where available) */
@@ -122,12 +123,24 @@ const TRUSTED_ADVISORS = [
   },
 ];
 
+const ACCENT_DOT = {
+  forest: "bg-forest",
+  sage: "bg-sage",
+};
+
 const SECTION_ACCENTS = {
   "Design & Build": { bg: "bg-clay/10", border: "border-clay/30", dot: "bg-clay" },
   "Technology & Strategy": { bg: "bg-amber/10", border: "border-amber/30", dot: "bg-amber" },
   "Fellows & Artists": { bg: "bg-sage/10", border: "border-sage/30", dot: "bg-sage" },
   "Trusted Advisors": { bg: "bg-forest/10", border: "border-forest/30", dot: "bg-forest" },
 };
+
+const CULTURE_STATS = [
+  { number: "15+", label: "Team Members" },
+  { number: "5", label: "Departments" },
+  { number: "4", label: "States" },
+  { number: "100%", label: "Mission-Driven" },
+];
 
 function LeadershipCard({ member, index }) {
   const accentClasses = member.accent === "forest"
@@ -153,7 +166,7 @@ function LeadershipCard({ member, index }) {
               </span>
             )}
           </div>
-          <div className={`absolute -bottom-1 -right-1 w-10 h-10 bg-${member.accent} rounded-full`} />
+          <div className={`absolute -bottom-1 -right-1 w-10 h-10 ${ACCENT_DOT[member.accent] || "bg-charcoal"} rounded-full`} />
         </div>
         <div className="text-center sm:text-left">
           <h3 className="font-serif text-2xl md:text-3xl font-bold text-charcoal mb-1">
@@ -206,22 +219,24 @@ function MemberCard({ member, index }) {
   );
 }
 
-function TeamSection({ title, members, accent }) {
+function TeamSection({ title, members, bgClass }) {
   const colors = SECTION_ACCENTS[title] || { bg: "", border: "", dot: "bg-charcoal" };
 
   return (
-    <div className="mb-20 md:mb-28 last:mb-0">
-      <div className="reveal-up flex items-center gap-3 mb-12 md:mb-16">
-        <div className={`w-2.5 h-2.5 rounded-full ${colors.dot}`} />
-        <h2 className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60">
-          {title}
-        </h2>
-        <div className="flex-1 h-px bg-charcoal/10 ml-4" />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-        {members.map((member, i) => (
-          <MemberCard key={member.name} member={member} index={i} />
-        ))}
+    <div className={bgClass || ""}>
+      <div className={`${bgClass ? "page-container py-20 md:py-28" : "mb-20 md:mb-28 last:mb-0"}`}>
+        <div className="reveal-up flex items-center gap-3 mb-12 md:mb-16">
+          <div className={`w-2.5 h-2.5 rounded-full ${colors.dot}`} />
+          <h2 className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60">
+            {title}
+          </h2>
+          <div className="flex-1 h-px bg-charcoal/10 ml-4" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+          {members.map((member, i) => (
+            <MemberCard key={member.name} member={member} index={i} />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -232,17 +247,14 @@ export default function OurTeamPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero */}
+      {/* Hero — image-reveal wipe */}
       <section className="relative min-h-[60vh] flex flex-col justify-end pb-20 md:pb-28">
         <img
           src={teamHero}
           alt="Team members gathered around evening fire pit"
-          className="absolute inset-0 w-full h-full object-cover opacity-15"
+          className="absolute inset-0 w-full h-full object-cover image-reveal"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
-        {/* Decorative blobs */}
-        <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-sage/8 blob pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-[20%] left-[-5%] w-[30vw] h-[30vw] bg-clay/6 blob pointer-events-none" aria-hidden="true" style={{ animationDelay: "-4s" }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/90 to-cream/40" />
 
         <div className="page-container relative z-10">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
@@ -256,22 +268,25 @@ export default function OurTeamPage() {
             and digital fabrication.
           </p>
         </div>
+      </section>
 
-        {/* Scroll indicator */}
-        <div className="reveal-up stagger-3 absolute bottom-16 right-[max(2.5rem,6vw)] flex flex-col items-center gap-2">
-          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 rotate-90 origin-center translate-y-8">
-            Scroll
-          </span>
-          <div className="w-[1px] h-16 bg-charcoal/20 mt-12">
-            <div className="w-full h-1/3 bg-charcoal/60 animate-pulse" />
+      {/* Team Culture Stats Strip */}
+      <section className="bg-warm-white border-y border-charcoal/10 py-12 md:py-16">
+        <div className="page-container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            {CULTURE_STATS.map((stat, i) => (
+              <div key={stat.label} className={`reveal-up stagger-${i + 1} text-center`}>
+                <span className="block font-serif text-4xl md:text-5xl font-bold text-charcoal mb-2">
+                  {stat.number}
+                </span>
+                <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
-
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
 
       {/* Leadership — featured large cards */}
       <section className="py-24 md:py-36">
@@ -296,52 +311,64 @@ export default function OurTeamPage() {
             ))}
           </div>
 
-          {/* Grouped team sections */}
+          {/* Design & Build — with tinted background */}
           <TeamSection title="Design & Build" members={DESIGN_BUILD} />
-          <TeamSection title="Technology & Strategy" members={TECH_STRATEGY} />
+        </div>
+      </section>
+
+      {/* Technology & Strategy — cream (default) */}
+      <div className="bg-clay/[0.03]">
+        <section className="py-20 md:py-28">
+          <div className="page-container">
+            <TeamSection title="Technology & Strategy" members={TECH_STRATEGY} />
+          </div>
+        </section>
+      </div>
+
+      {/* Fellows & Artists — tinted background */}
+      <section className="py-20 md:py-28">
+        <div className="page-container">
           <TeamSection title="Fellows & Artists" members={FELLOWS_ARTISTS} />
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider variant="dot" />
 
       {/* Trusted Advisors Section */}
-      <section className="py-24 md:py-36">
-        <div className="page-container">
-          <div className="text-center mb-16 md:mb-20">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-              Advisors
-            </p>
-            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
-              Trusted Advisors
-            </h2>
-            <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl mx-auto">
-              Experienced professionals who guide 500 Acres through financial
-              planning, governance, and operational excellence.
-            </p>
-          </div>
+      <div className="bg-sage/[0.03]">
+        <section className="py-24 md:py-36">
+          <div className="page-container">
+            <div className="text-center mb-16 md:mb-20">
+              <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
+                Advisors
+              </p>
+              <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
+                Trusted Advisors
+              </h2>
+              <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl mx-auto">
+                Experienced professionals who guide 500 Acres through financial
+                planning, governance, and operational excellence.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
-            {TRUSTED_ADVISORS.map((member, i) => (
-              <MemberCard key={member.name} member={member} index={i} />
-            ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16">
+              {TRUSTED_ADVISORS.map((member, i) => (
+                <MemberCard key={member.name} member={member} index={i} />
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* CTA band */}
-      <section className="relative py-24 md:py-36 bg-moss overflow-hidden">
+      <section className="relative py-24 md:py-36 bg-charcoal overflow-hidden">
         <div className="page-container relative z-10 text-center">
           <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            Ready to build?
+            Join the team.
           </h2>
           <p className="reveal-up stagger-1 font-serif text-lg text-cream/70 mb-10 max-w-xl mx-auto">
-            Whether you want to apply for a fellowship, attend a Live Forum,
-            volunteer for a build weekend, or support the mission — there's
-            a place for you here.
+            We're always looking for mission-driven people who want to build
+            homes, train the next generation, and create communities that last.
           </p>
           <Link
             to="/get-involved"

@@ -2,10 +2,10 @@ import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import img21 from "../../assets/images/21.png";
-import img22 from "../../assets/images/22.png";
-import left23 from "../../assets/images/23Left.png";
-import right23 from "../../assets/images/23Right.png";
+import img21 from "../../assets/images/21.webp";
+import img22 from "../../assets/images/22.webp";
+import left23 from "../../assets/images/23Left.webp";
+import right23 from "../../assets/images/23Right.webp";
 
 gsap.registerPlugin(ScrollTrigger);
 

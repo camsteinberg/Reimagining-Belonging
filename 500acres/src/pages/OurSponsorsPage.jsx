@@ -6,7 +6,7 @@ import logoAD from "../assets/logos/architectural-digest.png";
 import logoBliss from "../assets/logos/bliss-events.png";
 import logoDiamondPier from "../assets/logos/diamond-pier.png";
 import logoBSU from "../assets/logos/bsu-foundation.png";
-import logoVirtus from "../assets/logos/virtus-group.png";
+import logoVirtus from "../assets/logos/virtus-group.webp";
 import logoWikiHouse from "../assets/logos/wikihouse.svg";
 import logoRDV from "../assets/logos/rdv-tequila.png";
 
@@ -342,13 +342,13 @@ export default function OurSponsorsPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero */}
-      <section className="relative min-h-[60vh] flex flex-col justify-end pb-20 md:pb-28">
+      {/* Hero — centered layout */}
+      <section className="relative min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/95 to-cream/80" />
         <div className="absolute top-[12%] left-[-8%] w-[40vw] h-[40vw] bg-amber/5 blob pointer-events-none" aria-hidden="true" />
         <div className="absolute bottom-[15%] right-[-6%] w-[30vw] h-[30vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" style={{ animationDelay: "-3s" }} />
 
-        <div className="page-container relative z-10">
+        <div className="page-container relative z-10 flex flex-col items-center">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             Our Sponsors
           </p>
@@ -362,15 +362,12 @@ export default function OurSponsorsPage() {
             housing, digital fabrication, and expanding opportunity for the next
             generation.
           </p>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="reveal-up stagger-3 absolute bottom-16 right-[max(2.5rem,6vw)] flex flex-col items-center gap-2">
-          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 rotate-90 origin-center translate-y-8">
-            Scroll
-          </span>
-          <div className="w-[1px] h-16 bg-charcoal/20 mt-12">
-            <div className="w-full h-1/3 bg-charcoal/60 animate-pulse" />
+          {/* Partner count badge */}
+          <div className="reveal-up stagger-3 mt-10 inline-flex items-center gap-3 px-6 py-3 rounded-full border border-charcoal/10 bg-warm-white">
+            <span className="font-serif text-2xl font-bold text-charcoal">
+              {FEATURED_PARTNERS.length + SPONSOR_GROUPS.reduce((sum, g) => sum + g.sponsors.length, 0)}
+            </span>
+            <span className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/50">Partners & Sponsors</span>
           </div>
         </div>
       </section>
@@ -426,7 +423,7 @@ export default function OurSponsorsPage() {
       ))}
 
       {/* CTA band */}
-      <section className="relative py-24 md:py-36 bg-moss overflow-hidden">
+      <section className="relative py-24 md:py-36 bg-bark overflow-hidden">
         <div className="page-container relative z-10 text-center">
           <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
             Partner with us.

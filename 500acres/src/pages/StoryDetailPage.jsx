@@ -2,7 +2,33 @@ import { useParams, Link } from "react-router-dom";
 import { participants } from "../data/participants";
 import useReveal from "../hooks/useReveal";
 
-const ACCENT_COLORS = ["#6b8f71", "#8b5e3c", "#4a7c59", "#5a7d8b", "#c9a96e", "#c4856d", "#3d6b4f"];
+import ih01 from "../assets/images/idealHome/01.webp";
+import ih02 from "../assets/images/idealHome/02.webp";
+import ih03 from "../assets/images/idealHome/03.webp";
+import ih04 from "../assets/images/idealHome/04.webp";
+import ih05 from "../assets/images/idealHome/05.webp";
+import ih06 from "../assets/images/idealHome/06.webp";
+import ih07 from "../assets/images/idealHome/07.webp";
+
+import svg01 from "../assets/svg/01inline.svg";
+import svg02 from "../assets/svg/02inline.svg";
+import svg03 from "../assets/svg/03inline.svg";
+import svg04 from "../assets/svg/04inline.svg";
+import svg05 from "../assets/svg/05inline.svg";
+import svg06 from "../assets/svg/06inline.svg";
+import svg07 from "../assets/svg/07inline.svg";
+
+const IDEAL_HOME_MAP = {
+  "01.webp": ih01, "02.webp": ih02, "03.webp": ih03,
+  "04.webp": ih04, "05.webp": ih05, "06.webp": ih06, "07.webp": ih07,
+};
+
+const SVG_MAP = {
+  "01": svg01, "02": svg02, "03": svg03,
+  "04": svg04, "05": svg05, "06": svg06, "07": svg07,
+};
+
+const ACCENT_COLORS = ["#6b8f71", "#5c3d2e", "#3d6b4f", "#365f45", "#d4a84b", "#b8755d", "#c45d3e"];
 
 export default function StoryDetailPage() {
   const { slug } = useParams();
@@ -31,15 +57,8 @@ export default function StoryDetailPage() {
   const next = participants[currentIndex + 1];
   const accentColor = ACCENT_COLORS[currentIndex] || "#6b8f71";
 
-  const svgUrl = new URL(
-    `../assets/svg/${participant.svgIndex}inline.svg`,
-    import.meta.url
-  ).href;
-
-  const idealHomeUrl = new URL(
-    `../assets/images/idealHome/${participant.idealHomeImage}`,
-    import.meta.url
-  ).href;
+  const svgUrl = SVG_MAP[participant.svgIndex] || "";
+  const idealHomeUrl = IDEAL_HOME_MAP[participant.idealHomeImage] || "";
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
@@ -110,7 +129,7 @@ export default function StoryDetailPage() {
       {/* Belonging quote — dramatic pull quote */}
       <section className="py-20 md:py-28 border-t border-charcoal/10">
         <div className="page-container max-w-4xl mx-auto">
-          <blockquote className="reveal-up">
+          <blockquote className="reveal-clip-up">
             <span className="block font-serif text-6xl md:text-8xl leading-none opacity-10" style={{ color: accentColor }} aria-hidden="true">"</span>
             <p className="font-serif text-xl md:text-3xl lg:text-4xl text-charcoal italic leading-[1.5] -mt-8 md:-mt-12">
               {participant.belongingQuote}
@@ -183,7 +202,7 @@ export default function StoryDetailPage() {
                 {participant.idealHomeTitle}
               </h2>
 
-              <div className="reveal-scale rounded-2xl overflow-hidden bg-charcoal/5 mb-8">
+              <div className="reveal-scale rounded-2xl overflow-hidden bg-charcoal/5 mb-8 hover-image-scale">
                 <img
                   src={idealHomeUrl}
                   alt={`${participant.name}'s ideal home: ${participant.idealHomeTitle}`}
@@ -221,10 +240,7 @@ export default function StoryDetailPage() {
 }
 
 function NavCard({ participant, direction, accentColor }) {
-  const svgUrl = new URL(
-    `../assets/svg/${participant.svgIndex}inline.svg`,
-    import.meta.url
-  ).href;
+  const svgUrl = SVG_MAP[participant.svgIndex] || "";
   const isPrev = direction === "prev";
 
   return (

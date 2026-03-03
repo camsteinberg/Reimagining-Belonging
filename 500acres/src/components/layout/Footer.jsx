@@ -62,9 +62,9 @@ export default function Footer() {
 
         {/* Newsletter signup */}
         <div className="mb-20 md:mb-24 max-w-md">
-          <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/50 mb-6">
+          <label htmlFor="newsletter-email" className="block font-sans text-xs uppercase tracking-[0.3em] text-cream/50 mb-6">
             Stay Connected
-          </p>
+          </label>
           {subscribed ? (
             <p className="font-serif text-sage text-lg">
               You're in. We'll be in touch.
@@ -72,12 +72,12 @@ export default function Footer() {
           ) : (
             <form onSubmit={handleNewsletter} className="flex gap-3">
               <input
+                id="newsletter-email"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                aria-label="Email address for newsletter"
                 className="flex-1 bg-transparent border-b border-cream/20 px-3 py-3 font-serif text-cream placeholder-cream/30 focus:outline-none focus:border-sage transition-colors"
               />
               <button

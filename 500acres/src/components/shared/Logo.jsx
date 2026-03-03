@@ -1,4 +1,4 @@
-import logoPng from "../../assets/brand/500acres.png";
+import logoPng from "../../assets/brand/500acres.webp";
 
 export default function Logo({ className = "", showText = true, style }) {
   return (

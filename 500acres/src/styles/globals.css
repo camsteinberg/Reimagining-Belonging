@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@300;400;500;600&display=swap");
 @import "tailwindcss";
 
 @theme {
@@ -66,18 +65,26 @@
     }
   }
 
-  /* ── Focus visible ── */
-  *:focus-visible {
-    outline: 2px solid var(--color-sage);
-    outline-offset: 3px;
-    border-radius: 4px;
+}
+
+/* ── Hide default cursor on pointer devices ──
+   Only hide when custom cursor is active (JS adds .custom-cursor-ready to html).
+   Respects prefers-reduced-motion and never uses !important so users
+   and assistive tech can override. */
+@media (hover: hover) and (pointer: fine) {
+  html.custom-cursor-ready *,
+  html.custom-cursor-ready *::before,
+  html.custom-cursor-ready *::after {
+    cursor: none;
   }
 }
 
-/* ── Hide default cursor on pointer devices ── */
-@media (hover: hover) and (pointer: fine) {
-  *, *::before, *::after {
-    cursor: none !important;
+/* Restore native cursor when reduced motion is preferred */
+@media (prefers-reduced-motion: reduce) {
+  html.custom-cursor-ready *,
+  html.custom-cursor-ready *::before,
+  html.custom-cursor-ready *::after {
+    cursor: auto;
   }
 }
 
@@ -93,8 +100,11 @@
   pointer-events: none;
   z-index: 10001;
   transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease,
-              background-color 0.3s ease, opacity 0.3s ease;
-  mix-blend-mode: difference;
+              background-color 0.3s ease, opacity 0.3s ease,
+              box-shadow 0.3s ease;
+  /* Removed mix-blend-mode: difference — it can make the cursor invisible
+     on ~50% gray backgrounds. Use a subtle shadow instead for contrast. */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
   opacity: 0;
 }
 
@@ -1812,9 +1822,6 @@ body.slide25-active .slide25 .imgContainer7 {
   font-family: var(--font-serif);
 }
 
-.hidden {
-  display: none;
-}
 
 /* ═══════════════════════════════════════
    INNER PAGES — CREATIVE STYLES
@@ -1867,6 +1874,42 @@ body.slide25-active .slide25 .imgContainer7 {
 .reveal-scale.is-revealed {
   opacity: 1;
   transform: scale(1);
+}
+
+/* Fade-only reveal — no transform, just opacity */
+.reveal-fade {
+  opacity: 0;
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-fade.is-revealed {
+  opacity: 1;
+}
+
+/* Clip-path curtain reveal — content unmasks from bottom */
+.reveal-clip-up {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-clip-up.is-revealed {
+  clip-path: inset(0 0 0 0);
+}
+
+/* Inset section — floating rounded section with side margins */
+.section-inset {
+  margin-left: max(1.5rem, 4vw);
+  margin-right: max(1.5rem, 4vw);
+  border-radius: 2rem;
+}
+@media (max-width: 768px) {
+  .section-inset { margin-left: 1rem; margin-right: 1rem; border-radius: 1.5rem; }
+}
+
+/* Large decorative number accent */
+.num-accent {
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(42, 37, 32, 0.06);
 }
 
 /* Stagger delays */
@@ -1987,10 +2030,6 @@ body.slide25-active .slide25 .imgContainer7 {
     line-height: 1.15;
   }
 
-  /* Card text width constraint — prevents text from stretching edge-to-edge */
-  .card-prose {
-    max-width: 55ch;
-  }
 }
 
 /* ── Firefly particles (decorative background) ── */

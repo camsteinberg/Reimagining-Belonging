@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { participants } from "../data/participants";
 import useReveal from "../hooks/useReveal";
 import storiesHero from "../assets/photos/stories-hero-barn.webp";
+import SectionDivider from "../components/shared/SectionDivider";
 
 /* Theme tags assigned per participant based on their story content */
 const THEME_TAGS = {
@@ -33,10 +34,14 @@ const TAG_COLORS = {
   "Online Community": "bg-ember/10 text-ember",
 };
 
-const CARD_ACCENTS = ["#6b8f71", "#8b5e3c", "#4a7c59", "#5a7d8b", "#c9a96e", "#c4856d", "#3d6b4f"];
+const CARD_ACCENTS = ["#6b8f71", "#5c3d2e", "#3d6b4f", "#365f45", "#d4a84b", "#b8755d", "#c45d3e"];
 
 /* Indices 0 and 3 (Sherry and Michaella) are featured — larger cards */
 const FEATURED_INDICES = [0, 3];
+
+/* Pick a random spotlight participant for the quote section */
+const SPOTLIGHT_INDEX = Math.floor(Math.random() * participants.length);
+const SPOTLIGHT = participants[SPOTLIGHT_INDEX];
 
 function FeaturedStoryCard({ participant, index }) {
   const svgUrl = new URL(
@@ -49,7 +54,7 @@ function FeaturedStoryCard({ participant, index }) {
     <Link
       to={`/stories/${participant.slug}`}
       aria-label={`Read ${participant.name}'s story`}
-      className={`reveal-up stagger-${(index % 4) + 1} story-card group relative rounded-3xl overflow-hidden border-2 border-charcoal/8 bg-warm-white md:col-span-2 lg:col-span-2`}
+      className={`reveal-up stagger-${(index % 4) + 1} story-card group relative rounded-2xl overflow-hidden border border-charcoal/8 bg-warm-white md:col-span-2 lg:col-span-2`}
     >
       {/* Top accent line */}
       <div
@@ -190,22 +195,22 @@ export default function StoriesPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28">
+      {/* Hero — shorter to get to content faster */}
+      <section className="relative min-h-[70vh] flex flex-col justify-end pb-20 md:pb-28">
         <img src={storiesHero} alt="Historic barn in pastoral landscape" className="absolute inset-0 w-full h-full object-cover opacity-15" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <div className="absolute top-[20%] right-[5%] w-[35vw] h-[35vw] bg-clay/5 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
+          <p className="reveal-clip-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             Stories
           </p>
-          <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-8">
+          <h1 className="reveal-clip-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-8">
             Seven voices,
             <br />
             <span className="italic text-forest">one vision.</span>
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/70 max-w-md leading-[1.8]">
+          <p className="reveal-clip-up stagger-2 font-serif text-lg md:text-xl text-charcoal/70 max-w-md leading-[1.8]">
             Gen Z participants shared their stories, drawings, and visions
             of home as part of the Reimagining Belonging research project.
             Their insights shaped the 500 Acres model — here's what they said.
@@ -213,20 +218,27 @@ export default function StoriesPage() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="page-container">
-        <div className="h-px bg-charcoal/10" />
-      </div>
+      <SectionDivider variant="dot" />
 
-      {/* Context intro */}
-      <section className="py-16 md:py-20">
-        <div className="page-container max-w-3xl mx-auto text-center">
-          <p className="reveal-up font-serif text-xl md:text-2xl text-charcoal/70 leading-[1.7] italic">
-            Seven Gen Z voices shared their stories about housing, belonging, and home.
-            Their insights shaped the 500 Acres model.
-          </p>
+      {/* Spotlight Quote — dark inset section */}
+      <section className="bg-charcoal section-inset py-20 md:py-28 overflow-hidden">
+        <div className="page-container max-w-4xl mx-auto text-center">
+          <blockquote className="reveal-clip-up">
+            <p className="font-serif text-2xl md:text-4xl italic text-cream leading-[1.5]">
+              "{SPOTLIGHT.belongingQuote}"
+            </p>
+          </blockquote>
+          <Link
+            to={`/stories/${SPOTLIGHT.slug}`}
+            className="reveal-up stagger-2 inline-flex items-center gap-3 mt-10 font-sans text-sm uppercase tracking-[0.3em] text-cream/60 hover:text-cream transition-colors"
+          >
+            <span>— {SPOTLIGHT.name}</span>
+            <span className="transition-transform duration-300 hover:translate-x-1">→</span>
+          </Link>
         </div>
       </section>
+
+      <SectionDivider variant="space" />
 
       {/* Participant grid — masonry/staggered layout with featured cards */}
       <section className="pb-24 md:pb-32">
@@ -255,22 +267,29 @@ export default function StoriesPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-24 md:py-36 bg-charcoal diagonal-top">
+      <section className="py-24 md:py-36 bg-bark diagonal-top">
         <div className="page-container text-center">
           <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
-            Your story matters too.
+            What does belonging mean to you?
           </h2>
           <p className="reveal-up stagger-1 font-serif text-lg text-cream/60 leading-[1.8] mb-10 max-w-xl mx-auto">
-            The Reimagining Belonging research continues. Want to share
-            your experience with housing, belonging, and home? Your voice
+            The Reimagining Belonging research continues. Your voice
             helps shape what we build next.
           </p>
-          <Link
-            to="/get-involved"
-            className="reveal-up stagger-2 inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
-          >
-            Get Involved
-          </Link>
+          <div className="reveal-up stagger-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              to="/get-involved"
+              className="inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
+            >
+              Share your experience
+            </Link>
+            <Link
+              to="/about/white-paper"
+              className="inline-flex items-center gap-2 font-sans text-sm uppercase tracking-[0.2em] text-cream/70 hover:text-cream transition-colors duration-300"
+            >
+              Read the research <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         </div>
       </section>
     </div>

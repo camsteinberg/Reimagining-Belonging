@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
 import Breadcrumbs from "../components/shared/Breadcrumbs";
+import pullquoteBarndo from "../assets/photos/pullquote-barndo-storm.webp";
 
 const ABOUT_CARDS = [
   {
@@ -65,8 +66,10 @@ export default function AboutLandingPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28">
+      {/* Hero — shorter with subtle background image */}
+      <section className="relative min-h-[70vh] flex flex-col justify-end pb-20 md:pb-28">
+        <img src={pullquoteBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-[0.08]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/90 to-cream/60" />
         {/* Decorative blobs */}
         <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-sage/8 blob pointer-events-none" aria-hidden="true" />
         <div className="absolute bottom-[20%] left-[-5%] w-[30vw] h-[30vw] bg-amber/6 blob pointer-events-none" style={{ animationDelay: "-4s" }} aria-hidden="true" />
@@ -112,11 +115,12 @@ export default function AboutLandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
             {ABOUT_CARDS.map((card, i) => {
               const style = ACCENT_STYLES[card.accent];
+              const revealDir = i % 2 === 0 ? "reveal-left" : "reveal-right";
               return (
                 <Link
                   key={card.to}
                   to={card.to}
-                  className={`reveal-up stagger-${i + 1} group block rounded-3xl p-10 md:p-14 border-2 ${style.border} ${style.bg} ${style.hover} transition-all duration-500 hover:-translate-y-3 hover:shadow-lg`}
+                  className={`${revealDir} stagger-${i + 1} group block rounded-2xl p-10 md:p-14 border ${style.border} ${style.bg} ${style.hover} transition-all duration-500 hover:-translate-y-2 hover:shadow-lg`}
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className={`w-2.5 h-2.5 rounded-full ${style.dot}`} />
@@ -127,7 +131,7 @@ export default function AboutLandingPage() {
                   <h2 className="font-serif text-2xl md:text-3xl font-bold text-charcoal mb-4 group-hover:translate-x-2 transition-transform duration-300">
                     {card.title}
                   </h2>
-                  <p className="font-serif text-base text-charcoal/60 leading-relaxed card-prose">
+                  <p className="font-serif text-base text-charcoal/60 leading-[1.8]">
                     {card.description}
                   </p>
                   <div className="mt-8 flex items-center gap-2 font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 group-hover:text-charcoal transition-colors">

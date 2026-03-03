@@ -12,7 +12,7 @@ export default function useReveal(rootMargin = "-60px") {
     if (!el) return;
 
     const targets = el.querySelectorAll(
-      ".reveal-up, .reveal-left, .reveal-right, .reveal-scale"
+      ".reveal-up, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade, .reveal-clip-up"
     );
 
     if (targets.length === 0) return;

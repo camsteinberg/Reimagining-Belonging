@@ -5,8 +5,6 @@ import heroConstruction from "../assets/photos/getinvolved-hero-crane.webp";
 import cardApply from "../assets/photos/card-apply.webp";
 import cardAttend from "../assets/photos/card-attend.webp";
 import cardBuild from "../assets/photos/card-build.webp";
-import timelineResearch from "../assets/photos/timeline-research.webp";
-import timelinePrototype from "../assets/photos/timeline-prototype.webp";
 
 /* ───────────────────────────── Constants ───────────────────────────── */
 
@@ -43,69 +41,6 @@ const ENGAGEMENT_STEPS = [
     linkLabel: "Learn more",
     isAnchor: true,
     image: cardBuild,
-  },
-];
-
-const TIMELINE_STEPS = [
-  {
-    label: "Apply",
-    desc: "Submit your interest and background info through the online form.",
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-        <path d="M14 2v6h6" />
-        <path d="M9 15l2 2 4-4" />
-      </svg>
-    ),
-    color: "bg-amber",
-  },
-  {
-    label: "Cohort Start",
-    desc: "Get matched with a cohort of fellows and meet the training team.",
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 00-3-3.87" />
-        <path d="M16 3.13a4 4 0 010 7.75" />
-        <path d="M1 21v-2a4 4 0 014-4h8a4 4 0 014 4v2" />
-      </svg>
-    ),
-    color: "bg-clay",
-  },
-  {
-    label: "Training",
-    desc: "Complete the Six Steps curriculum — CNC fabrication, framing, and business skills.",
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-        <path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" />
-      </svg>
-    ),
-    color: "bg-forest",
-    image: timelineResearch,
-  },
-  {
-    label: "Build Weekend",
-    desc: "Hands-on construction at a real site near a national park.",
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M2 20h20" />
-        <path d="M5 20V8l7-5 7 5v12" />
-        <path d="M9 20v-6h6v6" />
-      </svg>
-    ),
-    color: "bg-sage",
-    image: timelinePrototype,
-  },
-  {
-    label: "Ownership Path",
-    desc: "Transition from fellow to certified builder, instructor, or homeowner.",
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z" />
-      </svg>
-    ),
-    color: "bg-moss",
   },
 ];
 
@@ -176,7 +111,7 @@ export default function GetInvolvedPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero -- immersive full-bleed */}
+      {/* Hero -- immersive full-bleed with CTA */}
       <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28 bg-charcoal overflow-hidden">
         <img src={heroConstruction} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
         {/* Animated gradient blobs */}
@@ -193,16 +128,24 @@ export default function GetInvolvedPage() {
             <br />
             <span className="italic text-sage">us.</span>
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-cream/70 max-w-md leading-[1.8]">
+          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-cream/70 max-w-md leading-[1.8] mb-10">
             500 Acres brings together fellows, builders, and supporters to
             transform land near national parks into homes. Whether you want to
             train in digital fabrication, volunteer for a build weekend, or
             support the mission — there's a way in.
           </p>
+          {/* CTA button in hero — unique to Get Involved */}
+          <a
+            href="#volunteer-form"
+            onClick={scrollToSection}
+            className="reveal-up stagger-3 inline-block bg-ember text-cream px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-clay transition-colors duration-300"
+          >
+            Express Interest
+          </a>
         </div>
       </section>
 
-      {/* Engagement funnel -- stacked editorial cards */}
+      {/* Engagement funnel -- featured Apply card + 2-column grid */}
       <section className="py-24 md:py-36">
         <div className="page-container">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -212,8 +155,43 @@ export default function GetInvolvedPage() {
             Three ways in.
           </h2>
 
-          <div className="space-y-6 md:space-y-0 md:grid md:grid-cols-3 md:gap-14">
-            {ENGAGEMENT_STEPS.map((step, i) => {
+          {/* Featured Apply card — full width, horizontal layout */}
+          {(() => {
+            const applyStep = ENGAGEMENT_STEPS[0];
+            return (
+              <a
+                href={applyStep.linkTo}
+                onClick={scrollToSection}
+                className="reveal-scale group relative block border-2 border-amber/30 bg-amber/10 rounded-2xl p-10 md:p-16 mb-10 md:mb-14 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+                  <div className="w-full aspect-video rounded-xl overflow-hidden">
+                    <img src={applyStep.image} alt={applyStep.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                  </div>
+                  <div>
+                    <span className={`block font-sans text-6xl font-bold ${applyStep.color} opacity-15 mb-6`}>
+                      {applyStep.num}
+                    </span>
+                    <h3 className="font-serif text-3xl md:text-4xl font-bold text-charcoal mb-8">
+                      {applyStep.title}
+                    </h3>
+                    <p className="font-serif text-base text-charcoal/60 leading-[1.85] mb-10 max-w-sm">
+                      {applyStep.desc}
+                    </p>
+                    <div className="flex items-center gap-2 text-charcoal/50 group-hover:text-charcoal transition-colors">
+                      <span className="font-sans text-sm">{applyStep.linkLabel}</span>
+                      <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            );
+          })()}
+
+          {/* Attend + Build — standard 2-column grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14">
+            {ENGAGEMENT_STEPS.slice(1).map((step, i) => {
+              const revealClass = i === 0 ? "reveal-left" : "reveal-right";
               const cardContent = (
                 <>
                   <div className="w-full aspect-video rounded-xl overflow-hidden mb-6">
@@ -228,7 +206,6 @@ export default function GetInvolvedPage() {
                   <p className="font-serif text-base text-charcoal/60 leading-[1.85] mb-10 max-w-sm">
                     {step.desc}
                   </p>
-                  {/* Arrow on hover */}
                   <div className="flex items-center gap-2 text-charcoal/50 group-hover:text-charcoal transition-colors">
                     <span className="font-sans text-sm">{step.linkLabel}</span>
                     <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
@@ -236,7 +213,7 @@ export default function GetInvolvedPage() {
                 </>
               );
 
-              const cardClasses = `reveal-up stagger-${i + 1} group relative block ${step.bg} rounded-2xl p-10 md:p-16 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl`;
+              const cardClasses = `${revealClass} stagger-${i + 1} group relative block ${step.bg} rounded-2xl p-10 md:p-16 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl`;
 
               if (step.isAnchor) {
                 return (
@@ -265,84 +242,6 @@ export default function GetInvolvedPage() {
         </div>
       </section>
 
-      {/* Application Timeline */}
-      <section className="py-24 md:py-36 bg-warm-white">
-        <div className="page-container">
-          <div className="text-center mb-16 md:mb-20">
-            <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-              The Process
-            </p>
-            <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-5xl font-bold text-charcoal mb-4">
-              Your path from application to ownership.
-            </h2>
-            <p className="reveal-up stagger-2 font-serif text-lg text-charcoal/60 max-w-2xl mx-auto">
-              The fellowship is a structured journey — each step builds on the
-              last, leading from interest to impact.
-            </p>
-          </div>
-
-          {/* Desktop: horizontal timeline */}
-          <div className="hidden md:block">
-            <div className="relative">
-              {/* Connector line */}
-              <div className="absolute top-10 left-[10%] right-[10%] h-[2px] bg-charcoal/10" aria-hidden="true" />
-
-              <div className="grid grid-cols-5 gap-6">
-                {TIMELINE_STEPS.map((step, i) => (
-                  <div key={step.label} className={`reveal-up stagger-${(i % 4) + 1} flex flex-col items-center text-center`}>
-                    {/* Circle node */}
-                    <div className={`relative z-10 w-20 h-20 rounded-full ${step.color} text-cream flex items-center justify-center mb-6 transition-transform duration-500 hover:scale-110`}>
-                      {step.icon}
-                    </div>
-                    <h4 className="font-serif text-lg font-bold text-charcoal mb-2">
-                      {step.label}
-                    </h4>
-                    <p className="font-serif text-sm text-charcoal/60 leading-[1.7] max-w-[180px]">
-                      {step.desc}
-                    </p>
-                    {step.image && (
-                      <div className="mt-4 w-full aspect-video rounded-xl overflow-hidden">
-                        <img src={step.image} alt={step.label} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile: vertical timeline */}
-          <div className="md:hidden">
-            <div className="relative pl-12">
-              {/* Vertical connector line */}
-              <div className="absolute left-5 top-0 bottom-0 w-[2px] bg-charcoal/10" aria-hidden="true" />
-
-              <div className="space-y-12">
-                {TIMELINE_STEPS.map((step, i) => (
-                  <div key={step.label} className={`reveal-up stagger-${(i % 4) + 1} relative`}>
-                    {/* Circle node */}
-                    <div className={`absolute -left-12 top-0 w-10 h-10 rounded-full ${step.color} text-cream flex items-center justify-center z-10`}>
-                      <div className="w-4 h-4">{step.icon}</div>
-                    </div>
-                    <h4 className="font-serif text-lg font-bold text-charcoal mb-2">
-                      {step.label}
-                    </h4>
-                    <p className="font-serif text-sm text-charcoal/60 leading-[1.7]">
-                      {step.desc}
-                    </p>
-                    {step.image && (
-                      <div className="mt-4 w-full aspect-video rounded-xl overflow-hidden">
-                        <img src={step.image} alt={step.label} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Divider */}
       <div className="page-container">
         <div className="h-px bg-charcoal/10" />
@@ -361,42 +260,55 @@ export default function GetInvolvedPage() {
           </div>
 
           <div className="space-y-4">
-            {FAQ_ITEMS.map((item, i) => (
-              <div
-                key={i}
-                className={`reveal-up stagger-${(i % 4) + 1} rounded-2xl border border-charcoal/10 overflow-hidden transition-colors duration-300 ${openFaq === i ? "bg-charcoal/[0.03]" : ""}`}
-              >
-                <button
-                  onClick={() => toggleFaq(i)}
-                  className="w-full flex items-center justify-between p-6 md:p-8 text-left"
-                  aria-expanded={openFaq === i}
-                >
-                  <span className="font-serif text-lg md:text-xl font-bold text-charcoal pr-8">
-                    {item.question}
-                  </span>
-                  <span
-                    className="shrink-0 w-8 h-8 rounded-full border border-charcoal/20 flex items-center justify-center text-charcoal/60 transition-transform duration-300"
-                    style={{ transform: openFaq === i ? "rotate(45deg)" : "rotate(0deg)" }}
-                    aria-hidden="true"
-                  >
-                    +
-                  </span>
-                </button>
+            {FAQ_ITEMS.map((item, i) => {
+              const isOpen = openFaq === i;
+              const panelId = `faq-panel-${i}`;
+              const buttonId = `faq-button-${i}`;
+              return (
                 <div
-                  className="overflow-hidden transition-all duration-300"
-                  style={{
-                    maxHeight: openFaq === i ? "400px" : "0px",
-                    opacity: openFaq === i ? 1 : 0,
-                  }}
+                  key={i}
+                  className={`reveal-up stagger-${(i % 4) + 1} rounded-2xl border border-charcoal/10 overflow-hidden transition-colors duration-300 ${isOpen ? "bg-charcoal/[0.03]" : ""}`}
                 >
-                  <div className="px-6 md:px-8 pb-6 md:pb-8">
-                    <p className="font-serif text-base text-charcoal/60 leading-[1.8]">
-                      {item.answer}
-                    </p>
+                  <h3>
+                    <button
+                      id={buttonId}
+                      onClick={() => toggleFaq(i)}
+                      className="w-full flex items-center justify-between p-6 md:p-8 text-left cursor-pointer"
+                      aria-expanded={isOpen}
+                      aria-controls={panelId}
+                    >
+                      <span className="font-serif text-lg md:text-xl font-bold text-charcoal pr-8">
+                        {item.question}
+                      </span>
+                      <span
+                        className="shrink-0 w-8 h-8 rounded-full border border-charcoal/20 flex items-center justify-center text-charcoal/60 transition-transform duration-300"
+                        style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
+                        aria-hidden="true"
+                      >
+                        +
+                      </span>
+                    </button>
+                  </h3>
+                  <div
+                    id={panelId}
+                    role="region"
+                    aria-labelledby={buttonId}
+                    hidden={!isOpen}
+                    className="overflow-hidden transition-all duration-300"
+                    style={{
+                      maxHeight: isOpen ? "400px" : "0px",
+                      opacity: isOpen ? 1 : 0,
+                    }}
+                  >
+                    <div className="px-6 md:px-8 pb-6 md:pb-8">
+                      <p className="font-serif text-base text-charcoal/60 leading-[1.8]">
+                        {item.answer}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -525,7 +437,7 @@ export default function GetInvolvedPage() {
                     onChange={(e) => setFormState({ ...formState, interest: e.target.value })}
                     className="w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors appearance-none cursor-pointer"
                   >
-                    <option value="">What are you interested in?</option>
+                    <option value="" disabled>What are you interested in?</option>
                     <option value="fellowship">Fellowship Application</option>
                     <option value="build-weekend">Build Weekend Volunteer</option>
                     <option value="live-forum">Live Forum RSVP</option>
@@ -608,7 +520,7 @@ export default function GetInvolvedPage() {
           <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-4xl font-bold text-charcoal mb-4">
             Updates from
             <br />
-            <span className="italic text-hearth">the field.</span>
+            <span className="italic text-clay">the field.</span>
           </h2>
           <p className="reveal-up stagger-2 font-serif text-base text-charcoal/70 mb-10 max-w-md mx-auto">
             Build progress, fellowship announcements, and Live Forum

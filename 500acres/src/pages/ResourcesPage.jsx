@@ -203,8 +203,8 @@ export default function ResourcesPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28">
+      {/* Hero — shorter for utility page */}
+      <section className="relative min-h-[60vh] flex flex-col justify-end pb-20 md:pb-28">
         <img src={resourcesHero} alt="" className="absolute inset-0 w-full h-full object-cover opacity-12" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <div className="absolute top-[15%] left-[-8%] w-[40vw] h-[40vw] bg-sage/5 blob pointer-events-none" aria-hidden="true" />
@@ -244,6 +244,21 @@ export default function ResourcesPage() {
                 </span>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Curator's Note */}
+      <section className="py-16 md:py-20">
+        <div className="page-container max-w-3xl">
+          <div className="reveal-fade flex gap-6">
+            <div className="w-1 rounded-full bg-forest/40 flex-shrink-0" />
+            <p className="font-serif text-lg md:text-xl text-charcoal/60 italic leading-[1.7]">
+              These resources are curated by the 500 Acres team — selected for
+              clarity, credibility, and relevance to the housing challenges
+              facing Gen Z. We prioritize actionable knowledge over volume,
+              and update this collection as new tools and research emerge.
+            </p>
           </div>
         </div>
       </section>
@@ -306,7 +321,9 @@ export default function ResourcesPage() {
               <button
                 key={cat}
                 role="tab"
+                id={`tab-${cat.toLowerCase().replace(/\s+/g, "-")}`}
                 aria-selected={activeCategory === cat}
+                aria-controls="resources-tabpanel"
                 onClick={() => setActiveCategory(cat)}
                 className={`px-5 py-2.5 rounded-full font-sans text-sm tracking-wide transition-all duration-300 ${
                   activeCategory === cat
@@ -320,7 +337,7 @@ export default function ResourcesPage() {
           </div>
 
           {/* Resource cards -- bento grid with varied spans */}
-          <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+          <div ref={gridRef} id="resources-tabpanel" role="tabpanel" aria-labelledby={`tab-${activeCategory.toLowerCase().replace(/\s+/g, "-")}`} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {filtered.map((resource, i) => {
               // First card spans 2 columns when unfiltered and more than 2 results
               const isWide = i === 0 && filtered.length > 2;
@@ -376,7 +393,7 @@ export default function ResourcesPage() {
       </section>
 
       {/* Bottom CTA band */}
-      <section className="relative py-24 md:py-36 bg-moss overflow-hidden">
+      <section className="relative py-24 md:py-36 bg-bark overflow-hidden">
         <div className="page-container relative z-10 text-center">
           <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
             Ready to take action?

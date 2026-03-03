@@ -1,5 +1,5 @@
-import belongingLeft from "../../assets/images/belongingLeft.png";
-import belongingRight from "../../assets/images/belongingRight.png";
+import belongingLeft from "../../assets/images/belongingLeft.webp";
+import belongingRight from "../../assets/images/belongingRight.webp";
 
 export default function BelongingReveal() {
   return (
