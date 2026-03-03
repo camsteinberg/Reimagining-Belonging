@@ -348,7 +348,7 @@ export default function OurSponsorsPage() {
       <section className="relative min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/95 to-cream/80" />
         <div className="absolute top-[12%] left-[-8%] w-[40vw] h-[40vw] bg-amber/5 blob pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-[15%] right-[-6%] w-[30vw] h-[30vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" style={{ animationDelay: "-3s" }} />
+        <div className="absolute bottom-[15%] right-[-6%] w-[30vw] h-[30vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10 flex flex-col items-center">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
@@ -359,7 +359,7 @@ export default function OurSponsorsPage() {
             <br />
             <span className="text-forest">building belonging.</span>
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/60 max-w-lg">
+          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/70 max-w-lg">
             We work with organizations that share our commitment to innovative
             housing, digital fabrication, and expanding opportunity for the next
             generation.

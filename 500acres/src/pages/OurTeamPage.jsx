@@ -262,7 +262,7 @@ export default function OurTeamPage() {
           <h1 className="reveal-up stagger-1 font-serif text-[clamp(2.5rem,6vw,6rem)] leading-[0.95] font-bold text-charcoal mb-8">
             The people behind 500 Acres.
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/60 max-w-lg">
+          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/70 max-w-lg">
             From land acquisition and fund management to on-site construction
             and digital fabrication.
           </p>

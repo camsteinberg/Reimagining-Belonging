@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import useReveal from "../hooks/useReveal";
-import CTABand from "../components/shared/CTABand";
 import resourcesHero from "../assets/photos/resources-hero-ranch.webp";
 
 /* ───────────────────────────── Constants ───────────────────────────── */
@@ -209,7 +208,7 @@ export default function ResourcesPage() {
         <img src={resourcesHero} alt="" className="absolute inset-0 w-full h-full object-cover opacity-12" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <div className="absolute top-[15%] left-[-8%] w-[40vw] h-[40vw] bg-sage/5 blob pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-[10%] right-[-5%] w-[25vw] h-[25vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" style={{ animationDelay: "-3s" }} />
+        <div className="absolute bottom-[10%] right-[-5%] w-[25vw] h-[25vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
@@ -254,7 +253,7 @@ export default function ResourcesPage() {
         <div className="page-container max-w-3xl">
           <div className="reveal-fade flex gap-6">
             <div className="w-1 rounded-full bg-forest/40 flex-shrink-0" />
-            <p className="font-serif text-lg md:text-xl text-charcoal/60 italic leading-[1.7]">
+            <p className="font-serif text-lg md:text-xl text-charcoal/70 italic leading-[1.7]">
               These resources are curated by the 500 Acres team — selected for
               clarity, credibility, and relevance to the housing challenges
               facing Gen Z. We prioritize actionable knowledge over volume,
@@ -275,11 +274,6 @@ export default function ResourcesPage() {
             className={`reveal-up stagger-1 group relative block p-10 md:p-16 lg:p-20 rounded-2xl border ${FEATURED_RESOURCE.accent}
               transition-all duration-500 hover:-translate-y-2 hover:shadow-xl`}
           >
-            {/* Decorative element */}
-            <span className="absolute top-8 right-10 font-sans text-7xl md:text-8xl font-bold text-charcoal/[0.03]" aria-hidden="true">
-              *
-            </span>
-
             <div className="flex flex-wrap items-center gap-3 mb-10">
               <div className={`w-2.5 h-2.5 rounded-full ${FEATURED_RESOURCE.accentDot}`} />
               <span className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/60">
@@ -353,11 +347,6 @@ export default function ResourcesPage() {
                     transition-all duration-500 hover:-translate-y-2 hover:shadow-xl
                     ${isWide ? "md:col-span-2 md:row-span-1" : ""}`}
                 >
-                  {/* Decorative number */}
-                  <span className="absolute top-6 right-8 font-sans text-5xl font-bold text-charcoal/[0.03]" aria-hidden="true">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-
                   <div className="flex flex-wrap items-center gap-3 mb-10">
                     <div className={`w-2 h-2 rounded-full ${resource.accentDot}`} />
                     <span className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/60">
@@ -394,15 +383,23 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      <CTABand
-        bg="bg-bark"
-        heading="Ready to take action?"
-        description="These resources are just the beginning. Take the next step — apply for a fellowship or learn from the stories that shaped our mission."
-        ctas={[
-          { label: "Get Involved", to: "/get-involved" },
-          { label: "Read Stories", to: "/stories", variant: "outline" },
-        ]}
-      />
+      {/* Lightweight closing prompt — utility page doesn't need a dramatic CTA */}
+      <section className="py-14 md:py-20 border-t border-charcoal/10">
+        <div className="page-container flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <p className="reveal-up font-serif text-lg text-charcoal/60">
+            Have a resource to suggest?{" "}
+            <Link to="/get-involved" className="text-forest hover:text-charcoal transition-colors creative-link">
+              Get in touch
+            </Link>.
+          </p>
+          <Link
+            to="/stories"
+            className="reveal-up stagger-1 font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 hover:text-charcoal transition-colors creative-link flex items-center gap-2"
+          >
+            Read Stories <span aria-hidden="true">&rarr;</span>
+          </Link>
+        </div>
+      </section>
 
     </div>
   );

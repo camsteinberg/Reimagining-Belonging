@@ -73,7 +73,7 @@ export default function AboutLandingPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/90 to-cream/60" />
         {/* Decorative blobs */}
         <div className="absolute top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-sage/8 blob pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-[20%] left-[-5%] w-[30vw] h-[30vw] bg-amber/6 blob pointer-events-none" style={{ animationDelay: "-4s" }} aria-hidden="true" />
+        <div className="absolute bottom-[20%] left-[-5%] w-[30vw] h-[30vw] bg-amber/6 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10">
           <Breadcrumbs items={[{ label: "About" }]} />
@@ -85,21 +85,12 @@ export default function AboutLandingPage() {
             <br />
             <span className="text-forest">what we do.</span>
           </h1>
-          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/60 max-w-lg">
+          <p className="reveal-up stagger-2 font-serif text-lg md:text-xl text-charcoal/70 max-w-lg">
             Explore our mission, meet the team, discover our partners, and read
             the research driving 500 Acres forward.
           </p>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="reveal-up stagger-3 absolute bottom-16 right-[max(2.5rem,6vw)] flex flex-col items-center gap-2">
-          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50 rotate-90 origin-center translate-y-8">
-            Scroll
-          </span>
-          <div className="w-[1px] h-16 bg-charcoal/20 mt-12">
-            <div className="w-full h-1/3 bg-charcoal/60 animate-pulse" />
-          </div>
-        </div>
       </section>
 
       <SectionDivider />
@@ -122,9 +113,6 @@ export default function AboutLandingPage() {
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className={`w-2.5 h-2.5 rounded-full ${style.dot}`} />
-                    <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/50">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
                   </div>
                   <h2 className="font-serif text-2xl md:text-3xl font-bold text-charcoal mb-4 group-hover:translate-x-2 transition-transform duration-300">
                     {card.title}

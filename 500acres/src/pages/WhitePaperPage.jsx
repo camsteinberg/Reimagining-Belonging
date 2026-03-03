@@ -235,7 +235,7 @@ export default function WhitePaperPage() {
         <img src={heroBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/90 to-cream/70" />
         <div className="absolute top-[8%] right-[-12%] w-[55vw] h-[55vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-[15%] left-[-8%] w-[35vw] h-[35vw] bg-amber/5 blob pointer-events-none" aria-hidden="true" style={{ animationDelay: "-4s" }} />
+        <div className="absolute bottom-[15%] left-[-8%] w-[35vw] h-[35vw] bg-amber/5 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
@@ -247,7 +247,7 @@ export default function WhitePaperPage() {
           <p className="reveal-up stagger-2 font-serif text-xl md:text-2xl text-charcoal/80 max-w-2xl leading-[1.4] mb-4">
             Housing as Capacity Infrastructure
           </p>
-          <p className="reveal-up stagger-3 font-serif text-lg md:text-xl text-charcoal/60 max-w-xl leading-[1.6]">
+          <p className="reveal-up stagger-3 font-serif text-lg md:text-xl text-charcoal/70 max-w-xl leading-[1.6]">
             A 10-Year Framework to End the Working Homeless Crisis
           </p>
           <span className="reveal-up stagger-4 inline-block mt-6 font-sans text-xs uppercase tracking-[0.3em] text-charcoal/40">

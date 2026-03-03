@@ -78,10 +78,6 @@ function FeaturedStoryCard({ participant, index }) {
 
         {/* Content */}
         <div className="flex flex-col flex-1">
-          <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/20 mb-3" aria-hidden="true">
-            Participant {String(index + 1).padStart(2, "0")}
-          </span>
-
           <h2 className="font-serif text-2xl md:text-3xl font-bold text-charcoal mb-1 group-hover:text-forest transition-colors">
             {participant.name}
           </h2>
@@ -138,11 +134,6 @@ function StoryCard({ participant, index }) {
       />
 
       <div className="p-8 md:p-12 flex flex-col">
-        {/* Participant number */}
-        <span className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/20 mb-auto" aria-hidden="true">
-          Participant {String(index + 1).padStart(2, "0")}
-        </span>
-
         {/* SVG portrait */}
         <div className="my-8 flex justify-center">
           <img

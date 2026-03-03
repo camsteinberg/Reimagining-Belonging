@@ -43,7 +43,7 @@ export default function NotFoundPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden relative">
       {/* Decorative blobs */}
       <div className="absolute top-[20%] left-[10%] w-[30vw] h-[30vw] bg-sage/8 blob pointer-events-none blur-2xl" aria-hidden="true" />
-      <div className="absolute bottom-[15%] right-[10%] w-[20vw] h-[20vw] bg-amber/10 blob pointer-events-none blur-2xl" style={{ animationDelay: "-3s" }} aria-hidden="true" />
+      <div className="absolute bottom-[15%] right-[10%] w-[20vw] h-[20vw] bg-amber/10 blob pointer-events-none blur-2xl" aria-hidden="true" />
 
       {/* Hero section */}
       <div className="relative z-10 pt-40 md:pt-52 pb-16 text-center page-container">

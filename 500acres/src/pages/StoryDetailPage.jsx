@@ -212,7 +212,7 @@ export default function StoryDetailPage() {
                 />
               </div>
 
-              <p className="reveal-up font-serif text-lg text-charcoal/60 leading-[1.8] max-w-2xl">
+              <p className="reveal-up font-serif text-lg text-charcoal/70 leading-[1.8] max-w-2xl">
                 {participant.idealHomeDescription}
               </p>
             </div>

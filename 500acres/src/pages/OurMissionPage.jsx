@@ -1,4 +1,3 @@
-import { useState } from "react";
 import useReveal from "../hooks/useReveal";
 import SectionDivider from "../components/shared/SectionDivider";
 import SectionHeader from "../components/shared/SectionHeader";
@@ -8,16 +7,6 @@ import missionWorkbench from "../assets/photos/mission-team-workbench.webp";
 
 export default function OurMissionPage() {
   const ref = useReveal();
-  const [email, setEmail] = useState("");
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleNewsletter = (e) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setEmail("");
-    }
-  };
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
@@ -35,7 +24,7 @@ export default function OurMissionPage() {
             <br />
             <span className="text-forest">into real homes.</span>
           </h1>
-          <p className="reveal-scale stagger-2 font-serif text-lg md:text-xl text-charcoal/60 max-w-lg">
+          <p className="reveal-scale stagger-2 font-serif text-lg md:text-xl text-charcoal/70 max-w-lg">
             500 Acres is a social enterprise transforming underutilized land
             near America's national parks into communities where young adults
             learn to build sustainable housing — and build their own path
@@ -236,55 +225,6 @@ export default function OurMissionPage() {
               inform the mission — it is the mission.
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Newsletter Signup */}
-      <section className="py-16 md:py-24 lg:py-32 bg-night overflow-hidden">
-        <div className="page-container relative z-10 text-center max-w-2xl mx-auto">
-          {/* Decorative stars */}
-          <div className="absolute top-8 left-[15%] w-1 h-1 bg-cream rounded-full opacity-40" aria-hidden="true" />
-          <div className="absolute top-16 right-[20%] w-1.5 h-1.5 bg-cream rounded-full opacity-30" aria-hidden="true" />
-          <div className="absolute bottom-12 left-[25%] w-1 h-1 bg-cream rounded-full opacity-25" aria-hidden="true" />
-          <div className="absolute top-24 right-[35%] w-0.5 h-0.5 bg-cream rounded-full opacity-50" aria-hidden="true" />
-
-          <h2 className="reveal-up font-serif text-3xl md:text-4xl font-bold text-cream mb-4">
-            Stay Connected
-          </h2>
-          <p className="reveal-up stagger-1 font-serif text-lg text-cream/60 mb-10 max-w-lg mx-auto">
-            Build updates, fellowship announcements, and Live Forum
-            invitations — delivered to your inbox, never more than twice
-            a month.
-          </p>
-
-          {subscribed ? (
-            <div className="success-enter">
-              <p className="font-serif text-lg text-sage">
-                You're in. We'll be in touch.
-              </p>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleNewsletter}
-              className="reveal-up stagger-2 flex flex-col sm:flex-row items-center gap-5 max-w-md mx-auto"
-            >
-              <input
-                type="email"
-                required
-                placeholder="Your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                aria-label="Email address for newsletter"
-                className="w-full sm:flex-1 px-6 py-5 rounded-full bg-cream/10 border border-cream/20 text-cream placeholder-cream/30 font-serif text-base focus:outline-none focus:border-sage/60 transition-colors duration-300"
-              />
-              <button
-                type="submit"
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-ember text-cream font-serif text-base font-bold btn-pill hover:bg-bark whitespace-nowrap"
-              >
-                Join Us
-              </button>
-            </form>
-          )}
         </div>
       </section>
 

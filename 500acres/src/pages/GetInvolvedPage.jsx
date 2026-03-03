@@ -81,20 +81,12 @@ export default function GetInvolvedPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
     setFormState({ firstName: "", lastName: "", email: "", interest: "", message: "" });
-  };
-
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    setNewsletterSubmitted(true);
-    setNewsletterEmail("");
   };
 
   const scrollToSection = (e) => {
@@ -116,10 +108,10 @@ export default function GetInvolvedPage() {
       {/* Hero -- immersive full-bleed with CTA */}
       <section className="relative min-h-[85vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28 bg-charcoal overflow-hidden">
         <img src={heroConstruction} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-        {/* Animated gradient blobs */}
+        {/* Decorative blobs */}
         <div className="absolute top-[20%] left-[10%] w-[30vw] h-[30vw] bg-bark/20 blob pointer-events-none blur-3xl" aria-hidden="true" />
-        <div className="absolute bottom-[10%] right-[15%] w-[25vw] h-[25vw] bg-amber/15 blob pointer-events-none blur-3xl" aria-hidden="true" style={{ animationDelay: "-3s" }} />
-        <div className="absolute top-[60%] left-[50%] w-[20vw] h-[20vw] bg-sage/10 blob pointer-events-none blur-3xl" aria-hidden="true" style={{ animationDelay: "-6s" }} />
+        <div className="absolute bottom-[10%] right-[15%] w-[25vw] h-[25vw] bg-amber/15 blob pointer-events-none blur-3xl" aria-hidden="true" />
+        <div className="absolute top-[60%] left-[50%] w-[20vw] h-[20vw] bg-sage/10 blob pointer-events-none blur-3xl" aria-hidden="true" />
 
         <div className="page-container relative z-10 w-full">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/70 mb-10">
@@ -170,9 +162,6 @@ export default function GetInvolvedPage() {
                     <img src={applyStep.image} alt={applyStep.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </div>
                   <div>
-                    <span className={`block font-sans text-6xl font-bold ${applyStep.color} opacity-15 mb-6`}>
-                      {applyStep.num}
-                    </span>
                     <h3 className="font-serif text-3xl md:text-4xl font-bold text-charcoal mb-8">
                       {applyStep.title}
                     </h3>
@@ -198,9 +187,6 @@ export default function GetInvolvedPage() {
                   <div className="w-full aspect-video rounded-xl overflow-hidden mb-6">
                     <img src={step.image} alt={step.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </div>
-                  <span className={`block font-sans text-6xl font-bold ${step.color} opacity-15 mb-6`}>
-                    {step.num}
-                  </span>
                   <h3 className="font-serif text-3xl md:text-4xl font-bold text-charcoal mb-8">
                     {step.title}
                   </h3>
@@ -494,78 +480,6 @@ export default function GetInvolvedPage() {
               No prior experience needed.
             </p>
           </div>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* Newsletter signup */}
-      <section className="py-16 md:py-24 lg:py-36 bg-cream">
-        <div className="page-container max-w-2xl mx-auto text-center">
-          <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
-            Stay Connected
-          </p>
-          <h2 className="reveal-up stagger-1 font-serif text-3xl md:text-4xl font-bold text-charcoal mb-4">
-            Updates from
-            <br />
-            <span className="italic text-clay">the field.</span>
-          </h2>
-          <p className="reveal-up stagger-2 font-serif text-base text-charcoal/70 mb-10 max-w-md mx-auto">
-            Build progress, fellowship announcements, and Live Forum
-            invitations — delivered to your inbox, never more than twice
-            a month.
-          </p>
-
-          {newsletterSubmitted ? (
-            <div className="success-enter flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-forest/10 flex items-center justify-center mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6 text-forest"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <p className="font-serif text-lg text-charcoal/70">
-                You're in. We'll be in touch.
-              </p>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleNewsletterSubmit}
-              className="reveal-up stagger-3 flex flex-col sm:flex-row items-center gap-4 max-w-md mx-auto"
-            >
-              <div className="relative flex-1 w-full">
-                <input
-                  id="newsletterEmail"
-                  name="newsletterEmail"
-                  type="email"
-                  required
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-3 font-serif text-base text-charcoal focus:outline-none focus:border-charcoal transition-colors placeholder-transparent"
-                  placeholder="Email address"
-                />
-                <label
-                  htmlFor="newsletterEmail"
-                  className="absolute left-3 top-3 font-sans text-sm text-charcoal/60 transition-all duration-300 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-charcoal peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs"
-                >
-                  Email address
-                </label>
-              </div>
-              <button
-                type="submit"
-                className="group flex items-center gap-3 bg-charcoal text-cream px-8 py-3 rounded-full font-serif text-base btn-pill hover:bg-forest hover:gap-4 shrink-0"
-              >
-                <span>Subscribe</span>
-                <span className="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
-              </button>
-            </form>
-          )}
         </div>
       </section>
 

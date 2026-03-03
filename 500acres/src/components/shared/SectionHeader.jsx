@@ -47,7 +47,7 @@ export default function SectionHeader({
       </h2>
       {description && (
         <p
-          className={`${reveal} stagger-2 font-serif text-lg text-charcoal/60 ${maxWidth}${isCenter ? " mx-auto" : ""}`}
+          className={`${reveal} stagger-2 font-serif text-lg text-charcoal/70 ${maxWidth}${isCenter ? " mx-auto" : ""}`}
         >
           {description}
         </p>
