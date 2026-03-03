@@ -127,7 +127,7 @@ export default function StoryDetailPage() {
       </section>
 
       {/* Belonging quote — dramatic pull quote */}
-      <section className="py-20 md:py-28 border-t border-charcoal/10">
+      <section className="py-14 md:py-20 lg:py-28 border-t border-charcoal/10">
         <div className="page-container max-w-4xl mx-auto">
           <blockquote className="reveal-clip-up">
             <span className="block font-serif text-6xl md:text-8xl leading-none opacity-10" style={{ color: accentColor }} aria-hidden="true">"</span>
@@ -155,7 +155,7 @@ export default function StoryDetailPage() {
       </section>
 
       {/* Quotes — staggered editorial layout */}
-      <section className="py-20 md:py-28 bg-warm-white">
+      <section className="py-14 md:py-20 lg:py-28 bg-warm-white">
         <div className="page-container">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-12">
             <div className="md:col-span-3">
@@ -188,7 +188,7 @@ export default function StoryDetailPage() {
       </section>
 
       {/* Ideal Home — immersive image + text */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start">
             <div className="md:col-span-3">

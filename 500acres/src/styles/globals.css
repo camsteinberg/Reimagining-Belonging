@@ -186,14 +186,20 @@
 }
 
 /* Reusable page container — guaranteed centered content with generous,
-   viewport-relative padding. Use on inner content wrappers inside sections. */
+   viewport-relative padding. Tighter on mobile to maximize content width. */
 .page-container {
   width: 100%;
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: max(2.5rem, 6vw);
-  padding-right: max(2.5rem, 6vw);
+  padding-left: max(1.25rem, 5vw);
+  padding-right: max(1.25rem, 5vw);
+}
+@media (min-width: 768px) {
+  .page-container {
+    padding-left: max(2.5rem, 6vw);
+    padding-right: max(2.5rem, 6vw);
+  }
 }
 
 body.popup-open {

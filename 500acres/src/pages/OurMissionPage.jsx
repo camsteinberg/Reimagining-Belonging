@@ -47,7 +47,7 @@ export default function OurMissionPage() {
       <SectionDivider />
 
       {/* Mission — asymmetric two-column editorial */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
           <div className="md:col-span-4 md:col-start-1">
             <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -84,7 +84,7 @@ export default function OurMissionPage() {
       </section>
 
       {/* Values Section — bento-style staggered grid with featured cards */}
-      <section className="py-24 md:py-36 bg-warm-white">
+      <section className="py-16 md:py-24 lg:py-36 bg-warm-white">
         <div className="page-container">
           <SectionHeader
             label="What We Believe"
@@ -173,7 +173,7 @@ export default function OurMissionPage() {
       </section>
 
       {/* Three-Word Mantra Triptych */}
-      <section className="bg-charcoal py-20 md:py-28 overflow-hidden">
+      <section className="bg-charcoal py-14 md:py-20 lg:py-28 overflow-hidden">
         <div className="page-container">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-0">
             {[
@@ -202,7 +202,7 @@ export default function OurMissionPage() {
       <SectionDivider />
 
       {/* Origin — editorial image + text overlap */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
           <div className="md:col-span-5 md:col-start-1 relative">
             <div className="reveal-scale aspect-square bg-charcoal/5 rounded-2xl flex items-center justify-center overflow-hidden">
@@ -240,7 +240,7 @@ export default function OurMissionPage() {
       </section>
 
       {/* Newsletter Signup */}
-      <section className="py-24 md:py-32 bg-night overflow-hidden">
+      <section className="py-16 md:py-24 lg:py-32 bg-night overflow-hidden">
         <div className="page-container relative z-10 text-center max-w-2xl mx-auto">
           {/* Decorative stars */}
           <div className="absolute top-8 left-[15%] w-1 h-1 bg-cream rounded-full opacity-40" aria-hidden="true" />

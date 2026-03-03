@@ -232,7 +232,7 @@ function TeamSection({ title, members }) {
         </h2>
         <div className="flex-1 h-px bg-charcoal/10 ml-4" />
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12 lg:gap-16">
         {members.map((member, i) => (
           <MemberCard key={member.name} member={member} index={i} />
         ))}
@@ -247,7 +247,7 @@ export default function OurTeamPage() {
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero — image-reveal wipe */}
-      <section className="relative min-h-[60vh] flex flex-col justify-end pb-20 md:pb-28">
+      <section className="relative min-h-[60vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
         <img
           src={teamHero}
           alt="Team members gathered around evening fire pit"
@@ -288,7 +288,7 @@ export default function OurTeamPage() {
       </section>
 
       {/* Leadership — cream (default) */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container">
           <SectionHeader
             label="Leadership"
@@ -309,7 +309,7 @@ export default function OurTeamPage() {
 
       {/* Design & Build — tinted */}
       <div className="bg-clay/[0.03]">
-        <section className="py-20 md:py-28">
+        <section className="py-14 md:py-20 lg:py-28">
           <div className="page-container">
             <TeamSection title="Design & Build" members={DESIGN_BUILD} />
           </div>
@@ -317,7 +317,7 @@ export default function OurTeamPage() {
       </div>
 
       {/* Technology & Strategy — cream (default) */}
-      <section className="py-20 md:py-28">
+      <section className="py-14 md:py-20 lg:py-28">
         <div className="page-container">
           <TeamSection title="Technology & Strategy" members={TECH_STRATEGY} />
         </div>
@@ -325,7 +325,7 @@ export default function OurTeamPage() {
 
       {/* Fellows & Artists — tinted */}
       <div className="bg-sage/[0.03]">
-        <section className="py-20 md:py-28">
+        <section className="py-14 md:py-20 lg:py-28">
           <div className="page-container">
             <TeamSection title="Fellows & Artists" members={FELLOWS_ARTISTS} />
           </div>
@@ -335,7 +335,7 @@ export default function OurTeamPage() {
       <SectionDivider variant="dot" />
 
       {/* Trusted Advisors — cream (default) */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container">
           <SectionHeader
             label="Advisors"

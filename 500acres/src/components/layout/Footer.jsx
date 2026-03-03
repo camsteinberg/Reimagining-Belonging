@@ -112,7 +112,7 @@ export default function Footer() {
                   <div key={link.to}>
                     <Link
                       to={link.to}
-                      className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit"
+                      className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit py-1"
                     >
                       {link.label}
                     </Link>
@@ -148,7 +148,7 @@ export default function Footer() {
                   target={social.label !== "Email" ? "_blank" : undefined}
                   rel={social.label !== "Email" ? "noopener noreferrer" : undefined}
                   aria-label={social.ariaLabel}
-                  className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit"
+                  className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit py-1"
                 >
                   {social.label}
                 </a>

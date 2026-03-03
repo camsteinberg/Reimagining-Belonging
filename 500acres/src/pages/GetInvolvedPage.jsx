@@ -114,7 +114,7 @@ export default function GetInvolvedPage() {
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero -- immersive full-bleed with CTA */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28 bg-charcoal overflow-hidden">
+      <section className="relative min-h-[85vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28 bg-charcoal overflow-hidden">
         <img src={heroConstruction} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
         {/* Animated gradient blobs */}
         <div className="absolute top-[20%] left-[10%] w-[30vw] h-[30vw] bg-bark/20 blob pointer-events-none blur-3xl" aria-hidden="true" />
@@ -140,7 +140,7 @@ export default function GetInvolvedPage() {
           <a
             href="#volunteer-form"
             onClick={scrollToSection}
-            className="reveal-up stagger-3 inline-block bg-ember text-cream px-10 py-4 rounded-full font-serif text-lg font-bold btn-pill hover:bg-clay"
+            className="reveal-up stagger-3 inline-block bg-ember text-cream px-8 sm:px-10 py-3 sm:py-4 rounded-full font-serif text-base sm:text-lg font-bold btn-pill hover:bg-clay"
           >
             Express Interest
           </a>
@@ -148,7 +148,7 @@ export default function GetInvolvedPage() {
       </section>
 
       {/* Engagement funnel -- featured Apply card + 2-column grid */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container">
           <SectionHeader
             label="Your Journey"
@@ -246,7 +246,7 @@ export default function GetInvolvedPage() {
       <SectionDivider />
 
       {/* FAQ Accordion */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container max-w-3xl mx-auto">
           <SectionHeader
             label="Common Questions"
@@ -277,7 +277,7 @@ export default function GetInvolvedPage() {
                         {item.question}
                       </span>
                       <span
-                        className="shrink-0 w-8 h-8 rounded-full border border-charcoal/20 flex items-center justify-center text-charcoal/60 transition-transform duration-300"
+                        className="shrink-0 w-10 h-10 rounded-full border border-charcoal/20 flex items-center justify-center text-charcoal/60 transition-transform duration-300"
                         style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
                         aria-hidden="true"
                       >
@@ -310,7 +310,7 @@ export default function GetInvolvedPage() {
       <SectionDivider />
 
       {/* Volunteer form -- editorial split layout */}
-      <section id="volunteer-form" className="py-24 md:py-36 bg-warm-white">
+      <section id="volunteer-form" className="py-16 md:py-24 lg:py-36 bg-warm-white">
         <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
           <div className="md:col-span-4">
             <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -470,7 +470,7 @@ export default function GetInvolvedPage() {
       </section>
 
       {/* Build section anchor */}
-      <section id="build" className="py-24 md:py-36">
+      <section id="build" className="py-16 md:py-24 lg:py-36">
         <div className="page-container">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
             Build Program
@@ -500,7 +500,7 @@ export default function GetInvolvedPage() {
       <SectionDivider />
 
       {/* Newsletter signup */}
-      <section className="py-24 md:py-36 bg-cream">
+      <section className="py-16 md:py-24 lg:py-36 bg-cream">
         <div className="page-container max-w-2xl mx-auto text-center">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
             Stay Connected
@@ -570,7 +570,7 @@ export default function GetInvolvedPage() {
       </section>
 
       {/* Donate -- dramatic CTA */}
-      <section className="relative py-28 md:py-40 bg-charcoal overflow-hidden">
+      <section className="relative py-16 md:py-28 lg:py-40 bg-charcoal overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-sage/5 rounded-full blur-3xl" aria-hidden="true" />
         </div>

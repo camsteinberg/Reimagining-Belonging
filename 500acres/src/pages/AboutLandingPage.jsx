@@ -68,7 +68,7 @@ export default function AboutLandingPage() {
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero — shorter with subtle background image */}
-      <section className="relative min-h-[70vh] flex flex-col justify-end pb-20 md:pb-28">
+      <section className="relative min-h-[70vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
         <img src={pullquoteBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-[0.08]" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/90 to-cream/60" />
         {/* Decorative blobs */}
@@ -105,7 +105,7 @@ export default function AboutLandingPage() {
       <SectionDivider />
 
       {/* Entry-point cards */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-12">
             Explore

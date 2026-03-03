@@ -197,7 +197,7 @@ export default function StoriesPage() {
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero — shorter to get to content faster */}
-      <section className="relative min-h-[70vh] flex flex-col justify-end pb-20 md:pb-28">
+      <section className="relative min-h-[70vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
         <img src={storiesHero} alt="Historic barn in pastoral landscape" className="absolute inset-0 w-full h-full object-cover opacity-15" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <div className="absolute top-[20%] right-[5%] w-[35vw] h-[35vw] bg-clay/5 blob pointer-events-none" aria-hidden="true" />
@@ -222,7 +222,7 @@ export default function StoriesPage() {
       <SectionDivider variant="dot" />
 
       {/* Spotlight Quote — dark inset section */}
-      <section className="bg-charcoal section-inset py-20 md:py-28 overflow-hidden">
+      <section className="bg-charcoal section-inset py-14 md:py-20 lg:py-28 overflow-hidden">
         <div className="page-container max-w-4xl mx-auto text-center">
           <blockquote className="reveal-clip-up">
             <p className="font-serif text-2xl md:text-4xl italic text-cream leading-[1.5]">

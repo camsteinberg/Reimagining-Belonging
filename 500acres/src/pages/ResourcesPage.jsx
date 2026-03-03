@@ -205,7 +205,7 @@ export default function ResourcesPage() {
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero — shorter for utility page */}
-      <section className="relative min-h-[60vh] flex flex-col justify-end pb-20 md:pb-28">
+      <section className="relative min-h-[60vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
         <img src={resourcesHero} alt="" className="absolute inset-0 w-full h-full object-cover opacity-12" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <div className="absolute top-[15%] left-[-8%] w-[40vw] h-[40vw] bg-sage/5 blob pointer-events-none" aria-hidden="true" />
@@ -314,7 +314,7 @@ export default function ResourcesPage() {
       </section>
 
       {/* Filter + Bento Grid */}
-      <section className="py-20 md:py-28">
+      <section className="py-14 md:py-20 lg:py-28">
         <div className="page-container">
           {/* Category pills */}
           <div className="reveal-up flex flex-wrap gap-3 mb-14 md:mb-20" role="tablist" aria-label="Filter resources by category">
@@ -326,7 +326,7 @@ export default function ResourcesPage() {
                 aria-selected={activeCategory === cat}
                 aria-controls="resources-tabpanel"
                 onClick={() => setActiveCategory(cat)}
-                className={`px-5 py-2.5 rounded-full font-sans text-sm tracking-wide transition-all duration-300 ${
+                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-sans text-xs sm:text-sm tracking-wide transition-all duration-300 ${
                   activeCategory === cat
                     ? "bg-charcoal text-cream scale-105"
                     : "bg-transparent border border-charcoal/20 text-charcoal/60 hover:border-charcoal/50 hover:text-charcoal"

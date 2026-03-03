@@ -231,7 +231,7 @@ export default function WhitePaperPage() {
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* ── Hero ── */}
-      <section className="relative min-h-[65vh] flex flex-col justify-end pb-20 md:pb-28">
+      <section className="relative min-h-[65vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
         <img src={heroBarndo} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/90 to-cream/70" />
         <div className="absolute top-[8%] right-[-12%] w-[55vw] h-[55vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" />
@@ -288,7 +288,7 @@ export default function WhitePaperPage() {
           </button>
           <div
             className="overflow-hidden transition-all duration-300"
-            style={{ maxHeight: mobileTocOpen ? "500px" : "0px" }}
+            style={{ maxHeight: mobileTocOpen ? "min(500px, 60vh)" : "0px" }}
           >
             <nav className="pb-4 space-y-1" aria-label="Table of contents">
               {TOC_SECTIONS.map((s) => (
@@ -334,7 +334,7 @@ export default function WhitePaperPage() {
         </aside>
 
         {/* ── Executive Summary ── */}
-        <section id="executive-summary" className="py-24 md:py-36">
+        <section id="executive-summary" className="py-16 md:py-24 lg:py-36">
           <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
             <div className="md:col-span-5">
               <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -403,7 +403,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── The Problem — dark section ── */}
-        <section id="the-crisis" className="relative py-28 md:py-40 bg-charcoal diagonal-top overflow-hidden">
+        <section id="the-crisis" className="relative py-16 md:py-28 lg:py-40 bg-charcoal diagonal-top overflow-hidden">
           <img src={firepit} alt="" className="absolute inset-0 w-full h-full object-cover opacity-15" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-charcoal/70" />
           <div className="page-container relative z-10 max-w-4xl mx-auto text-center">
@@ -422,7 +422,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── What is Housing Capacity? ── */}
-        <section id="housing-capacity" className="py-24 md:py-36">
+        <section id="housing-capacity" className="py-16 md:py-24 lg:py-36">
           <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
             <div className="md:col-span-4">
               <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -452,7 +452,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── The Hypothesis ── */}
-        <section id="the-hypothesis" className="py-24 md:py-36 bg-warm-white">
+        <section id="the-hypothesis" className="py-16 md:py-24 lg:py-36 bg-warm-white">
           <div className="page-container max-w-4xl mx-auto">
             <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4 text-center">
               The HABITABLE Hypothesis
@@ -506,7 +506,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── The HCU Ladder — true step visualization ── */}
-        <section id="hcu-ladder" className="py-24 md:py-36">
+        <section id="hcu-ladder" className="py-16 md:py-24 lg:py-36">
           <div className="page-container">
             <div className="text-center mb-16 md:mb-20">
               <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -610,7 +610,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── Nesting Pods ── */}
-        <section id="nesting-pods" className="py-24 md:py-36 bg-warm-white">
+        <section id="nesting-pods" className="py-16 md:py-24 lg:py-36 bg-warm-white">
           <div className="page-container">
             <div className="text-center mb-16 md:mb-20">
               <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -661,7 +661,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── Robotic Fabrication ── */}
-        <section id="robotic-fabrication" className="py-24 md:py-36">
+        <section id="robotic-fabrication" className="py-16 md:py-24 lg:py-36">
           <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
             <div className="md:col-span-5">
               <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -704,7 +704,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── Pull Quote ── */}
-        <section className="relative py-28 md:py-40 bg-charcoal diagonal-top diagonal-bottom overflow-hidden">
+        <section className="relative py-16 md:py-28 lg:py-40 bg-charcoal diagonal-top diagonal-bottom overflow-hidden">
           <img src={workbench} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-charcoal/70" />
           <div className="page-container relative z-10 text-center max-w-4xl mx-auto">
@@ -716,7 +716,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── The Foundation ── */}
-        <section id="the-foundation" className="py-24 md:py-36">
+        <section id="the-foundation" className="py-16 md:py-24 lg:py-36">
           <div className="page-container">
             <div className="text-center mb-16 md:mb-20">
               <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -806,7 +806,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── Opportunity Zones ── */}
-        <section id="opportunity-zones" className="py-24 md:py-36 bg-warm-white">
+        <section id="opportunity-zones" className="py-16 md:py-24 lg:py-36 bg-warm-white">
           <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
             <div className="md:col-span-5">
               <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -860,7 +860,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── Business Model ── */}
-        <section id="business-model" className="py-24 md:py-36">
+        <section id="business-model" className="py-16 md:py-24 lg:py-36">
           <div className="page-container max-w-4xl mx-auto">
             <div className="text-center mb-16 md:mb-20">
               <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -950,7 +950,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── Accountability ── */}
-        <section id="accountability" className="py-20 md:py-28 bg-warm-white">
+        <section id="accountability" className="py-14 md:py-20 lg:py-28 bg-warm-white">
           <div className="page-container max-w-3xl mx-auto text-center">
             <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
               Public Accountability
@@ -970,7 +970,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── Policy Tailwinds ── */}
-        <section id="policy-tailwinds" className="py-24 md:py-36">
+        <section id="policy-tailwinds" className="py-16 md:py-24 lg:py-36">
           <div className="page-container grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-20">
             <div className="md:col-span-4">
               <p className="reveal-left font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-4">
@@ -1010,7 +1010,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── Conclusion ── */}
-        <section id="conclusion" className="relative py-28 md:py-40 bg-moss overflow-hidden">
+        <section id="conclusion" className="relative py-16 md:py-28 lg:py-40 bg-moss overflow-hidden">
           <div className="page-container relative z-10 text-center max-w-3xl mx-auto">
             <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/50 mb-8">
               Conclusion
@@ -1036,7 +1036,7 @@ export default function WhitePaperPage() {
         </section>
 
         {/* ── References ── */}
-        <section id="references" className="py-20 md:py-28 bg-charcoal">
+        <section id="references" className="py-14 md:py-20 lg:py-28 bg-charcoal">
           <div className="page-container max-w-3xl mx-auto">
             <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/40 mb-10">
               References

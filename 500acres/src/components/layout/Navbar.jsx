@@ -454,7 +454,7 @@ export default function Navbar({ isHomepage }) {
       >
         <div
           className="pointer-events-auto w-full h-full flex flex-col justify-center"
-          style={{ paddingLeft: "max(3rem, 8vw)", paddingRight: "max(3rem, 8vw)" }}
+          style={{ paddingLeft: "max(1.5rem, 5vw)", paddingRight: "max(1.5rem, 5vw)" }}
         >
           <nav aria-label="Main navigation" className="flex flex-col gap-2 md:gap-4">
             {NAV_LINKS.map((link, i) => {
@@ -478,7 +478,7 @@ export default function Navbar({ isHomepage }) {
                       <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
                         {link.num}
                       </span>
-                      <span className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                      <span className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
                         {link.label}
                       </span>
                       <svg
@@ -507,7 +507,7 @@ export default function Navbar({ isHomepage }) {
                         const childStyle = { transitionDelay: isExpanded ? `${j * 60}ms` : "0ms" };
                         const childInner = (
                           <>
-                            <span className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                            <span className="font-serif text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
                               {child.label}
                             </span>
                             {child.external && (
@@ -568,7 +568,7 @@ export default function Navbar({ isHomepage }) {
                   <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
                     {link.num}
                   </span>
-                  <span className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                  <span className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
                     {link.label}
                   </span>
                   <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />

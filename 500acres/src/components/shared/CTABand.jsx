@@ -26,7 +26,7 @@ export default function CTABand({
 }) {
   return (
     <section
-      className={`relative py-24 md:py-36 ${bg} overflow-hidden${diagonal ? " diagonal-top" : ""} ${className}`}
+      className={`relative py-16 md:py-24 lg:py-36 ${bg} overflow-hidden${diagonal ? " diagonal-top" : ""} ${className}`}
     >
       <div className="page-container relative z-10 text-center">
         {label && (
@@ -34,7 +34,7 @@ export default function CTABand({
             {label}
           </p>
         )}
-        <h2 className="reveal-up font-serif text-3xl md:text-5xl font-bold text-cream mb-6">
+        <h2 className="reveal-up font-serif text-2xl sm:text-3xl md:text-5xl font-bold text-cream mb-6">
           {heading}
         </h2>
         {description && (

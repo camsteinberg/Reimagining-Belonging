@@ -377,7 +377,7 @@ export default function OurSponsorsPage() {
       <SectionDivider />
 
       {/* Featured Partners -- bento grid with multi-column spans */}
-      <section className="py-24 md:py-36">
+      <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container">
           <SectionHeader
             label="Key Partners"
@@ -396,7 +396,7 @@ export default function OurSponsorsPage() {
 
       {/* Grouped sponsors by category */}
       {SPONSOR_GROUPS.map((group) => (
-        <section key={group.label} className="pb-20 md:pb-28">
+        <section key={group.label} className="pb-14 md:pb-20 lg:pb-28">
           <div className="page-container">
             <div className="flex items-center gap-4 mb-12 md:mb-16">
               <div className="h-px flex-1 bg-charcoal/10" />
