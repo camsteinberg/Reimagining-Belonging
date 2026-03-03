@@ -1028,7 +1028,7 @@ export default function WhitePaperPage() {
             </p>
             <Link
               to="/get-involved"
-              className="reveal-up stagger-3 inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
+              className="reveal-up stagger-3 inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold btn-pill hover:bg-sage hover:text-cream"
             >
               Get Involved
             </Link>

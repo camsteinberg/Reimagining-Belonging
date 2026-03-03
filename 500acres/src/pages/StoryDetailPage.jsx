@@ -103,7 +103,7 @@ export default function StoryDetailPage() {
                 {participants.map((_, i) => (
                   <div
                     key={i}
-                    className="w-2 h-2 rounded-full transition-colors duration-300"
+                    className={`w-2 h-2 rounded-full progress-dot${i === currentIndex ? " scale-125" : ""}`}
                     style={{
                       backgroundColor: i === currentIndex ? accentColor : "rgba(42,37,32,0.15)",
                     }}

@@ -66,7 +66,7 @@ export default function Footer() {
             Stay Connected
           </label>
           {subscribed ? (
-            <p className="font-serif text-sage text-lg">
+            <p className="success-enter font-serif text-sage text-lg">
               You're in. We'll be in touch.
             </p>
           ) : (

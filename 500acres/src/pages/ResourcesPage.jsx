@@ -344,11 +344,12 @@ export default function ResourcesPage() {
               const isWide = i === 0 && filtered.length > 2;
               return (
                 <a
-                  key={resource.title}
+                  key={`${activeCategory}-${resource.title}`}
                   href={resource.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`reveal-up stagger-${(i % 4) + 1} group relative p-10 md:p-14 rounded-2xl border ${resource.accent}
+                  style={{ animationDelay: `${i * 60}ms` }}
+                  className={`filter-enter group relative p-10 md:p-14 rounded-2xl border ${resource.accent}
                     transition-all duration-500 hover:-translate-y-2 hover:shadow-xl
                     ${isWide ? "md:col-span-2 md:row-span-1" : ""}`}
                 >

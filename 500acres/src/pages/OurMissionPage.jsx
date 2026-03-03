@@ -258,7 +258,7 @@ export default function OurMissionPage() {
           </p>
 
           {subscribed ? (
-            <div className="reveal-up stagger-2">
+            <div className="success-enter">
               <p className="font-serif text-lg text-sage">
                 You're in. We'll be in touch.
               </p>
@@ -279,7 +279,7 @@ export default function OurMissionPage() {
               />
               <button
                 type="submit"
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-ember text-cream font-serif text-base font-bold hover:bg-bark transition-colors duration-300 whitespace-nowrap"
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-ember text-cream font-serif text-base font-bold btn-pill hover:bg-bark whitespace-nowrap"
               >
                 Join Us
               </button>

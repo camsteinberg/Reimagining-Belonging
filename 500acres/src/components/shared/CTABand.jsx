@@ -72,7 +72,7 @@ export default function CTABand({
                   <El
                     key={key}
                     {...linkProps}
-                    className="inline-block bg-transparent border-2 border-cream text-cream px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-cream/10 transition-colors duration-300"
+                    className="inline-block bg-transparent border-2 border-cream text-cream px-10 py-4 rounded-full font-serif text-lg font-bold btn-pill hover:bg-cream/10"
                   >
                     {cta.label}
                   </El>
@@ -88,7 +88,7 @@ export default function CTABand({
                 <El
                   key={key}
                   {...linkProps}
-                  className="inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
+                  className="inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold btn-pill hover:bg-sage hover:text-cream"
                 >
                   {cta.label}
                 </El>

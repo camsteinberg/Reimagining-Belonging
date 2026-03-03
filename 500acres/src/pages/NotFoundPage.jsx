@@ -61,7 +61,7 @@ export default function NotFoundPage() {
         </p>
         <Link
           to="/"
-          className="reveal-up stagger-4 group inline-flex items-center gap-3 bg-charcoal text-cream px-8 py-4 rounded-full font-serif text-lg transition-all duration-300 hover:bg-forest hover:gap-5"
+          className="reveal-up stagger-4 group inline-flex items-center gap-3 bg-charcoal text-cream px-8 py-4 rounded-full font-serif text-lg btn-pill hover:bg-forest hover:gap-5"
         >
           <span>Back to Home</span>
           <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>

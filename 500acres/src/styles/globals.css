@@ -2744,7 +2744,80 @@ footer .creative-link {
 }
 
 .hover-image-scale:hover img {
-  transform: scale(1.02);
+  transform: scale(1.05);
+}
+
+/* ── CTA pill button micro-interaction ── */
+.btn-pill {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease,
+              background-color 0.3s ease,
+              color 0.3s ease,
+              gap 0.3s ease;
+}
+.btn-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.btn-pill:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.1s;
+}
+
+/* ── Form success entrance ── */
+.success-enter {
+  animation: successFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes successFadeIn {
+  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Filter grid item entrance ── */
+.filter-enter {
+  animation: filterSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes filterSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── FAQ accordion (CSS grid height animation) ── */
+.accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.accordion-panel.is-open {
+  grid-template-rows: 1fr;
+}
+.accordion-panel > .accordion-inner {
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.accordion-panel.is-open > .accordion-inner {
+  opacity: 1;
+  transition-delay: 0.1s;
+}
+
+/* ── Progress dot with smooth transition ── */
+.progress-dot {
+  transition: background-color 0.4s ease,
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Dropdown menu enter/exit ── */
+.dropdown-menu {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dropdown-menu.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* ── 10. Form Input Enhancement ── */

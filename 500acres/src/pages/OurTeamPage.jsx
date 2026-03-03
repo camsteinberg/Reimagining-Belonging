@@ -152,7 +152,7 @@ function LeadershipCard({ member, index }) {
     <div className={`reveal-up stagger-${index + 1} group rounded-3xl border-2 ${accentClasses} p-8 md:p-12 transition-all duration-500 hover:-translate-y-3 hover:shadow-lg`}>
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
         <div className="relative flex-shrink-0">
-          <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-charcoal/5 overflow-hidden">
+          <div className="w-36 h-36 md:w-44 md:h-44 rounded-full bg-charcoal/5 overflow-hidden hover-image-scale">
             {member.photo ? (
               <img
                 src={member.photo}
@@ -189,7 +189,7 @@ function MemberCard({ member, index }) {
   return (
     <div className={`reveal-up stagger-${(index % 3) + 1} group text-center`}>
       <div className="relative w-40 h-40 mx-auto mb-6">
-        <div className="w-full h-full rounded-full bg-charcoal/5 flex items-center justify-center overflow-hidden">
+        <div className="w-full h-full rounded-full bg-charcoal/5 flex items-center justify-center overflow-hidden hover-image-scale">
           {member.photo ? (
             <img
               src={member.photo}

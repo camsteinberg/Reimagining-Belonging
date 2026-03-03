@@ -140,7 +140,7 @@ export default function GetInvolvedPage() {
           <a
             href="#volunteer-form"
             onClick={scrollToSection}
-            className="reveal-up stagger-3 inline-block bg-ember text-cream px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-clay transition-colors duration-300"
+            className="reveal-up stagger-3 inline-block bg-ember text-cream px-10 py-4 rounded-full font-serif text-lg font-bold btn-pill hover:bg-clay"
           >
             Express Interest
           </a>
@@ -289,17 +289,15 @@ export default function GetInvolvedPage() {
                     id={panelId}
                     role="region"
                     aria-labelledby={buttonId}
-                    hidden={!isOpen}
-                    className="overflow-hidden transition-all duration-300"
-                    style={{
-                      maxHeight: isOpen ? "400px" : "0px",
-                      opacity: isOpen ? 1 : 0,
-                    }}
+                    aria-hidden={!isOpen}
+                    className={`accordion-panel${isOpen ? " is-open" : ""}`}
                   >
-                    <div className="px-6 md:px-8 pb-6 md:pb-8">
-                      <p className="font-serif text-base text-charcoal/60 leading-[1.8]">
-                        {item.answer}
-                      </p>
+                    <div className="accordion-inner">
+                      <div className="px-6 md:px-8 pb-6 md:pb-8">
+                        <p className="font-serif text-base text-charcoal/60 leading-[1.8]">
+                          {item.answer}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -331,7 +329,7 @@ export default function GetInvolvedPage() {
 
           <div className="md:col-span-7 md:col-start-6">
             {submitted ? (
-              <div className="reveal-right flex flex-col items-center justify-center text-center py-16 md:py-20">
+              <div className="success-enter flex flex-col items-center justify-center text-center py-16 md:py-20">
                 <div className="w-16 h-16 rounded-full bg-forest/10 flex items-center justify-center mb-6">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -460,7 +458,7 @@ export default function GetInvolvedPage() {
 
                 <button
                   type="submit"
-                  className="group flex items-center gap-4 bg-charcoal text-cream px-10 py-4 rounded-full font-serif text-lg transition-all duration-300 hover:bg-moss hover:gap-6 mt-4"
+                  className="group flex items-center gap-4 bg-charcoal text-cream px-10 py-4 rounded-full font-serif text-lg btn-pill hover:bg-moss hover:gap-6 mt-4"
                 >
                   <span>Submit</span>
                   <span className="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
@@ -519,7 +517,7 @@ export default function GetInvolvedPage() {
           </p>
 
           {newsletterSubmitted ? (
-            <div className="reveal-up stagger-3 flex flex-col items-center">
+            <div className="success-enter flex flex-col items-center">
               <div className="w-12 h-12 rounded-full bg-forest/10 flex items-center justify-center mb-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -561,7 +559,7 @@ export default function GetInvolvedPage() {
               </div>
               <button
                 type="submit"
-                className="group flex items-center gap-3 bg-charcoal text-cream px-8 py-3 rounded-full font-serif text-base transition-all duration-300 hover:bg-forest hover:gap-4 shrink-0"
+                className="group flex items-center gap-3 bg-charcoal text-cream px-8 py-3 rounded-full font-serif text-base btn-pill hover:bg-forest hover:gap-4 shrink-0"
               >
                 <span>Subscribe</span>
                 <span className="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
@@ -594,7 +592,7 @@ export default function GetInvolvedPage() {
             href="https://donate.500acres.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="reveal-up stagger-3 inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold hover:bg-sage hover:text-cream transition-colors duration-300"
+            className="reveal-up stagger-3 inline-block bg-cream text-charcoal px-10 py-4 rounded-full font-serif text-lg font-bold btn-pill hover:bg-sage hover:text-cream"
           >
             Donate
           </a>

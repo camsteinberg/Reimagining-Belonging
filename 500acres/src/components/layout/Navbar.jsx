@@ -387,12 +387,11 @@ export default function Navbar({ isHomepage }) {
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
-                      {isDropOpen && (
                         <div
                           id={`sticky-submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                           role="region"
                           aria-label={`${link.label} submenu`}
-                          className="absolute top-full left-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[180px]"
+                          className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full left-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[180px]`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           {link.children.map((child) =>
@@ -424,7 +423,6 @@ export default function Navbar({ isHomepage }) {
                             )
                           )}
                         </div>
-                      )}
                     </div>
                   );
                 }
