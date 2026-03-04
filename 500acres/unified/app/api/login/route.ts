@@ -15,6 +15,7 @@ type UserRow = {
   phone: string | null; // E.164
   password: string;
   role: string | null;
+  status: string | null;
 };
 
 export async function POST(req: Request) {
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
 
     if (looksLikeEmail(login)) {
       users = (await sql`
-        SELECT id, email, username, phone, password, role
+        SELECT id, email, username, phone, password, role, status
         FROM "User"
         WHERE lower(email) = lower(${login})
         LIMIT 1
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
       const phoneNorm = normalizePhone(login);
       if (phoneNorm) {
         users = (await sql`
-          SELECT id, email, username, phone, password, role
+          SELECT id, email, username, phone, password, role, status
           FROM "User"
           WHERE phone = ${phoneNorm}
           LIMIT 1
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
       } else {
         // Fallback: support legacy username during transition.
         users = (await sql`
-          SELECT id, email, username, phone, password, role
+          SELECT id, email, username, phone, password, role, status
           FROM "User"
           WHERE username = ${login}
           LIMIT 1
@@ -67,12 +68,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });
     }
 
+    if (user.status === 'pending') {
+      return NextResponse.json(
+        { success: false, message: 'Your account is awaiting admin approval. You\'ll receive an email when approved.' },
+        { status: 403 }
+      );
+    }
+
+    if (user.status === 'suspended') {
+      return NextResponse.json(
+        { success: false, message: 'Your account has been suspended. Contact an administrator.' },
+        { status: 403 }
+      );
+    }
+
     const { token, maxAge } = await signSession(
       {
         userId: String(user.id),
         username: user.username ?? '',
         email: user.email ?? undefined,
         role: user.role ?? undefined,
+        status: user.status ?? 'active',
       },
       !!remember
     );
