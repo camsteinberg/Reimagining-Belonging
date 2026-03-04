@@ -57,12 +57,37 @@ export async function POST(req: Request) {
     const roleToSave = isAdmin ? 'admin' : 'fellow';
 
     const rows = (await sql`
-      INSERT INTO "User" (username, email, phone, password, role, "createdAt")
-      VALUES (${uname}, ${mail}, ${phoneNorm}, ${hash}, ${roleToSave}, NOW())
+      INSERT INTO "User" (username, email, phone, password, role, status, "createdAt")
+      VALUES (${uname}, ${mail}, ${phoneNorm}, ${hash}, ${roleToSave}, 'pending', NOW())
       RETURNING id
     `) as IdRow[];
 
-    return NextResponse.json({ success: true, message: 'Registered! You can sign in now.', userId: rows[0].id });
+    // Notify admins of new registration
+    try {
+      const { sendSystemEmail } = await import('@/lib/mail');
+      const adminEmails = process.env.MONEY_TEAM_EMAILS?.split(',').map(e => e.trim()).filter(Boolean) ?? [];
+      if (adminEmails.length > 0) {
+        await sendSystemEmail(
+          adminEmails,
+          `New account registration: ${uname}`,
+          `<p>A new account has been created and needs approval:</p>
+           <ul>
+             <li><strong>Username:</strong> ${uname}</li>
+             <li><strong>Email:</strong> ${mail}</li>
+             <li><strong>Role requested:</strong> ${roleToSave}</li>
+           </ul>
+           <p>Visit the dashboard to approve or reject this account.</p>`
+        );
+      }
+    } catch (emailErr) {
+      console.error('Failed to send admin notification:', emailErr);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Account created! An admin will review your request. You\'ll receive an email when approved.',
+      userId: rows[0].id,
+    });
   } catch (err: any) {
     // If you have unique indexes (recommended), catch race-condition duplicates:
     if (err?.code === '23505') {
