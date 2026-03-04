@@ -11,6 +11,7 @@ export type SessionPayload = {
   username?: string;
   email?: string;
   role?: string;
+  status?: string;
 };
 
 export async function signSession(payload: SessionPayload, remember: boolean) {
