@@ -12,6 +12,7 @@ const PROTECTED_PREFIXES = [
   '/realestate',
   '/fellowship',
   '/fellowship-admin',
+  '/users',
 ];
 
 export async function middleware(req: NextRequest) {
@@ -44,11 +45,12 @@ export async function middleware(req: NextRequest) {
     const isFellowshipAdmin =
       pathname === '/fellowship-admin' || pathname.startsWith('/fellowship-admin/');
     const isFellowship = pathname === '/fellowship' || pathname.startsWith('/fellowship/');
+    const isUsers = pathname === '/users' || pathname.startsWith('/users/');
 
-    // Admin area: only admins allowed
-    if (isFellowshipAdmin) {
+    // Admin-only areas
+    if (isFellowshipAdmin || isUsers) {
       if (session.role !== 'admin') {
-        const url = new URL('/fellowship', req.url);
+        const url = new URL(isFellowshipAdmin ? '/fellowship' : '/dashboard', req.url);
         return NextResponse.redirect(url);
       }
       return NextResponse.next();
@@ -81,5 +83,6 @@ export const config = {
     '/realestate/:path*',
     '/fellowship/:path*',
     '/fellowship-admin/:path*',
+    '/users/:path*',
   ],
 };

@@ -12,6 +12,7 @@ import {
   LogOut,
   Icon,
   GraduationCap,
+  Users,
   X,
 } from 'lucide-react';
 import { bee } from '@lucide/lab';
@@ -61,6 +62,7 @@ export default function Sidebar({
           { label: 'The Till', path: '/till', icon: <DollarSign className="h-5 w-5" /> },
           { label: 'Real Estate', path: '/realestate', icon: <Building className="h-5 w-5" /> },
           { label: 'Governance', path: '/governance', icon: <HelpCircle className="h-5 w-5" /> },
+          { label: 'Users', path: '/users', icon: <Users className="h-5 w-5" /> },
         ]
       : [fellowshipItem];
 
