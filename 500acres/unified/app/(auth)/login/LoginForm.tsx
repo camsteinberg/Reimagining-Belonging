@@ -12,6 +12,7 @@ export default function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const redirect = params.get('redirect') || '/';
+  const statusParam = params.get('status');
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -38,7 +39,7 @@ export default function LoginForm() {
       }
 
       if (!res.ok || !data?.success) {
-        setError('Invalid credentials');
+        setError(data?.message || 'Invalid credentials');
         return;
       }
 
@@ -62,6 +63,17 @@ export default function LoginForm() {
             </span>
             <h1 className="text-3xl font-semibold leading-tight md:text-4xl">Sign in to your account</h1>
           </div>
+
+          {statusParam === 'pending' && (
+            <div className="rounded-2xl border border-[var(--color-warning)]/30 bg-[var(--color-warning)]/10 px-4 py-3 text-sm text-[var(--color-text)]">
+              Your account is awaiting admin approval. You&apos;ll receive an email when approved.
+            </div>
+          )}
+          {statusParam === 'suspended' && (
+            <div className="rounded-2xl border border-[var(--color-danger)]/30 bg-[var(--color-danger)]/10 px-4 py-3 text-sm text-[var(--color-text)]">
+              Your account has been suspended. Contact an administrator.
+            </div>
+          )}
 
           <div className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-5">

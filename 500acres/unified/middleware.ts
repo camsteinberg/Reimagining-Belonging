@@ -42,6 +42,15 @@ export async function middleware(req: NextRequest) {
   try {
     const session = await verifySession(token); // { userId, role, ... }
 
+    // Block non-active users from protected routes
+    if (session.status && session.status !== 'active') {
+      const url = new URL('/login', req.url);
+      url.searchParams.set('status', session.status as string);
+      const response = NextResponse.redirect(url);
+      response.cookies.delete(COOKIE_NAME);
+      return response;
+    }
+
     const isFellowshipAdmin =
       pathname === '/fellowship-admin' || pathname.startsWith('/fellowship-admin/');
     const isFellowship = pathname === '/fellowship' || pathname.startsWith('/fellowship/');
