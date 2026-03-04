@@ -1,9 +1,9 @@
-// app/reset-password/page.tsx
+// app/(auth)/reset-password/ResetPasswordForm.tsx
 'use client';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function ResetPasswordPage() {
+export default function ResetPasswordForm() {
   const params = useSearchParams();
   const router = useRouter();
   const token = params.get('token') || '';

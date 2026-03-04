@@ -1,46 +1,29 @@
-// app/layout.tsx
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { EB_Garamond, Inter } from 'next/font/google';
 import './globals.css';
-import AppShell from '@/components/AppShell';
-import { getSession } from '@/lib/getSession';
-import sql from '@/lib/db';
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
-const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
+const ebGaramond = EB_Garamond({
+  variable: '--font-serif',
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+const inter = Inter({
+  variable: '--font-sans',
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: '500AcresOS',
-  description: '500AcresOS Fellowship Dashboard',
+  title: '500 Acres — Reimagining Belonging',
+  description: 'Building community in nature. Helping Gen Z solve the housing crisis.',
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const session = await getSession();
-
-  let sidebarProps: {
-    username: string;
-    role: string | null;
-    hasPhone: boolean;
-  } | null = null;
-  if (session) {
-    const rows = (await sql`
-      SELECT phone
-      FROM "User"
-      WHERE id = ${session.userId}
-      LIMIT 1
-    `) as { phone: string | null }[];
-
-    const hasPhone = !!rows?.[0]?.phone;
-    const username = session.username ?? session.email ?? 'Fellow';
-    const role = session.role ?? null;
-
-    sidebarProps = { username, role, hasPhone };
-  }
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AppShell sidebarProps={sidebarProps}>{children}</AppShell>
+      <body className={`${ebGaramond.variable} ${inter.variable} antialiased`}>
+        {children}
       </body>
     </html>
   );
