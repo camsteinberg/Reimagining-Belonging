@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --color-canvas: #f4fbf6;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #eef7f2;
+  --color-surface-elevated: #f6fbf7;
+  --color-border-soft: rgba(41, 125, 82, 0.14);
+  --color-border-strong: rgba(20, 63, 42, 0.26);
+  --color-primary: #48c58a;
+  --color-primary-strong: #18432a;
+  --color-primary-soft: rgba(72, 197, 138, 0.18);
+  --color-muted: #6ea17f;
+  --color-text: #143f2a;
+  --color-text-muted: #4a7c5e;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --surface-sidebar: #e8f5ee;
+  --sidebar-border: rgba(41, 125, 82, 0.16);
+  --sidebar-active: #ffffff;
+  --sidebar-active-text: #143f2a;
+  --sidebar-hover: rgba(72, 197, 138, 0.16);
+  --sidebar-pill: rgba(72, 197, 138, 0.82);
+  --sidebar-muted: #4a7c5e;
+  --sidebar-cta-bg: #48c58a;
+  --sidebar-cta-text: #0e2218;
+  --sidebar-logout-bg: rgba(72, 197, 138, 0.12);
+  --sidebar-logout-hover: rgba(72, 197, 138, 0.24);
+  --surface-card-shadow: 0 22px 48px -32px rgba(20, 63, 42, 0.28);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-text);
+  transition: background-color 160ms ease, color 160ms ease;
+  scrollbar-width: none; /* Hide scrollbar in Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Hide scrollbar in WebKit browsers */
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"] {
+  cursor: pointer;
+}
+
+button:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+input[type="reset"]:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  text-decoration-color: var(--color-primary);
+}
+
+::selection {
+  background-color: var(--color-primary-soft);
+}
