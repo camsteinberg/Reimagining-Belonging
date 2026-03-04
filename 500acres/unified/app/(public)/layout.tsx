@@ -6,8 +6,10 @@ import Navbar from '@/components/public/layout/Navbar';
 import Footer from '@/components/public/layout/Footer';
 import ScrollProgress from '@/components/public/shared/ScrollProgress';
 import CustomCursor from '@/components/public/shared/CustomCursor';
+import useAnalytics from '@/hooks/useAnalytics';
 
 export default function PublicLayout({ children }: { children: ReactNode }) {
+  useAnalytics();
   const pathname = usePathname();
   const isHomepage = pathname === '/';
 
