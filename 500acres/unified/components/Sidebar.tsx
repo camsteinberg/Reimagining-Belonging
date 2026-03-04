@@ -84,7 +84,7 @@ export default function Sidebar({
   const widthClass = collapsed ? 'w-20' : 'w-72';
   const rootClass = `relative ${widthClass} flex flex-col gap-4 overflow-hidden border-r
         border-[var(--sidebar-border)] bg-[var(--surface-sidebar)] px-4 py-5 text-[var(--sidebar-active-text)]
-        shadow-[0_24px_48px_-36px_rgba(12,43,30,0.45)] transition-[width] duration-300 ${className ?? ''}`;
+        shadow-[0_24px_48px_-36px_rgba(42,37,32,0.45)] transition-[width] duration-300 ${className ?? ''}`;
 
   return (
     <aside className={rootClass}>
@@ -92,7 +92,7 @@ export default function Sidebar({
         className="pointer-events-none absolute inset-0 opacity-60 mix-blend-screen"
         style={{
           background:
-            'radial-gradient(circle at 18% -12%, rgba(72,197,138,0.18), transparent 55%), radial-gradient(circle at 80% 110%, rgba(72,197,138,0.12), transparent 60%)',
+            'radial-gradient(circle at 18% -12%, rgba(196,93,62,0.15), transparent 55%), radial-gradient(circle at 80% 110%, rgba(196,93,62,0.10), transparent 60%)',
         }}
         aria-hidden
       />
@@ -109,11 +109,11 @@ export default function Sidebar({
           {collapseIcon}
         </button>
         {!collapsed ? (
-          <h1 className="text-2xl font-semibold leading-none tracking-tight text-[var(--sidebar-active-text)]">
-            500Acres<span className="text-[var(--color-primary)]">OS</span>
+          <h1 className="font-serif text-2xl font-semibold leading-none tracking-tight text-[var(--sidebar-active-text)]">
+            500 Acres
           </h1>
         ) : (
-          <span className="text-xs font-semibold uppercase tracking-[0.35em] text-[var(--sidebar-muted)]">500AOS</span>
+          <span className="font-serif text-xs font-semibold uppercase tracking-[0.35em] text-[var(--sidebar-muted)]">500A</span>
         )}
       </div>
 
@@ -127,7 +127,7 @@ export default function Sidebar({
               href={item.path}
               className={`group relative flex items-center gap-3 rounded-2xl px-3 py-2 transition-all duration-200
                 ${active
-                  ? 'bg-[var(--sidebar-active)] text-[var(--sidebar-active-text)] shadow-[0_16px_36px_-20px_rgba(72,197,138,0.5)]'
+                  ? 'bg-[var(--sidebar-active)] text-[var(--sidebar-active-text)] shadow-[0_16px_36px_-20px_rgba(196,93,62,0.4)]'
                   : 'text-[var(--sidebar-muted)] hover:bg-[var(--sidebar-hover)]'}
                 ${collapsed ? 'justify-center' : 'justify-start'} backdrop-blur-[1px]`}
               title={collapsed ? item.label : undefined}
@@ -149,7 +149,7 @@ export default function Sidebar({
               <span
                 className={`pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300
                   ${active ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}
-                  bg-[radial-gradient(ellipse_at_left,_rgba(72,197,138,0.12),_transparent_60%)]`}
+                  bg-[radial-gradient(ellipse_at_left,_rgba(196,93,62,0.10),_transparent_60%)]`}
               />
             </Link>
           );
@@ -164,7 +164,7 @@ export default function Sidebar({
           style={{ background: 'color-mix(in srgb, var(--sidebar-active) 65%, transparent)' }}
         >
           {collapsed ? (
-            <div className="mx-auto h-8 w-8 rounded-full bg-[color-mix(in_srgb,var(--color-primary)_35%,_transparent)]" />
+            <div className="mx-auto h-8 w-8 rounded-full bg-[color-mix(in_srgb,var(--color-primary)_30%,_transparent)]" />
           ) : (
             <div className="space-y-1">
               <div className="text-sm font-semibold leading-tight text-[var(--sidebar-active-text)]">
@@ -179,7 +179,7 @@ export default function Sidebar({
           <Link
             href="/account/add-phone"
             className="block rounded-xl px-3 py-2 text-center font-semibold
-                 bg-[var(--sidebar-cta-bg)] !text-white transition hover:brightness-95"
+                 bg-[var(--sidebar-cta-bg)] text-[var(--sidebar-cta-text)] transition hover:brightness-95"
             title={collapsed ? 'Add phone number' : undefined}
           >
             {collapsed ? 'Add phone' : 'Add phone number'}

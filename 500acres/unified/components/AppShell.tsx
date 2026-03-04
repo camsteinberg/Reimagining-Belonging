@@ -50,7 +50,7 @@ export default function AppShell({ children, sidebarProps }: AppShellProps) {
               {...sidebarProps}
               isDrawer
               onClose={closeDrawer}
-              className="h-full border-r border-[var(--sidebar-border)] bg-[var(--surface-sidebar)] shadow-[0_28px_60px_-30px_rgba(12,43,30,0.6)]"
+              className="h-full border-r border-[var(--sidebar-border)] bg-[var(--surface-sidebar)] shadow-[0_28px_60px_-30px_rgba(42,37,32,0.6)]"
             />
           </div>
         </>
@@ -67,8 +67,8 @@ export default function AppShell({ children, sidebarProps }: AppShellProps) {
             >
               <Menu className="h-5 w-5" />
             </button>
-            <span className="text-lg font-semibold">
-              500Acres<span className="text-[var(--color-primary)]">OS</span>
+            <span className="font-serif text-lg font-semibold">
+              500 Acres
             </span>
             <span className="block w-10" aria-hidden />
           </header>
