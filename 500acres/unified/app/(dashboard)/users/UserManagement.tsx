@@ -15,13 +15,13 @@ type User = {
 type StatusFilter = 'all' | 'pending' | 'active' | 'suspended';
 
 const STATUS_COLORS: Record<string, string> = {
-  active: 'bg-[var(--color-sage)] text-white',
+  active: 'bg-[var(--color-sage)] text-warm-white',
   pending: 'bg-[var(--color-gold)] text-[var(--color-charcoal)]',
-  suspended: 'bg-[var(--color-ember)] text-white',
+  suspended: 'bg-[var(--color-ember)] text-warm-white',
 };
 
 const ROLE_COLORS: Record<string, string> = {
-  admin: 'bg-[var(--color-navy)] text-white',
+  admin: 'bg-[var(--color-navy)] text-warm-white',
   fellow: 'bg-[var(--color-surface-subtle)] text-[var(--color-text)]',
 };
 
@@ -120,7 +120,7 @@ export default function UserManagement() {
                   className={`inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-bold
                     ${
                       active
-                        ? 'bg-[var(--color-ember)] text-white'
+                        ? 'bg-[var(--color-ember)] text-warm-white'
                         : 'bg-[var(--color-gold)] text-[var(--color-charcoal)]'
                     }`}
                 >
@@ -268,7 +268,7 @@ function ActionButton({
     'rounded-lg px-3 py-1.5 font-sans text-xs font-medium transition-colors duration-200 cursor-pointer';
   const styles =
     variant === 'primary'
-      ? `${base} bg-[var(--color-sage)] text-white hover:bg-[var(--color-forest)]`
+      ? `${base} bg-[var(--color-sage)] text-warm-white hover:bg-[var(--color-forest)]`
       : `${base} text-[var(--color-text-muted)] hover:bg-[var(--color-surface-subtle)] hover:text-[var(--color-text)]`;
 
   return (

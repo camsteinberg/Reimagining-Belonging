@@ -1,5 +1,3 @@
-'use server';
-
 import { NextRequest, NextResponse } from 'next/server';
 import sql from '@/lib/db';
 import { getSession } from '@/lib/getSession';

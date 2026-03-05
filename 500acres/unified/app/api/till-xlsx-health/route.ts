@@ -1,11 +1,14 @@
 // dashboard/app/api/till-xlsx-health/route.ts
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/getSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     // Accept comma-separated IDs via TILL_FILE_IDS, fallback to single TILL_FILE_ID
     const ids = (process.env.TILL_FILE_IDS ?? process.env.TILL_FILE_ID ?? '')

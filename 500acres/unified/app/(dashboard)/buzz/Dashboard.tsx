@@ -92,7 +92,7 @@ export default function AcreBuzzDashboard({ username, role }: Props) {
     <div className="space-y-6 text-[var(--color-text)] transition-colors duration-300">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-3xl font-semibold leading-tight md:text-4xl">Acre Buzz</h2>
+        <h2 className="font-serif text-3xl font-semibold leading-tight md:text-4xl">Acre Buzz</h2>
         <SurfaceCard
           variant="muted"
           padding="sm"

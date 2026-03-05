@@ -82,13 +82,10 @@ export default function MigrationMap({ slideNum }: MigrationMapProps) {
       try {
         const [
           { default: mapboxgl },
-          ,
           { MapboxOverlay },
           { ArcLayer, GeoJsonLayer },
         ] = await Promise.all([
           import("mapbox-gl"),
-          // @ts-expect-error -- CSS module import has no type declarations
-          import("mapbox-gl/dist/mapbox-gl.css"),
           import("@deck.gl/mapbox"),
           import("@deck.gl/layers"),
         ]);

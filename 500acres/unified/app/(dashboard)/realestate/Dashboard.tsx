@@ -56,9 +56,9 @@ type ImpactDevRow = {
 };
 
 const BRAND = {
-  base: '#924537',
-  tint: '#FBE9E7',
-  accent: 'rgb(253 224 71)', // yellow-300
+  base: '#c45d3e',   // ember
+  tint: '#f5ede3',   // warm-white
+  accent: '#b89f65', // gold
 };
 
 const bubbleCls =
@@ -382,7 +382,7 @@ export default function RealEstateDashboard({ username, role }: Props) {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-1">
-          <h2 className="text-3xl font-semibold leading-tight text-[var(--color-text)] md:text-4xl">Real Estate</h2>
+          <h2 className="font-serif text-3xl font-semibold leading-tight text-[var(--color-text)] md:text-4xl">Real Estate</h2>
           <p className="text-xs text-[var(--color-text-muted)]">Site and lease overview - English dataset</p>
         </div>
         <SurfaceCard
@@ -587,7 +587,7 @@ export default function RealEstateDashboard({ username, role }: Props) {
 
       {/* Map Modal */}
       {showMap && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={closeMap}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/60 p-4" onClick={closeMap}>
           <div className="w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
             <SurfaceCard padding="lg" className="space-y-4 shadow-2xl">
               <div className="flex items-start justify-between gap-3">

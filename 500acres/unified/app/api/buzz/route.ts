@@ -43,11 +43,14 @@ export async function GET(_req: NextRequest) {
 // app/api/buzz/route.ts
 import { google } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
+import { getSession } from '@/lib/getSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(_req: NextRequest) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const key = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');
   const sheetId = process.env.GOOGLE_SHEET_ID;

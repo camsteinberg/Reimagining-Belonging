@@ -603,7 +603,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
     <div className="space-y-6 text-[var(--color-text)]">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-3xl font-semibold leading-tight md:text-4xl">Governance</h2>
+        <h2 className="font-serif text-3xl font-semibold leading-tight md:text-4xl">Governance</h2>
         <SurfaceCard
           variant="muted"
           padding="sm"
@@ -648,7 +648,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
 
       {/* Toast */}
       {toast && (
-        <div className="fixed bottom-4 right-4 bg-neutral-900 text-white text-sm px-4 py-2 rounded-lg shadow-lg">
+        <div className="fixed bottom-4 right-4 bg-charcoal text-warm-white text-sm px-4 py-2 rounded-lg shadow-lg">
           {toast}
         </div>
       )}
@@ -702,7 +702,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
                 setNewModule('Fellowship Grants');
                 setNewLead(leadChoices[0] || '');
               }}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-95 sm:w-auto"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-warm-white transition hover:brightness-95 sm:w-auto"
             >
               <Plus className="h-4 w-4" />
               Add question
@@ -831,7 +831,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
                             <>
                               <button
                                 onClick={() => saveTopQAnswer(absIdx)}
-                                className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-white transition hover:brightness-95"
+                                className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-warm-white transition hover:brightness-95"
                               >
                                 <Save className="w-4 h-4" /> Save
                               </button>
@@ -845,7 +845,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
                           ) : (
                             <button
                               onClick={() => { setTopqEditingAnswerAbsIdx(absIdx); setTopqEditedAnswer(answerValue || ''); }}
-                              className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] transition hover:bg-[var(--color-primary)] hover:text-white"
+                              className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] transition hover:bg-[var(--color-primary)] hover:text-warm-white"
                             >
                               <Pencil className="w-4 h-4" /> Edit
                             </button>
@@ -872,7 +872,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
         </div>
 
         {topqDetailsRow && topq ? (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 px-4">
             <div className="w-full max-w-3xl rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-[var(--surface-card-shadow)]">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -953,7 +953,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
 
       {/* Add Question Modal */}
       {showAddTopQ && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 px-4">
           <div className="w-full max-w-lg space-y-4 rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-[0_24px_48px_-24px_rgba(20,63,42,0.35)]">
             <div className="flex items-center justify-between">
               <h4 className="text-lg font-semibold text-[var(--color-text)]">Add Question</h4>
@@ -1018,7 +1018,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
               <button
                 onClick={addTopQRow}
                 disabled={adding}
-                className="rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-95 disabled:opacity-60"
+                className="rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-warm-white transition hover:brightness-95 disabled:opacity-60"
               >
                 {adding ? 'Adding…' : 'Add'}
               </button>
@@ -1035,7 +1035,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
             href="https://forms.gle/3RVpCGgZWckYWaTb8"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary-soft)] px-4 py-2 text-sm font-semibold text-[var(--color-primary-strong)] transition hover:bg-[var(--color-primary)] hover:text-white"
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary-soft)] px-4 py-2 text-sm font-semibold text-[var(--color-primary-strong)] transition hover:bg-[var(--color-primary)] hover:text-warm-white"
           >
             <Plus className="h-4 w-4" /> Submit conflict
           </a>
@@ -1151,7 +1151,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
                               setToast('Solution saved ✅');
                               setTimeout(() => setToast(null), 1500);
                             }}
-                            className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-white transition hover:brightness-95"
+                            className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-warm-white transition hover:brightness-95"
                           >
                             <Save className="w-4 h-4" /> Save
                           </button>
@@ -1166,7 +1166,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
                         <div className="flex gap-2 justify-center">
                           <button
                             onClick={() => { setConfEditingSolutionAbsIdx(i); setConfEditedSolution(row.solution || ''); }}
-                            className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] transition hover:bg-[var(--color-primary)] hover:text-white"
+                            className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] transition hover:bg-[var(--color-primary)] hover:text-warm-white"
                           >
                             <Pencil className="w-4 h-4" /> Edit
                           </button>
@@ -1191,7 +1191,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
       </SurfaceCard>
 
       {confDetailsRow ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 px-4">
           <div className="w-full max-w-3xl rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-[var(--surface-card-shadow)]">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -1262,7 +1262,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
               onClick={() => setDirectorySheet(sheet)}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                 directorySheet === sheet
-                  ? 'bg-[var(--color-primary)] text-white'
+                  ? 'bg-[var(--color-primary)] text-warm-white'
                   : 'bg-[var(--color-surface-subtle)] text-[var(--color-text)] hover:bg-[var(--color-primary-soft)]'
               }`}
             >

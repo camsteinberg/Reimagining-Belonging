@@ -1,6 +1,7 @@
 // app/api/governance/route.ts
 import { google } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
+import { getSession } from '@/lib/getSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -73,6 +74,8 @@ function normalizeStatus(input?: string): string {
 
 /* ----------------- GET ----------------- */
 export async function GET(req: NextRequest) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const type = req.nextUrl.searchParams.get('type'); // 'directory' | 'conflicts' | 'topq_sheets' | 'topq' | 'questions'(legacy)
   const sheetParam = req.nextUrl.searchParams.get('sheet');
 
@@ -239,6 +242,9 @@ export async function GET(req: NextRequest) {
  - kind='conflict': { rowNumber, solution?, status? }   // writes to GOVERNANCE_SHEET_ID, tab "Conflict Resolution Responses"
 */
 export async function PATCH(req: NextRequest) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (session.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const rawKey      = process.env.GOOGLE_PRIVATE_KEY;
   const topqSheetId = process.env.TOPQ_SHEET_ID;
@@ -409,6 +415,9 @@ export async function PATCH(req: NextRequest) {
  body.lead?: string
 */
 export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (session.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const rawKey      = process.env.GOOGLE_PRIVATE_KEY;
   const topqSheetId = process.env.TOPQ_SHEET_ID;

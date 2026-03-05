@@ -23,8 +23,6 @@ export default function InitialMap() {
     const initMap = async () => {
       try {
         const mapboxgl = (await import("mapbox-gl")).default;
-        // @ts-expect-error -- CSS module import has no type declarations
-        await import("mapbox-gl/dist/mapbox-gl.css");
 
         if (cancelled || mapRef.current) return;
 

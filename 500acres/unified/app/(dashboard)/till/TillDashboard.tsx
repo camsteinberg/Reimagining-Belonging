@@ -144,7 +144,7 @@ export default function TillDashboard({ username, role }: Props) {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-1">
-          <h2 className="text-3xl font-semibold leading-tight md:text-4xl">The Till</h2>
+          <h2 className="font-serif text-3xl font-semibold leading-tight md:text-4xl">The Till</h2>
           <p className="text-xs text-[var(--color-text-muted)]">
             {data?.asOf ? (
               <>
@@ -226,14 +226,14 @@ export default function TillDashboard({ username, role }: Props) {
         ) : (
           <ResponsiveContainer width="100%" height={320}>
             <LineChart data={monthly}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(20,63,42,0.08)" />
-              <XAxis dataKey="month" stroke="rgba(20,63,42,0.45)" />
-              <YAxis stroke="rgba(20,63,42,0.45)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(42,37,32,0.08)" />
+              <XAxis dataKey="month" stroke="rgba(42,37,32,0.45)" />
+              <YAxis stroke="rgba(42,37,32,0.45)" />
               <RTooltip />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#2FA878" strokeWidth={3} dot />
-              <Line type="monotone" dataKey="expenses" stroke="#F97316" strokeWidth={3} dot />
-              <Line type="monotone" dataKey="net" stroke="#0F766E" strokeWidth={3} dot />
+              <Line type="monotone" dataKey="revenue" stroke="#6b8f71" strokeWidth={3} dot />
+              <Line type="monotone" dataKey="expenses" stroke="#c45d3e" strokeWidth={3} dot />
+              <Line type="monotone" dataKey="net" stroke="#3d6b4f" strokeWidth={3} dot />
             </LineChart>
           </ResponsiveContainer>
         )}
@@ -255,14 +255,14 @@ export default function TillDashboard({ username, role }: Props) {
         ) : (
           <ResponsiveContainer width="100%" height={260}>
             <AreaChart data={cashflowMonthly}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(20,63,42,0.08)" />
-              <XAxis dataKey="month" stroke="rgba(20,63,42,0.45)" />
-              <YAxis stroke="rgba(20,63,42,0.45)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(42,37,32,0.08)" />
+              <XAxis dataKey="month" stroke="rgba(42,37,32,0.45)" />
+              <YAxis stroke="rgba(42,37,32,0.45)" />
               <RTooltip />
               <Legend />
-              <Area type="monotone" dataKey="operating" stroke="#2FA878" fill="rgba(47,168,120,0.35)" />
-              <Area type="monotone" dataKey="investing" stroke="#38BDF8" fill="rgba(56,189,248,0.25)" />
-              <Area type="monotone" dataKey="financing" stroke="#F97316" fill="rgba(249,115,22,0.25)" />
+              <Area type="monotone" dataKey="operating" stroke="#6b8f71" fill="rgba(107,143,113,0.35)" />
+              <Area type="monotone" dataKey="investing" stroke="#b89f65" fill="rgba(184,159,101,0.25)" />
+              <Area type="monotone" dataKey="financing" stroke="#c45d3e" fill="rgba(196,93,62,0.25)" />
             </AreaChart>
           </ResponsiveContainer>
         )}
@@ -281,7 +281,7 @@ export default function TillDashboard({ username, role }: Props) {
                 onChange={(e) => setSelectedExpensePeriod(e.target.value)}
               >
                 {expensePeriods.map((period) => (
-                  <option key={period.month} value={period.month} className="text-black">
+                  <option key={period.month} value={period.month} className="text-charcoal">
                     {period.month}
                   </option>
                 ))}
@@ -296,11 +296,11 @@ export default function TillDashboard({ username, role }: Props) {
         ) : (
           <ResponsiveContainer width="100%" height={280}>
             <RBarChart data={topExpenses}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(20,63,42,0.08)" />
-              <XAxis dataKey="category" stroke="rgba(20,63,42,0.45)" />
-              <YAxis stroke="rgba(20,63,42,0.45)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(42,37,32,0.08)" />
+              <XAxis dataKey="category" stroke="rgba(42,37,32,0.45)" />
+              <YAxis stroke="rgba(42,37,32,0.45)" />
               <RTooltip />
-              <Bar dataKey="amount" fill="#2FA878" />
+              <Bar dataKey="amount" fill="#6b8f71" />
             </RBarChart>
           </ResponsiveContainer>
         )}

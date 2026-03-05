@@ -75,10 +75,12 @@ export default function Navbar({ isHomepage }: NavbarProps) {
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const navigatingRef = useRef(false);
 
-  // Detect auth state
+  // Detect auth state via API (cookie is httpOnly, not visible to JS)
   useEffect(() => {
-    const hasSession = document.cookie.includes('session=');
-    setIsLoggedIn(hasSession);
+    fetch('/api/me')
+      .then((r) => r.json())
+      .then((data) => setIsLoggedIn(!!data?.authenticated))
+      .catch(() => setIsLoggedIn(false));
   }, []);
 
   // Close menu on route change (only for non-nav navigations like logo click, back button)
@@ -446,15 +448,55 @@ export default function Navbar({ isHomepage }: NavbarProps) {
 
                 // Login/Dashboard conditional link (last item)
                 if (link.href === "/login") {
-                  return isLoggedIn ? (
-                    <Link
-                      key="auth-link"
-                      href="/dashboard"
-                      className="font-sans text-sm tracking-wide text-charcoal/70 hover:text-charcoal transition-colors"
-                    >
-                      Dashboard
-                    </Link>
-                  ) : (
+                  if (isLoggedIn) {
+                    const isDropOpen = stickyDropdown === "user";
+                    return (
+                      <div key="auth-link" className="relative">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setStickyDropdown(isDropOpen ? null : "user");
+                          }}
+                          aria-expanded={isDropOpen}
+                          aria-controls="sticky-user-menu"
+                          className="font-sans text-sm tracking-wide text-charcoal/70 hover:text-charcoal transition-colors cursor-pointer"
+                        >
+                          Dashboard
+                          <svg className={`inline-block w-3 h-3 ml-1 transition-transform duration-200 ${isDropOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        <div
+                          id="sticky-user-menu"
+                          role="region"
+                          aria-label="User menu"
+                          className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full right-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[160px]`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Link
+                            href="/dashboard"
+                            onClick={() => setStickyDropdown(null)}
+                            className="block px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors"
+                          >
+                            Dashboard
+                          </Link>
+                          <button
+                            onClick={() => {
+                              setStickyDropdown(null);
+                              fetch("/api/logout", { method: "POST" }).then(() => {
+                                setIsLoggedIn(false);
+                                router.push("/");
+                              });
+                            }}
+                            className="block w-full text-left px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors cursor-pointer"
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return (
                     <Link
                       key="auth-link"
                       href="/login"
@@ -598,24 +640,39 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                 const authHref = isLoggedIn ? "/dashboard" : "/login";
                 const authLabel = isLoggedIn ? "Dashboard" : "Login";
                 return (
-                  <Link
-                    key="auth-overlay-link"
-                    ref={(el) => setLinkRef(el, i)}
-                    href={authHref}
-                    onClick={(e) => handleNavClick(e, authHref)}
-                    aria-current={pathname === authHref ? "page" : undefined}
-                    className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
-                      pathname === authHref ? "text-forest" : "text-cream hover:text-forest"
-                    }`}
-                  >
-                    <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
-                      {link.num}
-                    </span>
-                    <span className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
-                      {authLabel}
-                    </span>
-                    <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
-                  </Link>
+                  <div key="auth-overlay-link">
+                    <Link
+                      ref={(el) => setLinkRef(el, i)}
+                      href={authHref}
+                      onClick={(e) => handleNavClick(e, authHref)}
+                      aria-current={pathname === authHref ? "page" : undefined}
+                      className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
+                        pathname === authHref ? "text-forest" : "text-cream hover:text-forest"
+                      }`}
+                    >
+                      <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
+                        {link.num}
+                      </span>
+                      <span className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                        {authLabel}
+                      </span>
+                      <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                    </Link>
+                    {isLoggedIn && (
+                      <button
+                        onClick={() => {
+                          fetch("/api/logout", { method: "POST" }).then(() => {
+                            setIsLoggedIn(false);
+                            setIsOpen(false);
+                            router.push("/");
+                          });
+                        }}
+                        className="pl-10 md:pl-16 mt-1 font-sans text-sm md:text-base tracking-wide text-cream/60 hover:text-forest transition-colors cursor-pointer"
+                      >
+                        Logout
+                      </button>
+                    )}
+                  </div>
                 );
               }
 

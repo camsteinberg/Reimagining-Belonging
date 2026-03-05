@@ -1,6 +1,5 @@
 export const MAPBOX_TOKEN =
-  process.env.NEXT_PUBLIC_MAPBOX_TOKEN ||
-  "pk.eyJ1IjoiYWlkYW5taWxsZXIxMDAiLCJhIjoiY21rZ215MXR5MDl3ZzNmcHBrNjF4OTRtbiJ9.dB524Fvwi53kzAZzo6CqTQ";
+  process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
 
 export const MAPBOX_STYLE = "mapbox://styles/mapbox/light-v11";
 

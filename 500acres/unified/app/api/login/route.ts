@@ -58,13 +58,13 @@ export async function POST(req: Request) {
 
     const user = users[0];
     if (!user) {
-      console.warn('Login failed: user not found', { identifier: login });
+      console.warn('Login failed: user not found');
       return NextResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });
     }
 
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) {
-      console.warn('Login failed: wrong password', { userId: user.id });
+      console.warn('Login failed: wrong password');
       return NextResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });
     }
 

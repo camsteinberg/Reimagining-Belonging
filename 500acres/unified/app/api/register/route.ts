@@ -21,7 +21,6 @@ export async function POST(req: Request) {
     const mail = (email || '').trim().toLowerCase();
     const phoneNorm = normalizePhone(phone);
     const roleValue = String(role ?? '').trim().toLowerCase();
-    const isAdmin = roleValue === 'admin';
     const isFellow = roleValue === 'fellow';
 
     if (!uname || !mail || !password || !roleValue) {
@@ -36,7 +35,7 @@ export async function POST(req: Request) {
     if ((phone ?? '').trim() && !phoneNorm) {
       return NextResponse.json({ success: false, message: 'Invalid phone number' }, { status: 400 });
     }
-    if (!isAdmin && !isFellow) {
+    if (!isFellow) {
       return NextResponse.json({ success: false, message: 'Invalid role' }, { status: 400 });
     }
 
@@ -54,7 +53,7 @@ export async function POST(req: Request) {
     }
 
     const hash = await bcrypt.hash(password, 10);
-    const roleToSave = isAdmin ? 'admin' : 'fellow';
+    const roleToSave = 'fellow';
 
     const rows = (await sql`
       INSERT INTO "User" (username, email, phone, password, role, status, "createdAt")
@@ -67,14 +66,15 @@ export async function POST(req: Request) {
       const { sendSystemEmail } = await import('@/lib/mail');
       const adminEmails = process.env.MONEY_TEAM_EMAILS?.split(',').map(e => e.trim()).filter(Boolean) ?? [];
       if (adminEmails.length > 0) {
+        const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         await sendSystemEmail(
           adminEmails,
           `New account registration: ${uname}`,
           `<p>A new account has been created and needs approval:</p>
            <ul>
-             <li><strong>Username:</strong> ${uname}</li>
-             <li><strong>Email:</strong> ${mail}</li>
-             <li><strong>Role requested:</strong> ${roleToSave}</li>
+             <li><strong>Username:</strong> ${esc(uname)}</li>
+             <li><strong>Email:</strong> ${esc(mail)}</li>
+             <li><strong>Role requested:</strong> ${esc(roleToSave)}</li>
            </ul>
            <p>Visit the dashboard to approve or reject this account.</p>`
         );

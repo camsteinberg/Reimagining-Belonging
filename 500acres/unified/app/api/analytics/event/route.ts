@@ -7,9 +7,20 @@ export const dynamic = 'force-dynamic';
 
 // Simple in-memory rate limiter (per IP, 10 req/sec)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const MAX_RATE_LIMIT_ENTRIES = 10_000;
+let lastCleanup = Date.now();
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
+
+  // Periodic cleanup: sweep expired entries every 60s or when map gets large
+  if (now - lastCleanup > 60_000 || rateLimitMap.size > MAX_RATE_LIMIT_ENTRIES) {
+    for (const [key, val] of rateLimitMap) {
+      if (now > val.resetAt) rateLimitMap.delete(key);
+    }
+    lastCleanup = now;
+  }
+
   const entry = rateLimitMap.get(ip);
   if (!entry || now > entry.resetAt) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + 1000 });
@@ -27,7 +38,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Rate limited' }, { status: 429 });
     }
 
-    const body = await req.json();
+    // sendBeacon sends text/plain by default; handle both JSON and text/plain
+    const contentType = req.headers.get('content-type') || '';
+    let body: any;
+    if (contentType.includes('application/json')) {
+      body = await req.json();
+    } else {
+      const text = await req.text();
+      try {
+        body = JSON.parse(text);
+      } catch {
+        return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+      }
+    }
     const { sessionId, path, referrer, screenW, screenH, eventType, durationMs } = body;
 
     if (!sessionId || !path) {

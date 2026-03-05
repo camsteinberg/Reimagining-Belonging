@@ -475,7 +475,7 @@ export default function BudgetAdmin() {
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-95"
+            className="rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-warm-white transition hover:brightness-95"
           >
             Add row
           </button>
@@ -483,7 +483,7 @@ export default function BudgetAdmin() {
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 px-4">
           <div className="w-full max-w-md rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-xl">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -572,7 +572,7 @@ export default function BudgetAdmin() {
                       setAddingRow(false);
                     }
                   }}
-                  className={`rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-95 ${
+                  className={`rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-warm-white transition hover:brightness-95 ${
                     addingRow ? 'opacity-70' : ''
                   }`}
                 >
@@ -667,7 +667,7 @@ export default function BudgetAdmin() {
                         <button
                           type="button"
                           onClick={save}
-                          className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-white hover:brightness-95"
+                          className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-warm-white hover:brightness-95"
                         >
                           Save
                         </button>
@@ -684,14 +684,14 @@ export default function BudgetAdmin() {
                         <button
                           type="button"
                           onClick={() => startEdit(row)}
-                          className="rounded-lg bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] hover:bg-[var(--color-primary)] hover:text-white"
+                          className="rounded-lg bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] hover:bg-[var(--color-primary)] hover:text-warm-white"
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => remove(row.rowIndex)}
-                          className="rounded-lg bg-[var(--color-danger)] px-3 py-2 text-xs font-semibold text-white transition hover:brightness-90"
+                          className="rounded-lg bg-[var(--color-danger)] px-3 py-2 text-xs font-semibold text-warm-white transition hover:brightness-90"
                         >
                           Delete
                         </button>
@@ -727,7 +727,7 @@ export default function BudgetAdmin() {
                   onClick={() => setGrantView(opt.key)}
                   className={`px-3 py-1 text-xs font-semibold transition ${
                     grantView === opt.key
-                      ? 'bg-[var(--color-primary)] text-white'
+                      ? 'bg-[var(--color-primary)] text-warm-white'
                       : 'bg-[var(--color-surface)] text-[var(--color-text-muted)] hover:bg-[var(--color-primary-soft)]'
                   }`}
                 >
@@ -827,7 +827,7 @@ export default function BudgetAdmin() {
                           type="button"
                           onClick={() => decideGrant(g, 'approve')}
                           disabled={grantUpdatingId === g.id}
-                          className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-70"
+                          className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-warm-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-70"
                           title="Approve"
                         >
                           {grantUpdatingId === g.id ? 'Updating…' : 'Approve'}
@@ -951,7 +951,7 @@ export default function BudgetAdmin() {
                               : statusLabel === 'approved'
                               ? 'bg-[#6b8f71]/15 text-[#3d6b4f]'
                               : statusLabel === 'closed'
-                              ? 'bg-slate-200 text-slate-800'
+                              ? 'bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)]'
                               : statusLabel === 'denied'
                               ? 'bg-[#c45d3e]/10 text-[#c45d3e]'
                               : 'bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)]'
@@ -1031,7 +1031,7 @@ export default function BudgetAdmin() {
         </div>
       </SurfaceCard>
       {uploadGrant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4">
           <div className="w-full max-w-md rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-xl">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -1156,7 +1156,7 @@ export default function BudgetAdmin() {
                   !Number(uploadAmount || 0) ||
                   !!uploadFileError
                 }
-                className="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-95 disabled:opacity-70"
+                className="rounded-lg bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-warm-white transition hover:brightness-95 disabled:opacity-70"
               >
                 {uploading ? 'Uploading…' : 'Upload'}
               </button>
@@ -1165,7 +1165,7 @@ export default function BudgetAdmin() {
         </div>
       )}
       {detailsGrant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4">
           <div className="w-full max-w-xl rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 shadow-xl">
             <div className="flex items-start justify-between gap-3">
               <div>

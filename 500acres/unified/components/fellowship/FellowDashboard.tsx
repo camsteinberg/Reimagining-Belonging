@@ -88,7 +88,7 @@ export default function FellowDashboard({ userId, role, username, email }: Props
   return (
     <div className="space-y-6 text-[var(--color-text)]">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-4xl font-semibold md:text-5xl">Fellowship</h2>
+        <h2 className="font-serif text-4xl font-semibold md:text-5xl">Fellowship</h2>
         <SurfaceCard
           variant="muted"
           padding="sm"
@@ -162,7 +162,7 @@ function WeeklyPayCard() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
+        <div className="rounded-xl border border-[var(--color-ember)]/20 bg-[var(--color-ember)]/5 px-3 py-2 text-sm text-[var(--color-ember)]">
           Failed to load pay: {String((error as any)?.message ?? '')}
         </div>
       )}
@@ -285,14 +285,14 @@ function KPIsCard() {
         <button
           type="button"
           onClick={() => setOpenAdd(true)}
-          className="rounded-xl bg-[#c45d3e] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#8b5e3c]"
+          className="rounded-xl bg-[var(--color-ember)] px-3 py-2 text-sm font-semibold text-warm-white transition hover:bg-[var(--color-bark)]"
         >
           Add KPI
         </button>
       </div>
 
       {error && (
-        <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
+        <div className="rounded-xl border border-[var(--color-ember)]/20 bg-[var(--color-ember)]/5 px-3 py-2 text-sm text-[var(--color-ember)]">
           Failed to load KPIs: {String((error as any)?.message ?? '')}
         </div>
       )}
@@ -358,7 +358,7 @@ function KPIsCard() {
                         className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
                           row.is_done
                             ? 'bg-[#6b8f71]/15 text-[#3d6b4f]'
-                            : 'bg-[#c45d3e]/10 text-[#c45d3e]'
+                            : 'bg-[var(--color-ember)]/10 text-[var(--color-ember)]'
                         }`}
                       >
                         {row.is_done ? 'Completed' : 'Open'}
@@ -371,7 +371,7 @@ function KPIsCard() {
                         <button
                           type="button"
                           onClick={save}
-                          className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-white hover:brightness-95"
+                          className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-warm-white hover:brightness-95"
                         >
                           Save
                         </button>
@@ -391,14 +391,14 @@ function KPIsCard() {
                         <button
                           type="button"
                           onClick={() => startEdit(row)}
-                          className="rounded-lg bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] hover:bg-[var(--color-primary)] hover:text-white"
+                          className="rounded-lg bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] hover:bg-[var(--color-primary)] hover:text-warm-white"
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           onClick={() => remove(row.id)}
-                          className="rounded-lg bg-[#c45d3e] px-3 py-2 text-xs font-semibold text-white hover:bg-[#8b5e3c]"
+                          className="rounded-lg bg-[var(--color-ember)] px-3 py-2 text-xs font-semibold text-warm-white hover:bg-[var(--color-bark)]"
                         >
                           Delete
                         </button>
@@ -449,7 +449,7 @@ function KPIsCard() {
             <button
               type="button"
               onClick={add}
-              className="rounded-xl bg-[#c45d3e] px-3 py-2 text-sm font-semibold text-white hover:bg-[#8b5e3c]"
+              className="rounded-xl bg-[var(--color-ember)] px-3 py-2 text-sm font-semibold text-warm-white hover:bg-[var(--color-bark)]"
             >
               Add
             </button>
@@ -566,7 +566,7 @@ function GrantsCard() {
               resetForm();
               setOpenAdd(true);
             }}
-            className="rounded-xl bg-[#c45d3e] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#8b5e3c]"
+            className="rounded-xl bg-[var(--color-ember)] px-3 py-2 text-sm font-semibold text-warm-white transition hover:bg-[var(--color-bark)]"
           >
             Request grant
           </button>
@@ -574,7 +574,7 @@ function GrantsCard() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
+        <div className="rounded-xl border border-[var(--color-ember)]/20 bg-[var(--color-ember)]/5 px-3 py-2 text-sm text-[var(--color-ember)]">
           Failed to load grants: {String((error as any)?.message ?? '')}
         </div>
       )}
@@ -621,7 +621,7 @@ function GrantsCard() {
                     <button
                       type="button"
                       onClick={() => setOpenReceiptsFor(row)}
-                      className="rounded-lg bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] hover:bg-[var(--color-primary)] hover:text-white"
+                      className="rounded-lg bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] hover:bg-[var(--color-primary)] hover:text-warm-white"
                     >
                       Receipts
                     </button>
@@ -718,7 +718,7 @@ function GrantsCard() {
               />
               <div
                 className={`mt-1 text-[0.7rem] ${
-                  purpose.trim().length < 50 ? 'text-[#c45d3e]' : 'text-[var(--color-text-muted)]'
+                  purpose.trim().length < 50 ? 'text-[var(--color-ember)]' : 'text-[var(--color-text-muted)]'
                 }`}
               >
                 {purpose.trim().length}/50 minimum characters required.
@@ -789,7 +789,7 @@ function GrantsCard() {
                 Number(amount || 0) <= 0 ||
                 purpose.trim().length < 50
               }
-              className="rounded-xl bg-[#c45d3e] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#8b5e3c] disabled:opacity-70"
+              className="rounded-xl bg-[var(--color-ember)] px-3 py-2 text-sm font-semibold text-warm-white transition hover:bg-[var(--color-bark)] disabled:opacity-70"
             >
               {submitting ? 'Submitting...' : 'Submit request'}
             </button>
@@ -885,7 +885,7 @@ function ReceiptsModal({ grantId, onClose }: ReceiptsModalProps) {
     <ModalShell title={`Receipts for Grant ${grantId}`} onClose={onClose}>
       <div className="space-y-4">
         {error && (
-          <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
+          <div className="rounded-xl border border-[var(--color-ember)]/20 bg-[var(--color-ember)]/5 px-3 py-2 text-sm text-[var(--color-ember)]">
             Failed to load receipts: {String((error as any)?.message ?? '')}
           </div>
         )}
@@ -1004,7 +1004,7 @@ function ReceiptsModal({ grantId, onClose }: ReceiptsModalProps) {
               type="button"
               onClick={addReceipt}
               disabled={saving}
-              className="rounded-xl bg-[#c45d3e] px-3 py-2 text-xs font-semibold text-white hover:bg-[#8b5e3c] disabled:opacity-70"
+              className="rounded-xl bg-[var(--color-ember)] px-3 py-2 text-xs font-semibold text-warm-white hover:bg-[var(--color-bark)] disabled:opacity-70"
             >
               {saving ? 'Saving…' : 'Add receipt'}
             </button>
@@ -1025,7 +1025,7 @@ type ModalShellProps = {
 function ModalShell({ title, onClose, children }: ModalShellProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4 py-8 md:py-12"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 px-4 py-8 md:py-12"
       onClick={onClose}
     >
       <div

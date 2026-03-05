@@ -7,9 +7,8 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-sm mx-auto mt-10">
-          <h1 className="text-xl mb-4">Set a new password</h1>
-          <p className="text-sm text-[#8a837a]">Loading…</p>
+        <div className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] px-4 py-12">
+          <p className="text-sm text-[var(--color-text-muted)]">Loading…</p>
         </div>
       }
     >

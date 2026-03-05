@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import { NextResponse } from 'next/server';
+import { getSession } from '@/lib/getSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -278,6 +279,8 @@ function parseNumberLike(value: any): number | null {
 
 // ---------- API ----------
 export async function GET(req: Request) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const url = new URL(req.url);
   const which = (url.searchParams.get('which') || 'acres').toLowerCase(); // 'acres' | 'camel' | 'wander'
   const list = url.searchParams.get('list') === '1';

@@ -230,7 +230,7 @@ export default function AnalyticsDashboard() {
               className="rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-200"
               style={
                 period === p
-                  ? { backgroundColor: EMBER, color: '#fff' }
+                  ? { backgroundColor: EMBER, color: 'var(--color-warm-white, #f5f1ea)' }
                   : { color: 'var(--color-text-muted)' }
               }
             >
@@ -349,7 +349,7 @@ export default function AnalyticsDashboard() {
                       activeDot={{
                         r: 5,
                         fill: EMBER,
-                        stroke: '#fff',
+                        stroke: '#f5f1ea',
                         strokeWidth: 2,
                       }}
                     />

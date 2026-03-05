@@ -13,6 +13,7 @@ const PROTECTED_PREFIXES = [
   '/fellowship',
   '/fellowship-admin',
   '/users',
+  '/analytics',
 ];
 
 export async function middleware(req: NextRequest) {
@@ -93,5 +94,6 @@ export const config = {
     '/fellowship/:path*',
     '/fellowship-admin/:path*',
     '/users/:path*',
+    '/analytics/:path*',
   ],
 };

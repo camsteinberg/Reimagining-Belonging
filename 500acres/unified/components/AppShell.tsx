@@ -36,7 +36,7 @@ export default function AppShell({ children, sidebarProps }: AppShellProps) {
           {/* Mobile drawer */}
           <div
             onClick={closeDrawer}
-            className={`fixed inset-0 z-40 bg-black/30 transition-opacity duration-200 lg:hidden ${
+            className={`fixed inset-0 z-40 bg-charcoal/30 transition-opacity duration-200 lg:hidden ${
               drawerOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
             }`}
           />

@@ -39,7 +39,7 @@ export default function AdminDashboard() {
     <div className="space-y-6 text-[var(--color-text)]">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-3xl font-semibold text-[var(--color-text)]">Fellowship Admin</h2>
+        <h2 className="font-serif text-3xl font-semibold text-[var(--color-text)]">Fellowship Admin</h2>
         <div className="flex items-center gap-3 text-sm text-[var(--color-text-muted)]">
           <span>Dataset: English</span>
           <select
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
           <button
             type="button"
             onClick={() => setOpenKpi(true)}
-            className="rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-95"
+            className="rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-warm-white transition hover:brightness-95"
           >
             {selected ? `Add to ${nameById.get(selected)}` : 'Add'}
           </button>
@@ -151,7 +151,7 @@ export default function AdminDashboard() {
                             setKpiEditId(null);
                             mKpi();
                           }}
-                          className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-white transition hover:brightness-95"
+                          className="rounded-lg bg-[var(--color-primary)] px-3 py-2 text-xs font-semibold text-warm-white transition hover:brightness-95"
                         >
                           Save
                         </button>
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
                             setKpiTitle(r.title);
                             setKpiObj(r.objective);
                           }}
-                          className="rounded-lg bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] transition hover:bg-[var(--color-primary)] hover:text-white"
+                          className="rounded-lg bg-[var(--color-primary-soft)] px-3 py-2 text-xs font-semibold text-[var(--color-primary-strong)] transition hover:bg-[var(--color-primary)] hover:text-warm-white"
                         >
                           Edit
                         </button>
@@ -205,7 +205,7 @@ export default function AdminDashboard() {
                           className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
                             r.is_done
                               ? 'bg-[var(--color-surface-subtle)] text-[var(--color-text)] hover:bg-[var(--color-primary-soft)]'
-                              : 'bg-[var(--color-primary)] text-white hover:brightness-95'
+                              : 'bg-[var(--color-primary)] text-warm-white hover:brightness-95'
                           } ${kpiTogglingId === r.id ? 'opacity-70' : ''}`}
                         >
                           {r.is_done ? 'Mark open' : 'Mark complete'}
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                             });
                             mKpi();
                           }}
-                          className="rounded-lg bg-[var(--color-danger)] px-3 py-2 text-xs font-semibold text-white transition hover:brightness-90"
+                          className="rounded-lg bg-[var(--color-danger)] px-3 py-2 text-xs font-semibold text-warm-white transition hover:brightness-90"
                         >
                           Delete
                         </button>
@@ -274,7 +274,7 @@ function ModalShell({
   primaryLabel: string;
 }) {
                   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 p-4 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-3xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-6 text-[var(--color-text)] shadow-[var(--surface-card-shadow)]">
         <h4 className="mb-4 text-lg font-semibold text-center text-[var(--color-text)]">
           {title}
@@ -291,7 +291,7 @@ function ModalShell({
           <button
             type="button"
             onClick={onPrimary}
-            className="rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-white transition hover:brightness-95"
+            className="rounded-xl bg-[var(--color-primary)] px-3 py-2 text-sm font-semibold text-warm-white transition hover:brightness-95"
           >
             {primaryLabel}
           </button>

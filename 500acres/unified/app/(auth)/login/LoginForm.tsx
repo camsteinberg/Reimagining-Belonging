@@ -11,7 +11,7 @@ const INPUT_CLASS =
 export default function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const redirect = params.get('redirect') || '/';
+  const redirect = params.get('redirect') || '/dashboard';
   const statusParam = params.get('status');
 
   const [identifier, setIdentifier] = useState('');
@@ -118,7 +118,7 @@ export default function LoginForm() {
               </div>
 
               {error && (
-                <div className="rounded-2xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-4 py-3 text-sm text-[#c45d3e]">
+                <div className="rounded-2xl border border-[var(--color-danger)]/20 bg-[var(--color-danger)]/5 px-4 py-3 text-sm text-[var(--color-danger)]">
                   {error}
                 </div>
               )}
@@ -126,7 +126,7 @@ export default function LoginForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-primary)] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-75"
+                className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-primary)] px-4 py-3 text-sm font-semibold text-warm-white shadow-sm transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-75"
               >
                 {loading ? (
                   <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />

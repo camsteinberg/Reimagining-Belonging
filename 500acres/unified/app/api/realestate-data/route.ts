@@ -1,6 +1,7 @@
 // app/api/realestate-data/route.ts
 import { google, sheets_v4 } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
+import { getSession } from '@/lib/getSession';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -157,6 +158,8 @@ async function readSheetBlock(
 ======================= */
 
 export async function GET(_req: NextRequest) {
+  const session = await getSession();
+  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const sheetId = process.env.BARNDOS_SHEET_ID;
   const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
   const key = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n');

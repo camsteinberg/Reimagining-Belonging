@@ -1,7 +1,13 @@
 // app/(auth)/reset-password/ResetPasswordForm.tsx
 'use client';
+
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import SurfaceCard from '@/components/ui/SurfaceCard';
+
+const INPUT_CLASS =
+  'w-full rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface-subtle)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-soft)] transition';
 
 export default function ResetPasswordForm() {
   const params = useSearchParams();
@@ -38,42 +44,80 @@ export default function ResetPasswordForm() {
   }
 
   return (
-    <div className="max-w-sm mx-auto mt-10">
-      <h1 className="text-xl mb-4">Set a new password</h1>
-      {ok ? (
-        <p className="text-sm text-[#3d6b4f]">Password updated. Redirecting…</p>
-      ) : (
-        <form onSubmit={submit} className="space-y-4">
-          <div>
-            <label className="block mb-1 text-sm">New password</label>
-            <input
-              className="w-full border p-2 rounded"
-              type="password"
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="new-password"
-              required
-            />
+    <div className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] px-4 py-12 text-[var(--color-text)]">
+      <SurfaceCard className="w-full max-w-xl">
+        <div className="space-y-8">
+          <div className="space-y-4 text-center sm:text-left">
+            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-[var(--color-text-muted)]">
+              500AcresOS
+            </span>
+            <h1 className="text-3xl font-semibold leading-tight md:text-4xl">Set a new password</h1>
           </div>
-          <div>
-            <label className="block mb-1 text-sm">Confirm password</label>
-            <input
-              className="w-full border p-2 rounded"
-              type="password"
-              minLength={8}
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              autoComplete="new-password"
-              required
-            />
-          </div>
-          {error && <p className="text-[#c45d3e] text-sm">{error}</p>}
-          <button disabled={loading || !token} className="w-full border p-2 rounded">
-            {loading ? 'Saving…' : 'Save new password'}
-          </button>
-        </form>
-      )}
+
+          {ok ? (
+            <div className="rounded-2xl border border-[var(--color-success)]/20 bg-[var(--color-success)]/5 px-4 py-3 text-sm text-[var(--color-success)]">
+              Password updated. Redirecting...
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <form onSubmit={submit} className="space-y-5">
+                <label className="text-sm font-medium text-[var(--color-text)]">
+                  <span className="block">New password</span>
+                  <input
+                    className={`${INPUT_CLASS} mt-2`}
+                    type="password"
+                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="********"
+                    autoComplete="new-password"
+                    required
+                  />
+                </label>
+
+                <label className="text-sm font-medium text-[var(--color-text)]">
+                  <span className="block">Confirm password</span>
+                  <input
+                    className={`${INPUT_CLASS} mt-2`}
+                    type="password"
+                    minLength={8}
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    placeholder="Match your password"
+                    autoComplete="new-password"
+                    required
+                  />
+                </label>
+
+                {error && (
+                  <div className="rounded-2xl border border-[var(--color-danger)]/20 bg-[var(--color-danger)]/5 px-4 py-3 text-sm text-[var(--color-danger)]">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading || !token}
+                  className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-primary)] px-4 py-3 text-sm font-semibold text-warm-white shadow-sm transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-75"
+                >
+                  {loading ? (
+                    <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
+                  ) : (
+                    'Save new password'
+                  )}
+                </button>
+              </form>
+
+              <Link
+                href="/login"
+                className="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface-subtle)] px-4 py-3 text-sm font-semibold text-[var(--color-primary)] transition hover:bg-[var(--color-surface-muted)]"
+              >
+                Back to login
+              </Link>
+            </div>
+          )}
+        </div>
+      </SurfaceCard>
     </div>
   );
 }

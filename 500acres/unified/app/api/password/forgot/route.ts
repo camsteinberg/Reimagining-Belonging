@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         WHERE id = ${user.id}
       `;
 
-      const base = process.env.APP_URL || 'http://localhost:3000';
+      const base = process.env.APP_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
       const resetUrl = `${base}/reset-password?token=${token}`;
 
       try {

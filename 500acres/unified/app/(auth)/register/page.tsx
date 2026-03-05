@@ -12,7 +12,7 @@ type FormState = {
   phone: string;
   password: string;
   confirm: string;
-  role: 'admin' | 'fellow';
+  role: 'fellow';
 };
 
 const INPUT_CLASS =
@@ -125,17 +125,7 @@ export default function RegisterPage() {
                     autoComplete="tel"
                   />
                 </label>
-                <label className="text-sm font-medium text-[var(--color-text)] sm:col-span-2">
-                  <span className="block">Role</span>
-                  <select
-                    value={form.role}
-                    onChange={(e) => setForm({ ...form, role: e.target.value as FormState['role'] })}
-                    className={`${INPUT_CLASS} mt-2`}
-                  >
-                    <option value="fellow">Fellow</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </label>
+                <input type="hidden" name="role" value="fellow" />
                 <label className="text-sm font-medium text-[var(--color-text)]">
                   <span className="block">Password</span>
                   <input
@@ -166,8 +156,8 @@ export default function RegisterPage() {
                 <div
                   className={`rounded-2xl border px-4 py-3 text-sm ${
                     status.tone === 'success'
-                      ? 'border-[#3d6b4f]/20 bg-[#3d6b4f]/5 text-[#3d6b4f]'
-                      : 'border-[#c45d3e]/20 bg-[#c45d3e]/5 text-[#c45d3e]'
+                      ? 'border-[var(--color-success)]/20 bg-[var(--color-success)]/5 text-[var(--color-success)]'
+                      : 'border-[var(--color-danger)]/20 bg-[var(--color-danger)]/5 text-[var(--color-danger)]'
                   }`}
                 >
                   {status.message}
@@ -177,7 +167,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-primary)] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-75"
+                className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-primary)] px-4 py-3 text-sm font-semibold text-warm-white shadow-sm transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-75"
               >
                 {loading ? (
                   <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
