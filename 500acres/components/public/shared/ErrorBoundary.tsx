@@ -50,7 +50,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
             </p>
             <button
               onClick={this.handleRetry}
-              className="rounded-full bg-[var(--color-charcoal)] px-6 py-2.5 font-serif text-sm text-[var(--color-warm-white)] hover:bg-[var(--color-forest)] transition-colors"
+              className="rounded-full bg-[var(--color-primary)] px-6 py-2.5 font-serif text-sm text-[var(--color-warm-white)] hover:bg-[var(--color-primary-strong)] transition-colors"
             >
               Try Again
             </button>
@@ -59,20 +59,20 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
       }
 
       return (
-        <div className="min-h-screen bg-cream flex flex-col items-center justify-center p-8">
-          <p className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/30 mb-8">
+        <div className="min-h-screen bg-[var(--color-canvas)] flex flex-col items-center justify-center p-8">
+          <p className="font-sans text-xs uppercase tracking-[0.4em] text-[var(--color-text-muted)] mb-8">
             Something went wrong
           </p>
-          <h1 className="font-serif text-3xl md:text-5xl font-bold text-charcoal mb-6 text-center">
+          <h1 className="font-serif text-3xl md:text-5xl font-bold text-[var(--color-text)] mb-6 text-center">
             We hit a snag.
           </h1>
-          <p className="font-serif text-lg text-charcoal/50 mb-10 text-center max-w-md">
+          <p className="font-serif text-lg text-[var(--color-text-secondary)] mb-10 text-center max-w-md">
             Something unexpected happened. Let&apos;s get you back on track.
           </p>
           <div className="flex items-center gap-4">
             <button
               onClick={this.handleRetry}
-              className="bg-charcoal text-cream px-8 py-4 rounded-full font-serif text-lg hover:bg-forest transition-colors"
+              className="bg-[var(--color-primary)] text-[var(--color-warm-white)] px-8 py-4 rounded-full font-serif text-lg hover:bg-[var(--color-primary-strong)] transition-colors"
             >
               Try Again
             </button>
@@ -80,7 +80,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
               onClick={() => {
                 window.location.href = "/";
               }}
-              className="border border-charcoal/20 text-charcoal px-8 py-4 rounded-full font-serif text-lg hover:bg-charcoal/5 transition-colors"
+              className="border border-[var(--color-border-strong)] text-[var(--color-text)] px-8 py-4 rounded-full font-serif text-lg hover:bg-[var(--color-surface-muted)] transition-colors"
             >
               Back to Home
             </button>

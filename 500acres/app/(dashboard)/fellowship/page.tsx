@@ -11,15 +11,13 @@ export default async function Page() {
   const session = await getSession();
   if (!session) redirect('/login?redirect=/fellowship');
   return (
-    <main className="p-6">
-      <ErrorBoundary inline label="Fellowship">
-        <FellowDashboard
-          userId={session.userId}
-          role={session.role || 'fellow'}
-          username={session.username ?? undefined}
-          email={session.email ?? undefined}
-        />
-      </ErrorBoundary>
-    </main>
+    <ErrorBoundary inline label="Fellowship">
+      <FellowDashboard
+        userId={session.userId}
+        role={session.role || 'fellow'}
+        username={session.username ?? undefined}
+        email={session.email ?? undefined}
+      />
+    </ErrorBoundary>
   );
 }
