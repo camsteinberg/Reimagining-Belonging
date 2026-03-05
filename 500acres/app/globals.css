@@ -493,6 +493,10 @@
   transform: translateY(-12px);
   box-shadow: 0 20px 40px rgba(42, 37, 32, 0.08);
 }
+.hover-lift:active {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(42, 37, 32, 0.06);
+}
 
 .hover-image-scale {
   overflow: hidden;
@@ -502,6 +506,9 @@
 }
 .hover-image-scale:hover img {
   transform: scale(1.05);
+}
+.hover-image-scale:active img {
+  transform: scale(1.03);
 }
 
 
@@ -538,6 +545,10 @@
   transform: translateY(-12px) scale(1.02);
   box-shadow: 0 30px 60px rgba(42, 37, 32, 0.12);
 }
+.story-card:active {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 15px 30px rgba(42, 37, 32, 0.10);
+}
 
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -558,7 +569,8 @@
   background: currentColor;
   transition: width 0.4s cubic-bezier(0.77, 0, 0.18, 1);
 }
-.creative-link:hover::after {
+.creative-link:hover::after,
+.creative-link:active::after {
   width: 100%;
 }
 
@@ -1047,7 +1059,7 @@ body.force-scroll.popup-open::before {
 .introHeader {
   position: absolute;
   top: 35%;
-  font-size: 40px;
+  font-size: clamp(1.625rem, 3vw + 1rem, 2.5rem);
   font-weight: 700;
   background-color: transparent;
 }
@@ -1055,7 +1067,7 @@ body.force-scroll.popup-open::before {
 .introSub {
   position: absolute;
   top: 52%;
-  font-size: 25px;
+  font-size: clamp(1.0625rem, 2vw + 0.5rem, 1.5625rem);
 }
 
 .startButton {
@@ -1086,7 +1098,7 @@ body.force-scroll.popup-open::before {
   position: absolute;
   top: 50%;
   text-align: center;
-  font-size: 22px;
+  font-size: clamp(1rem, 1.5vw + 0.625rem, 1.375rem);
   z-index: 20;
 }
 
@@ -1100,7 +1112,7 @@ body.force-scroll.popup-open::before {
   position: absolute;
   top: 40%;
   text-align: center;
-  font-size: 22px;
+  font-size: clamp(1rem, 1.5vw + 0.625rem, 1.375rem);
   z-index: 20;
 }
 
@@ -1114,11 +1126,11 @@ body.force-scroll.popup-open::before {
 
 .slide6 .slide7TextContainer {
   top: calc(100vh + 40vh);
-  font-size: 30px;
+  font-size: clamp(1rem, 2vw + 0.75rem, 1.875rem);
 }
 
 .slide4BottomText {
-  font-size: 22px;
+  font-size: clamp(1rem, 1.5vw + 0.625rem, 1.375rem);
 }
 
 .slide6BottomText,
@@ -1130,7 +1142,7 @@ body.force-scroll.popup-open::before {
   position: absolute;
   top: 55%;
   text-align: center;
-  font-size: 22px;
+  font-size: clamp(1rem, 1.5vw + 0.625rem, 1.375rem);
   z-index: 20;
   transform-origin: center center;
   will-change: transform, opacity;
@@ -1265,7 +1277,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: absolute;
   top: 18px;
   width: 100vw;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
 }
 
 .slide21TextContainer {
@@ -1273,7 +1285,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: absolute;
   top: 102vh;
   width: 100vw;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
 }
 
 .slide22TextContainer {
@@ -1281,7 +1293,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: absolute;
   top: 202vh;
   width: 100vw;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
 }
 
 .slide23TextContainer {
@@ -1289,7 +1301,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: absolute;
   top: 302vh;
   width: 100vw;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
 }
 
 .slide24TextContainer,
@@ -1298,7 +1310,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: absolute;
   top: 65vh;
   left: 10vw;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
 }
 
 .slide15TextContainer,
@@ -1308,7 +1320,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: absolute;
   top: 13vh;
   width: 100vw;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
   z-index: 20;
 }
 
@@ -1317,7 +1329,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: absolute;
   top: 111vh;
   width: 100vw;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
 }
 
 .initMapText1,
@@ -1331,7 +1343,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: absolute;
   top: 213vh;
   width: 100vw;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
 }
 
 .initMapText3Quote {
@@ -1353,7 +1365,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: sticky;
   top: 25vh;
   width: 90vw;
-  height: 70vh;
+  height: min(70vh, 500px);
   margin: 0 auto;
   z-index: 10;
 }
@@ -1388,7 +1400,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   position: fixed;
   top: 25vh;
   width: 90vw;
-  height: 70vh;
+  height: min(70vh, 500px);
   margin: 0 auto;
   left: 50%;
   transform: translateX(-50%);
@@ -1524,7 +1536,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   left: 50%;
   transform: translateX(-50%);
   color: #e5dccf;
-  font-size: 34px;
+  font-size: clamp(1.125rem, 3vw + 0.5rem, 2.125rem);
   text-align: center;
   pointer-events: none;
   z-index: 30;
@@ -2079,7 +2091,7 @@ body.slide25-active .slide24SVGContainer .participant-svg {
 .popupContainer {
   background-color: #f4f1ec;
   width: 80vw;
-  height: 80vh;
+  height: min(80vh, 600px);
   border-radius: 30px;
   filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.5));
   z-index: 100;
@@ -2100,7 +2112,7 @@ body.slide25-active .slide24SVGContainer .participant-svg {
 .svg7popupContainer {
   background-color: #f4f1ec;
   width: 80vw;
-  height: 80vh;
+  height: min(80vh, 600px);
   border-radius: 30px;
   filter: drop-shadow(10px 10px 10px rgba(0, 0, 0, 0.5));
   z-index: 100;
@@ -2320,7 +2332,7 @@ body.slide25-active .slide25 .imgContainer7 {
   position: absolute;
   text-align: center;
   top: 10vh;
-  font-size: 20px;
+  font-size: clamp(1rem, 1.5vw + 0.5rem, 1.25rem);
 }
 
 .slide28BottomText {
@@ -2430,7 +2442,6 @@ body.slide25-active .slide25 .imgContainer7 {
 @media (max-width: 768px) {
   /* Hero intro */
   .introHeader {
-    font-size: 32px;
     top: 30%;
     padding: 0 20px;
     text-align: center;
@@ -2438,7 +2449,6 @@ body.slide25-active .slide25 .imgContainer7 {
   }
 
   .introSub {
-    font-size: 20px;
     top: 48%;
     padding: 0 30px;
     text-align: center;
@@ -2463,7 +2473,6 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide9TextContainer,
   .slide10TextContainer,
   .slide11TextContainer {
-    font-size: 18px;
     padding: 0 clamp(16px, 5vw, 40px);
     width: 100%;
     word-break: break-word;
@@ -2472,7 +2481,6 @@ body.slide25-active .slide25 .imgContainer7 {
 
   .slide26TextContainer,
   .slide27TextContainer {
-    font-size: 16px;
     padding: 0 clamp(16px, 5vw, 40px);
     width: 100%;
     word-break: break-word;
@@ -2480,7 +2488,6 @@ body.slide25-active .slide25 .imgContainer7 {
   }
 
   .slide4BottomText {
-    font-size: 18px;
     padding: 0 24px;
     width: 100%;
   }
@@ -2489,13 +2496,8 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide8BottomText,
   .slide9BottomText,
   .slide11BottomText {
-    font-size: 18px;
     padding: 0 24px;
     width: 100%;
-  }
-
-  .slide6 .slide7TextContainer {
-    font-size: 18px;
   }
 
   /* Slide 2 phone overlay */
@@ -2517,7 +2519,6 @@ body.slide25-active .slide25 .imgContainer7 {
   }
 
   .slide17 .belongingLabel {
-    font-size: 22px;
     top: 55vh;
   }
 
@@ -2570,7 +2571,6 @@ body.slide25-active .slide25 .imgContainer7 {
   }
 
   .slide19TextContainer {
-    font-size: 16px;
     padding: 0 20px;
     width: 100%;
     word-break: break-word;
@@ -2592,7 +2592,6 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide21TextContainer,
   .slide22TextContainer,
   .slide23TextContainer {
-    font-size: 16px;
     padding: 0 24px;
     width: 100%;
     word-break: break-word;
@@ -2603,7 +2602,6 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide24TextContainer,
   .slide25TextContainer {
     left: 5vw;
-    font-size: 16px;
     padding-right: 20px;
     word-break: break-word;
     overflow-wrap: break-word;
@@ -2737,13 +2735,11 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide15TextContainer,
   .slide16TextContainer,
   .initMapText1 {
-    font-size: 16px;
     padding: 0 20px;
   }
 
   .initMapText2,
   .initMapText3 {
-    font-size: 16px;
     padding: 0 20px;
   }
 
@@ -2767,7 +2763,6 @@ body.slide25-active .slide25 .imgContainer7 {
 
   /* Slide 28 — Final slide */
   .slide28TextContainer {
-    font-size: 16px;
     padding: 0 20px;
   }
 
@@ -2822,12 +2817,7 @@ body.slide25-active .slide25 .imgContainer7 {
 /* Small mobile - further adjustments */
 @media (max-width: 480px) {
   .introHeader {
-    font-size: 26px;
     top: 28%;
-  }
-
-  .introSub {
-    font-size: 17px;
   }
 
   .slide2TextContainer,
@@ -2845,7 +2835,6 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide8BottomText,
   .slide9BottomText,
   .slide11BottomText {
-    font-size: 16px;
     padding: 0 16px;
   }
 
@@ -2855,10 +2844,6 @@ body.slide25-active .slide25 .imgContainer7 {
 
   .slide20Orbs {
     --orb-size: 120px;
-  }
-
-  .slide17 .belongingLabel {
-    font-size: 18px;
   }
 
   .greenSVGContainer,
@@ -2920,6 +2905,135 @@ body.slide25-active .slide25 .imgContainer7 {
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
   border-right: 8px solid rgba(245, 241, 230, 0.95);
+}
+
+/* Landscape orientation — fix vh-based layouts on short viewports */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Hero / intro slide — prevent cramped hero */
+  .slide1 {
+    min-height: 100svh;
+  }
+
+  /* Phone overlay SVG — prevent overflow */
+  .phoneOverlay .svgContainer svg {
+    width: min(80vh, 90vw);
+    height: min(80vh, 90vw);
+  }
+
+  /* Maps — constrain height and adjust position */
+  .mapWrap {
+    height: min(70vh, 400px);
+    top: 15vh;
+  }
+
+  #initialMap {
+    height: min(70vh, 400px);
+    top: 15vh;
+  }
+
+  .slide15 .mapWrap,
+  .slide16 .mapWrap {
+    top: 15vh;
+  }
+
+  .slide15TextContainer,
+  .slide16TextContainer,
+  .initMapText1 {
+    top: 4vh;
+  }
+
+  /* Popup containers — constrain height */
+  .popupContainer {
+    height: min(80vh, 600px);
+    max-height: 90vh;
+  }
+
+  .svg1popupContainer,
+  .svg2popupContainer,
+  .svg3popupContainer,
+  .svg4popupContainer,
+  .svg5popupContainer,
+  .svg6popupContainer,
+  .svg7popupContainer {
+    height: min(80vh, 600px);
+    max-height: 90vh;
+  }
+
+  /* Ideal home popup windows — constrain height */
+  .popWinContainer1,
+  .popWinContainer2,
+  .popWinContainer3,
+  .popWinContainer4,
+  .popWinContainer5,
+  .popWinContainer6,
+  .popWinContainer7 {
+    height: min(75vh, 500px);
+    max-height: 90vh;
+  }
+
+  /* Slide 17 — belonging circle and label positioning */
+  .slide17 .svgContainer2 {
+    top: 15vh;
+  }
+
+  .slide17 .belongingLabel {
+    top: 40vh;
+  }
+
+  .slide17 .slide17Reveal {
+    top: 55vh;
+  }
+
+  .slide17 .slide17Reveal.left,
+  .slide17 .slide17Reveal.right {
+    top: 28vh;
+  }
+
+  /* Slide 18 — circle containers */
+  .greenSVGContainer,
+  .yellowSVGContainer,
+  .redSVGContainer,
+  .blueSVGContainer {
+    top: 45vh;
+  }
+
+  .slide18Media {
+    bottom: 20vh;
+  }
+
+  /* Slide 19 — drawings */
+  .slide19Media {
+    height: 40vh;
+  }
+
+  .slide19QuoteContainer {
+    top: 15vh;
+  }
+
+  /* Slide 20-23 — orbs */
+  .slide20Orbs {
+    top: calc(18px + 15vh);
+  }
+
+  /* Slide 24/25 text containers — prevent overlap */
+  .slide24TextContainer,
+  .slide25TextContainer {
+    top: 50vh;
+  }
+
+  /* Slide 28 — final slide text */
+  .slide28TextContainer {
+    top: 5vh;
+  }
+
+  .slide28BottomText {
+    top: 70vh;
+  }
+
+  /* Popup text positioning */
+  .popupTopText {
+    margin-top: 5vh;
+  }
 }
 
 .text-primary {

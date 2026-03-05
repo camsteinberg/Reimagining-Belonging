@@ -68,7 +68,7 @@ export default function LoginForm() {
             <span className="font-sans text-xs font-semibold uppercase tracking-[0.32em] text-smoke">
               500 Acres
             </span>
-            <h1 className="font-serif text-3xl font-semibold leading-tight text-charcoal md:text-4xl">
+            <h1 className="font-serif text-[clamp(1.875rem,4vw,2.25rem)] font-semibold leading-tight text-charcoal">
               Sign in to your account
             </h1>
           </div>
@@ -91,6 +91,7 @@ export default function LoginForm() {
                 <input
                   className={`${INPUT_CLASS} mt-2`}
                   type="text"
+                  inputMode="email"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder="you@school.edu or (555) 123-4567"

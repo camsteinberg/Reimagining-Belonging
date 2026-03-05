@@ -231,6 +231,9 @@ export default function PhoneOverlay() {
 
   // GSAP gradient orb animation
   useGSAP(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
     const gradientOrb = gradientRef.current;
     if (!gradientOrb) return;
     gsap.set(gradientOrb, { opacity: 0 });

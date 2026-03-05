@@ -90,7 +90,7 @@ export default function UserManagement() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Page heading */}
       <div className="mb-8">
-        <h1 className="font-serif text-3xl font-semibold tracking-tight text-[var(--color-text)] sm:text-4xl">
+        <h1 className="font-serif text-[clamp(1.875rem,4vw,2.25rem)] font-semibold tracking-tight text-[var(--color-text)]">
           User Management
         </h1>
         <p className="mt-2 font-sans text-sm text-[var(--color-text-muted)]">
@@ -106,7 +106,7 @@ export default function UserManagement() {
             <button
               key={tab.key}
               onClick={() => setFilter(tab.key)}
-              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 font-sans text-sm font-medium
+              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 font-sans text-sm font-medium
                 transition-colors duration-200
                 ${
                   active

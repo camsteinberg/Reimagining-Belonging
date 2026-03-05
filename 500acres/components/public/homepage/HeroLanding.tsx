@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useCallback, useState } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import finalImage from "@/assets/images/finalImage2.webp";
 
@@ -36,7 +37,7 @@ export default function HeroLanding({ show, onDismiss }: HeroLandingProps) {
   const taglineRef = useRef<HTMLParagraphElement>(null);
   const lineLeftRef = useRef<HTMLDivElement>(null);
   const lineRightRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const imgRef = useRef<HTMLDivElement>(null);
   const scoutRef = useRef<HTMLDivElement>(null);
   const bubbleRef = useRef<HTMLDivElement>(null);
   const [bubblePhase, setBubblePhase] = useState<"hidden" | "dots" | "message">("hidden");
@@ -197,13 +198,20 @@ export default function HeroLanding({ show, onDismiss }: HeroLandingProps) {
       style={{ zIndex: 100, pointerEvents: show ? "auto" : "none" }}
     >
       {/* Background image with slow zoom */}
-      <img
+      <div
         ref={imgRef}
-        src={finalImage.src}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover will-change-transform"
+        className="absolute inset-0 will-change-transform"
         style={{ transform: "scale(1.1)", filter: "brightness(0.5) saturate(1.4) sepia(0.25)" }}
-      />
+      >
+        <Image
+          src={finalImage}
+          alt=""
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover"
+        />
+      </div>
 
       {/* Vignette overlay */}
       <div

@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image, { StaticImageData } from 'next/image';
 import { participants } from '@/data/participants';
 import useReveal from '@/hooks/useReveal';
 
@@ -12,8 +13,6 @@ import ih04 from '@/assets/images/idealHome/04.webp';
 import ih05 from '@/assets/images/idealHome/05.webp';
 import ih06 from '@/assets/images/idealHome/06.webp';
 import ih07 from '@/assets/images/idealHome/07.webp';
-
-import { StaticImageData } from 'next/image';
 
 const IDEAL_HOME_MAP: Record<string, StaticImageData> = {
   "01.webp": ih01, "02.webp": ih02, "03.webp": ih03,
@@ -116,7 +115,6 @@ export default function StoryDetailPage() {
 
   const svgUrl = SVG_MAP[participant.svgIndex] || "";
   const idealHomeData = IDEAL_HOME_MAP[participant.idealHomeImage];
-  const idealHomeUrl = idealHomeData ? idealHomeData.src : "";
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
@@ -261,13 +259,18 @@ export default function StoryDetailPage() {
               </h2>
 
               <div className="reveal-scale rounded-2xl overflow-hidden bg-charcoal/5 mb-8 hover-image-scale">
-                <img
-                  src={idealHomeUrl}
-                  alt={`${participant.name}'s ideal home: ${participant.idealHomeTitle}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full max-h-[60vh] object-contain p-6 md:p-10"
-                />
+                {idealHomeData ? (
+                  <Image
+                    src={idealHomeData}
+                    alt={`${participant.name}'s ideal home: ${participant.idealHomeTitle}`}
+                    sizes="(max-width: 768px) 100vw, 58vw"
+                    className="w-full max-h-[60vh] object-contain p-6 md:p-10"
+                  />
+                ) : (
+                  <div className="w-full h-48 flex items-center justify-center text-charcoal/30">
+                    Image not available
+                  </div>
+                )}
               </div>
 
               <p className="reveal-up font-serif text-lg text-charcoal/70 leading-[1.8] max-w-2xl">

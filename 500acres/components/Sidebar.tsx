@@ -106,7 +106,7 @@ export default function Sidebar({
         <button
           aria-label={collapseLabel}
           onClick={collapseAction}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-transparent
+          className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-transparent
             bg-[var(--color-surface-subtle)] text-[var(--sidebar-muted)] transition-colors duration-200
             hover:border-[var(--sidebar-border)] hover:bg-[var(--color-primary-soft)]"
         >
@@ -129,7 +129,7 @@ export default function Sidebar({
             <Link
               key={item.path}
               href={item.path}
-              className={`group relative flex min-w-0 items-center gap-3 rounded-2xl px-3 py-2 transition-all duration-200
+              className={`group relative flex min-w-0 items-center gap-3 rounded-2xl px-3 py-2.5 transition-all duration-200
                 ${active
                   ? 'bg-[var(--sidebar-active)] text-[var(--sidebar-active-text)] shadow-[0_16px_36px_-20px_rgba(196,93,62,0.4)]'
                   : 'text-[var(--sidebar-muted)] hover:bg-[var(--sidebar-hover)]'}

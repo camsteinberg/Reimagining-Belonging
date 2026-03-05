@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { participants } from '@/data/participants';
 import useReveal from '@/hooks/useReveal';
 import storiesHero from '@/assets/photos/stories-hero-barn.webp';
@@ -67,7 +68,7 @@ function FeaturedStoryCard({ participant, index }: { participant: Participant; i
     >
       {/* Top accent line */}
       <div
-        className="h-1.5 w-full transition-all duration-500 group-hover:h-2.5"
+        className="h-1.5 w-full transition-all duration-500 group-hover:h-2.5 group-active:h-2.5"
         style={{ background: CARD_ACCENTS[index] }}
         aria-hidden="true"
       />
@@ -80,13 +81,13 @@ function FeaturedStoryCard({ participant, index }: { participant: Participant; i
             alt={`Portrait illustration of ${participant.name}`}
             loading="lazy"
             decoding="async"
-            className="w-40 h-28 md:w-52 md:h-36 object-contain transition-all duration-500 group-hover:scale-105"
+            className="w-40 h-28 md:w-52 md:h-36 object-contain transition-all duration-500 group-hover:scale-105 group-active:scale-105"
           />
         </div>
 
         {/* Content */}
         <div className="flex flex-col flex-1">
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-charcoal mb-1 group-hover:text-forest transition-colors">
+          <h2 className="font-serif text-[clamp(1.5rem,3vw,1.875rem)] font-bold text-charcoal mb-1 group-hover:text-forest group-active:text-forest transition-colors">
             {participant.name}
           </h2>
           <p className="font-sans text-xs text-charcoal/60 mb-5 tracking-wide">
@@ -111,9 +112,9 @@ function FeaturedStoryCard({ participant, index }: { participant: Participant; i
           </div>
 
           {/* Read more arrow */}
-          <div className="mt-auto flex items-center gap-2 text-charcoal/60 group-hover:text-forest transition-all duration-300">
+          <div className="mt-auto flex items-center gap-2 text-charcoal/60 group-hover:text-forest group-active:text-forest transition-all duration-300">
             <span className="font-sans text-xs uppercase tracking-wider">Read story</span>
-            <span className="transition-transform duration-300 group-hover:translate-x-2" aria-hidden="true">&rarr;</span>
+            <span className="transition-transform duration-300 group-hover:translate-x-2 group-active:translate-x-2" aria-hidden="true">&rarr;</span>
           </div>
         </div>
       </div>
@@ -133,7 +134,7 @@ function StoryCard({ participant, index }: { participant: Participant; index: nu
     >
       {/* Top accent line */}
       <div
-        className="h-1 w-full transition-all duration-500 group-hover:h-2"
+        className="h-1 w-full transition-all duration-500 group-hover:h-2 group-active:h-2"
         style={{ background: CARD_ACCENTS[index] }}
         aria-hidden="true"
       />
@@ -144,7 +145,7 @@ function StoryCard({ participant, index }: { participant: Participant; index: nu
           <img
             src={svgUrl}
             alt={`Portrait illustration of ${participant.name}`}
-            className="w-32 h-20 md:w-40 md:h-24 object-contain transition-all duration-500 group-hover:scale-110"
+            className="w-32 h-20 md:w-40 md:h-24 object-contain transition-all duration-500 group-hover:scale-110 group-active:scale-110"
             loading="lazy"
             decoding="async"
           />
@@ -152,7 +153,7 @@ function StoryCard({ participant, index }: { participant: Participant; index: nu
 
         {/* Info */}
         <div className="mt-auto">
-          <h2 className="font-serif text-xl md:text-2xl font-bold text-charcoal mb-1 group-hover:text-forest transition-colors">
+          <h2 className="font-serif text-[clamp(1.25rem,2.5vw,1.5rem)] font-bold text-charcoal mb-1 group-hover:text-forest group-active:text-forest transition-colors">
             {participant.name}
           </h2>
           <p className="font-sans text-xs text-charcoal/60 mb-4 tracking-wide">
@@ -177,9 +178,9 @@ function StoryCard({ participant, index }: { participant: Participant; index: nu
           </div>
 
           {/* Read more arrow */}
-          <div className="mt-6 flex items-center gap-2 text-charcoal/60 group-hover:text-forest transition-all duration-300">
+          <div className="mt-6 flex items-center gap-2 text-charcoal/60 group-hover:text-forest group-active:text-forest transition-all duration-300">
             <span className="font-sans text-xs uppercase tracking-wider">Read story</span>
-            <span className="transition-transform duration-300 group-hover:translate-x-2" aria-hidden="true">&rarr;</span>
+            <span className="transition-transform duration-300 group-hover:translate-x-2 group-active:translate-x-2" aria-hidden="true">&rarr;</span>
           </div>
         </div>
       </div>
@@ -194,7 +195,7 @@ export default function StoriesPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero -- shorter to get to content faster */}
       <section className="relative min-h-[70vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
-        <img src={storiesHero.src} alt="Historic barn in pastoral landscape" className="absolute inset-0 w-full h-full object-cover opacity-15" />
+        <Image src={storiesHero} alt="Historic barn in pastoral landscape" fill sizes="100vw" className="object-cover opacity-15" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <div className="absolute top-[20%] right-[5%] w-[35vw] h-[35vw] bg-clay/5 blob pointer-events-none" aria-hidden="true" />
 
@@ -221,7 +222,7 @@ export default function StoriesPage() {
       <section className="bg-charcoal section-inset py-14 md:py-20 lg:py-28 overflow-hidden">
         <div className="page-container max-w-4xl mx-auto text-center">
           <blockquote className="reveal-clip-up">
-            <p className="font-serif text-2xl md:text-4xl italic text-cream leading-[1.5]">
+            <p className="font-serif text-[clamp(1.5rem,4vw,2.25rem)] italic text-cream leading-[1.5]">
               &ldquo;{SPOTLIGHT.belongingQuote}&rdquo;
             </p>
           </blockquote>

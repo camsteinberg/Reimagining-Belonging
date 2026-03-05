@@ -90,7 +90,7 @@ export default function RegisterPage() {
             <span className="font-sans text-xs font-semibold uppercase tracking-[0.32em] text-smoke">
               500 Acres
             </span>
-            <h1 className="font-serif text-3xl font-semibold leading-tight text-charcoal md:text-4xl">
+            <h1 className="font-serif text-[clamp(1.875rem,4vw,2.25rem)] font-semibold leading-tight text-charcoal">
               Create your account
             </h1>
           </div>

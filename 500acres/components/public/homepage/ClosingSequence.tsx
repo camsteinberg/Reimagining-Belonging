@@ -17,6 +17,15 @@ export default function ClosingSequence() {
 
   useGSAP(
     () => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        // Make content visible without animation
+        if (slide26TextRef.current) gsap.set(slide26TextRef.current, { opacity: 1, y: 0 });
+        if (slide27TextRef.current) gsap.set(slide27TextRef.current, { opacity: 1, scale: 1 });
+        if (acresSpanRef.current) gsap.set(acresSpanRef.current, { color: "#9f4f2e" });
+        return;
+      }
+
       // Slide 26: fade in + slide up
       gsap.fromTo(
         slide26TextRef.current,

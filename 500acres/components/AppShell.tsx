@@ -62,7 +62,7 @@ export default function AppShell({ children, sidebarProps }: AppShellProps) {
             <button
               type="button"
               onClick={openDrawer}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm transition hover:brightness-95"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm transition hover:brightness-95"
               aria-label="Open navigation"
             >
               <Menu className="h-5 w-5" />
@@ -70,11 +70,11 @@ export default function AppShell({ children, sidebarProps }: AppShellProps) {
             <span className="font-serif text-lg font-semibold">
               500 Acres
             </span>
-            <span className="block w-10" aria-hidden />
+            <span className="block w-11" aria-hidden />
           </header>
         ) : null}
 
-        <main className="flex-1 space-y-6 overflow-y-auto px-4 py-6 transition-colors duration-300 sm:px-6 lg:px-8">
+        <main id="main-content" className="flex-1 space-y-6 overflow-y-auto px-4 py-6 transition-colors duration-300 sm:px-6 lg:px-8">
           {children}
         </main>
       </div>

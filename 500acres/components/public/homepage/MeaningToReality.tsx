@@ -15,6 +15,9 @@ export default function MeaningToReality() {
   const containerRef = useRef<HTMLElement>(null);
 
   useGSAP(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
     const orbs = document.querySelector(".slide20Orbs") as HTMLElement | null;
     const leftOrb = document.querySelector(".slide20Orb--left") as HTMLElement | null;
     const rightOrb = document.querySelector(".slide20Orb--right") as HTMLElement | null;
