@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
+  BarChart3,
   DollarSign,
   HelpCircle,
   Building,
@@ -63,6 +64,7 @@ export default function Sidebar({
           { label: 'Real Estate', path: '/realestate', icon: <Building className="h-5 w-5" /> },
           { label: 'Governance', path: '/governance', icon: <HelpCircle className="h-5 w-5" /> },
           { label: 'Users', path: '/users', icon: <Users className="h-5 w-5" /> },
+          { label: 'Analytics', path: '/analytics', icon: <BarChart3 className="h-5 w-5" /> },
         ]
       : [fellowshipItem];
 
