@@ -46,137 +46,157 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   DASHBOARD VARIABLE REMAPPING — Campfire Palette
-   Maps the dashboard's generic variables to Campfire values.
+   GLOBAL VARIABLES — Shared across public + dashboard
    ═══════════════════════════════════════════════════════════════════ */
 
-:root {
-  color-scheme: light;
+@layer base {
+  :root {
+    color-scheme: light;
 
-  /* ── Dashboard surface & border tokens ── */
-  --color-canvas: #e8e0d0;          /* cream */
-  --color-surface: #f5f1ea;         /* warm-white */
-  --color-surface-subtle: #f0ebe0;  /* cream tinted lighter */
-  --color-surface-elevated: #f0ead6; /* starlight */
-  --color-border-soft: rgba(42, 37, 32, 0.10);  /* charcoal-based */
-  --color-border-strong: rgba(42, 37, 32, 0.22);
+    /* ── Public site variables (original) ── */
+    --bg: #f2efe7;
+    --ink: #111;
+    --panel: #ffffffcc;
+    --stroke: #111;
 
-  /* ── Brand / accent ── */
-  --color-primary: #c45d3e;         /* ember — the CTA color */
-  --color-primary-strong: #5c3d2e;  /* bark */
-  --color-primary-soft: rgba(196, 93, 62, 0.12);
+    /* ── Semantic text tokens ── */
+    --color-text-primary: #2a2520;
+    --color-text-secondary: rgba(42, 37, 32, 0.75);
+    --color-text-tertiary: rgba(42, 37, 32, 0.55);
+    --color-text-muted: rgba(42, 37, 32, 0.3);
 
-  /* ── Text ── */
-  --color-muted: #8a837a;           /* smoke */
-  --color-text: #2a2520;            /* charcoal */
-  --color-text-muted: #8a837a;      /* smoke */
+    /* ── Functional colors ── */
+    --color-success: #6b8f71;          /* sage */
+    --color-danger: #b91c1c;           /* true red — distinct from ember CTAs */
+    --color-warning: #d4a84b;          /* amber */
+    --color-info: #3a5a6e;             /* navy */
+    --color-surface-muted: rgba(42, 37, 32, 0.05);
 
-  /* ── Functional ── */
-  --color-danger: #c45d3e;          /* ember */
-  --color-warning: #d4a84b;         /* amber */
+    /* ── Dashboard surface & border tokens ── */
+    --color-canvas: #e8e0d0;          /* cream */
+    --color-surface: #f5f1ea;         /* warm-white */
+    --color-surface-subtle: #f0ebe0;  /* cream tinted lighter */
+    --color-surface-elevated: #f0ead6; /* starlight */
+    --color-border-soft: rgba(42, 37, 32, 0.10);  /* charcoal-based */
+    --color-border-strong: rgba(42, 37, 32, 0.22);
 
-  /* ── Sidebar — charcoal dark theme ── */
-  --surface-sidebar: #2a2520;       /* charcoal */
-  --sidebar-border: rgba(245, 241, 234, 0.08);
-  --sidebar-active: rgba(245, 241, 234, 0.10);
-  --sidebar-active-text: #f5f1ea;   /* warm-white */
-  --sidebar-hover: rgba(245, 241, 234, 0.05);
-  --sidebar-pill: #c45d3e;          /* ember */
-  --sidebar-muted: #8a837a;         /* smoke */
-  --sidebar-cta-bg: #c45d3e;        /* ember */
-  --sidebar-cta-text: #f5f1ea;      /* warm-white */
-  --sidebar-logout-bg: rgba(245, 241, 234, 0.05);
-  --sidebar-logout-hover: rgba(245, 241, 234, 0.10);
-  --surface-card-shadow: 0 22px 48px -32px rgba(42, 37, 32, 0.15);
+    /* ── Brand / accent ── */
+    --color-primary: #c45d3e;         /* ember — the CTA color */
+    --color-primary-strong: #5c3d2e;  /* bark */
+    --color-primary-soft: rgba(196, 93, 62, 0.12);
 
-  /* ── Campfire semantic tokens ── */
-  --text-primary: #2a2520;
-  --text-secondary: rgba(42, 37, 32, 0.75);
-  --text-tertiary: rgba(42, 37, 32, 0.55);
-  --text-muted: rgba(42, 37, 32, 0.4);
-  --light-text-primary: #f5f1ea;
-  --light-text-secondary: rgba(245, 241, 234, 0.8);
+    /* ── Text (dashboard aliases) ── */
+    --color-muted: #8a837a;           /* smoke */
+    --color-text: #2a2520;            /* charcoal */
 
-  --surface-default: #e8e0d0;       /* cream */
-  --surface-raised: #f5f1ea;        /* warm-white */
-  --surface-dark: #2a2520;          /* charcoal */
-  --surface-darkest: #1a1714;       /* night */
+    /* ── Sidebar — charcoal dark theme ── */
+    --surface-sidebar: #2a2520;       /* charcoal */
+    --sidebar-border: rgba(245, 241, 234, 0.08);
+    --sidebar-active: rgba(245, 241, 234, 0.10);
+    --sidebar-active-text: #f5f1ea;   /* warm-white */
+    --sidebar-hover: rgba(245, 241, 234, 0.05);
+    --sidebar-pill: #c45d3e;          /* ember */
+    --sidebar-muted: #8a837a;         /* smoke */
+    --sidebar-cta-bg: #c45d3e;        /* ember */
+    --sidebar-cta-text: #f5f1ea;      /* warm-white */
+    --sidebar-logout-bg: rgba(245, 241, 234, 0.05);
+    --sidebar-logout-hover: rgba(245, 241, 234, 0.10);
+    --surface-card-shadow: 0 22px 48px -32px rgba(42, 37, 32, 0.15);
 
-  --success: #6b8f71;               /* sage */
-  --info: #3a5a6e;                  /* navy */
+    /* ── Campfire semantic tokens ── */
+    --text-primary: #2a2520;
+    --text-secondary: rgba(42, 37, 32, 0.75);
+    --text-tertiary: rgba(42, 37, 32, 0.55);
+    --text-muted: rgba(42, 37, 32, 0.4);
+    --light-text-primary: #f5f1ea;
+    --light-text-secondary: rgba(245, 241, 234, 0.8);
 
-  /* ── Spacing scale ── */
-  --space-xs: 0.5rem;
-  --space-sm: 1rem;
-  --space-md: 1.5rem;
-  --space-lg: 2rem;
-  --space-xl: 3rem;
-  --space-2xl: 4rem;
-  --space-3xl: 6rem;
-  --space-4xl: 9rem;
+    --surface-default: #e8e0d0;       /* cream */
+    --surface-raised: #f5f1ea;        /* warm-white */
+    --surface-dark: #2a2520;          /* charcoal */
+    --surface-darkest: #1a1714;       /* night */
 
-  /* ── Easing ── */
-  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-crisp: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --success: #6b8f71;               /* sage */
+    --info: #3a5a6e;                  /* navy */
+
+    /* ── Spacing scale ── */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+    --space-2xl: 4rem;
+    --space-3xl: 6rem;
+    --space-4xl: 9rem;
+
+    /* ── Easing (original editorial values) ── */
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-crisp: cubic-bezier(0.77, 0, 0.18, 1);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body {
+    overflow-x: hidden;
+    font-family: var(--font-serif);
+    color: var(--color-charcoal);
+    background-color: var(--color-charcoal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
 
 
 /* ═══════════════════════════════════════════════════════════════════
-   BODY DEFAULTS
+   INTERACTIVE ELEMENT DEFAULTS
    ═══════════════════════════════════════════════════════════════════ */
 
-body {
-  background: var(--color-canvas);
-  color: var(--color-text);
-  font-family: var(--font-serif);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
-  transition: background-color 160ms ease, color 160ms ease;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
+@layer base {
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  [role="button"] {
+    cursor: pointer;
+  }
 
-body::-webkit-scrollbar {
-  display: none;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════════
-   DASHBOARD — INTERACTIVE ELEMENT DEFAULTS
-   ═══════════════════════════════════════════════════════════════════ */
-
-button,
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
-[role="button"] {
-  cursor: pointer;
-}
-
-button:disabled,
-input[type="button"]:disabled,
-input[type="submit"]:disabled,
-input[type="reset"]:disabled,
-[aria-disabled="true"] {
-  cursor: not-allowed;
-}
-
-a {
-  color: var(--color-primary);
-  text-decoration-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
-  text-decoration-thickness: 1px;
-}
-
-a:hover {
-  text-decoration-color: var(--color-primary);
+  button:disabled,
+  input[type="button"]:disabled,
+  input[type="submit"]:disabled,
+  input[type="reset"]:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 ::selection {
   background-color: var(--color-amber);
   color: var(--color-charcoal);
+}
+
+/* ── Dashboard-scoped link styling ──
+   Only color links inside the dashboard route group.
+   Public site links inherit color from their parent elements. */
+[data-dashboard] a {
+  color: var(--color-primary);
+  text-decoration-color: color-mix(in srgb, var(--color-primary) 50%, transparent);
+  text-decoration-thickness: 1px;
+}
+
+[data-dashboard] a:hover {
+  text-decoration-color: var(--color-primary);
+}
+
+/* ── Dashboard body overrides ──
+   Applied via data attribute on the dashboard layout wrapper. */
+[data-dashboard] {
+  background-color: var(--color-canvas);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+[data-dashboard]::-webkit-scrollbar {
+  display: none;
 }
 
 

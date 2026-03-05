@@ -516,7 +516,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                     <Link
                       key="auth-link"
                       href="/login"
-                      className="font-sans text-sm tracking-wide bg-ember text-warm-white px-4 py-2 rounded-full hover:bg-bark transition-colors"
+                      className="font-sans text-sm tracking-wide border border-charcoal/20 text-charcoal px-4 py-2 rounded-full hover:bg-charcoal hover:text-cream transition-colors"
                     >
                       Login
                     </Link>

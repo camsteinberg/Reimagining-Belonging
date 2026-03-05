@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import SurfaceCard from '@/components/ui/SurfaceCard';
 
 type StatusState = { tone: 'error' | 'success'; message: string } | null;
 
@@ -16,7 +15,7 @@ type FormState = {
 };
 
 const INPUT_CLASS =
-  'w-full rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface-subtle)] px-4 py-3 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-soft)] transition';
+  'w-full rounded-lg border border-charcoal/10 bg-warm-white px-4 py-3 font-sans text-sm text-charcoal placeholder:text-smoke focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 transition';
 
 export default function RegisterPage() {
   const [form, setForm] = useState<FormState>({
@@ -77,20 +76,22 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--color-canvas)] px-4 py-12 text-[var(--color-text)]">
-      <SurfaceCard className="w-full max-w-xl">
+    <div className="flex min-h-screen items-center justify-center bg-charcoal px-4 py-12">
+      <div className="w-full max-w-xl rounded-2xl bg-warm-white p-8 sm:p-10 shadow-lg">
         <div className="space-y-8">
-          <div className="space-y-4 text-center sm:text-left">
-            <span className="text-xs font-semibold uppercase tracking-[0.32em] text-[var(--color-text-muted)]">
-              500AcresOS
+          <div className="space-y-3">
+            <span className="font-sans text-xs font-semibold uppercase tracking-[0.32em] text-smoke">
+              500 Acres
             </span>
-            <h1 className="text-3xl font-semibold leading-tight md:text-4xl">Create your account</h1>
+            <h1 className="font-serif text-3xl font-semibold leading-tight text-charcoal md:text-4xl">
+              Create your account
+            </h1>
           </div>
 
           <div className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="text-sm font-medium text-[var(--color-text)]">
+                <label className="font-sans text-sm font-medium text-charcoal">
                   <span className="block">Username</span>
                   <input
                     type="text"
@@ -102,7 +103,7 @@ export default function RegisterPage() {
                     autoComplete="username"
                   />
                 </label>
-                <label className="text-sm font-medium text-[var(--color-text)]">
+                <label className="font-sans text-sm font-medium text-charcoal">
                   <span className="block">Email</span>
                   <input
                     type="email"
@@ -114,7 +115,7 @@ export default function RegisterPage() {
                     autoComplete="email"
                   />
                 </label>
-                <label className="text-sm font-medium text-[var(--color-text)] sm:col-span-2">
+                <label className="font-sans text-sm font-medium text-charcoal sm:col-span-2">
                   <span className="block">Phone (optional)</span>
                   <input
                     type="tel"
@@ -126,7 +127,7 @@ export default function RegisterPage() {
                   />
                 </label>
                 <input type="hidden" name="role" value="fellow" />
-                <label className="text-sm font-medium text-[var(--color-text)]">
+                <label className="font-sans text-sm font-medium text-charcoal">
                   <span className="block">Password</span>
                   <input
                     type="password"
@@ -138,7 +139,7 @@ export default function RegisterPage() {
                     autoComplete="new-password"
                   />
                 </label>
-                <label className="text-sm font-medium text-[var(--color-text)]">
+                <label className="font-sans text-sm font-medium text-charcoal">
                   <span className="block">Confirm password</span>
                   <input
                     type="password"
@@ -154,10 +155,10 @@ export default function RegisterPage() {
 
               {status && (
                 <div
-                  className={`rounded-2xl border px-4 py-3 text-sm ${
+                  className={`rounded-lg border px-4 py-3 font-sans text-sm ${
                     status.tone === 'success'
-                      ? 'border-[var(--color-success)]/20 bg-[var(--color-success)]/5 text-[var(--color-success)]'
-                      : 'border-[var(--color-danger)]/20 bg-[var(--color-danger)]/5 text-[var(--color-danger)]'
+                      ? 'border-sage/20 bg-sage/5 text-forest'
+                      : 'border-red-700/20 bg-red-700/5 text-red-700'
                   }`}
                 >
                   {status.message}
@@ -167,10 +168,10 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-[var(--color-primary)] px-4 py-3 text-sm font-semibold text-warm-white shadow-sm transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-75"
+                className="inline-flex w-full items-center justify-center rounded-full bg-charcoal px-4 py-3 font-serif text-sm font-bold text-cream shadow-sm transition hover:bg-night disabled:cursor-not-allowed disabled:opacity-75"
               >
                 {loading ? (
-                  <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-white/60 border-t-transparent" />
+                  <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-cream/60 border-t-transparent" />
                 ) : (
                   'Create account'
                 )}
@@ -179,13 +180,13 @@ export default function RegisterPage() {
 
             <Link
               href="/login"
-              className="inline-flex w-full items-center justify-center rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface-subtle)] px-4 py-3 text-sm font-semibold text-[var(--color-primary)] transition hover:bg-[var(--color-surface-muted)]"
+              className="inline-flex w-full items-center justify-center rounded-full border border-charcoal/15 px-4 py-3 font-serif text-sm font-bold text-charcoal transition hover:bg-charcoal/5"
             >
               Sign in instead
             </Link>
           </div>
         </div>
-      </SurfaceCard>
+      </div>
     </div>
   );
 }

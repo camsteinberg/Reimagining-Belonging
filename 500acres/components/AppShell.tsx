@@ -28,7 +28,7 @@ export default function AppShell({ children, sidebarProps }: AppShellProps) {
   }, [hasSidebar, sidebarProps]);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-[var(--color-canvas)] text-[var(--color-text)] transition-colors duration-300 lg:flex-row">
+    <div data-dashboard className="flex min-h-dvh flex-col bg-[var(--color-canvas)] text-[var(--color-text)] transition-colors duration-300 lg:flex-row">
       {desktopSidebar}
 
       {hasSidebar && sidebarProps ? (
