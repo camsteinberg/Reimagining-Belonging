@@ -1,0 +1,49 @@
+
+=== Blueprint Telephone Integration Test ===
+Room code: mrfn
+Room URL:  ws://127.0.0.1:1999/parties/main/mrfn
+Start:     2026-02-27T18:19:01.104Z
+
+--- Step 1: Host connects ---
+  [PASS] Initial phase is lobby
+  [PASS] No players initially
+  [PASS] Host not yet flagged as connected
+  [PASS] Host connected flag set after join
+
+--- Step 2: Four players connect and join ---
+  Player "Alice" joined
+  Player "Bob" joined
+  Player "Carol" joined
+  Player "Dave" joined
+  [PASS] 4 players in state
+  [PASS] At least 2 teams -- got 2
+  [PASS] Team "Cabin Crew" first player is architect -- Alice = architect
+  [PASS] Team "Cabin Crew" player 2 is builder -- Bob = builder
+  [PASS] Team "The Framers" first player is architect -- Carol = architect
+  [PASS] Team "The Framers" player 2 is builder -- Dave = builder
+
+--- Step 3: Host starts round 1 ---
+  [PASS] Phase is round1
+  [PASS] Round number is 1
+  [PASS] Target grid exists
+  [PASS] Timer is set
+  [PASS] Timer is in the future -- 180s remaining
+  [FAIL] Team "Cabin Crew" grid is empty at round start
+  [FAIL] Team "The Framers" grid is empty at round start
+
+--- Step 4: Builders place blocks, architects chat ---
+  Builders:   Bob, Dave
+  Architects: Alice, Carol
+  Architect Alice sent chat
+  Architect Carol sent chat
+  [FAIL] Unexpected error -- TypeError: Cannot read properties of undefined (reading '0')
+
+  ERROR DETAILS: 
+--- Cleanup ---
+
+=== RESULTS ===
+  Passed: 15
+  Failed: 3
+  Total:  18
+  End:    2026-02-27T18:19:02.345Z
+

@@ -1,0 +1,428 @@
+================================================================================
+CODE AUDIT REPORT — Blueprint Telephone Game
+Generated: 2026-02-23
+Files audited: 34 files across party/, lib/, components/, app/
+================================================================================
+
+
+==============================
+  CRITICAL FINDINGS
+==============================
+
+[CRITICAL] app/play/[code]/page.tsx:37-44 - Player ID detection by name match causes wrong-player bug
+  The PlayPage detects the current player's ID by matching `p.name === playerName`.
+  If two players join with the same name, the first match wins and the second
+  player will be bound to the wrong player record. They will see the wrong
+  team's grid and role, and their block placements will be attributed to
+  someone else.
+  Impact: Two players named "Alex" causes one to control the other's session.
+          The second player is permanently stuck showing wrong data.
+  Fix: Use the PartySocket connection ID (socket.current.id) as the player ID
+       instead of matching by name. The server keys players by connection ID,
+       so the client should use its own socket ID directly. Example:
+         const playerId = socketRef.current?.id;
+       This is available from the partysocket library. Pass socket ref from
+       usePartySocket and use socket.current.id.
+
+[CRITICAL] party/index.ts:29-35 - Host disconnect marks hostConnected=false but does NOT pause/stop the timer
+  When the host disconnects (onClose), `hostConnected` is set to false and
+  the player is marked disconnected, but the server timer keeps running.
+  If the host disconnects during a round, the round will expire and
+  auto-advance to reveal phase with no host to control it. Reconnecting
+  host gets a fresh connection ID and can never re-register as host.
+  Impact: Host browser crash or network drop during a round = game stuck
+          in reveal phase with no way to advance. All players are stranded.
+  Fix: Either (a) pause the timer when host disconnects and resume on
+       reconnect, or (b) allow a host to re-join by sending a new "join"
+       message with isHost=true and mapping to the new connection ID.
+       At minimum, store the host identity separately from connection ID
+       and allow re-registration.
+
+[CRITICAL] party/gameState.ts:63-67 - removePlayer only marks disconnected, never cleans up team roster
+  When a player disconnects, `removePlayer` sets `connected = false` but
+  does NOT remove the player ID from `team.players[]`. This means:
+  1) Team size is never reduced, so new players cannot fill the slot
+  2) If the disconnected player was the only architect, the team has no
+     connected architect — nobody can see the target in Round 1
+  3) Role swapping in Round 2 still swaps the disconnected player's role
+  Impact: Player disconnect permanently reduces effective team size.
+          Team with disconnected architect has no one who can see the target.
+  Fix: Either remove the player ID from the team.players array and
+       reassign architect role to another connected team member, OR
+       at minimum, promote the first connected builder to architect
+       when the current architect disconnects.
+
+[CRITICAL] party/gameState.ts:86-92 - Role swap in round 2 swaps ALL players including disconnected ones
+  The round 2 role swap iterates `Object.values(state.players)` and swaps
+  every player's role. If a team had 3 players (1 architect + 2 builders)
+  and the architect disconnected, the swap produces 1 disconnected builder
+  + 2 architects — but the game expects exactly 1 architect per team.
+  With 2 architects on a team, both see the target but neither has the
+  builder UI to place blocks.
+  Impact: Team with disconnected player gets broken roles in Round 2.
+          Could result in 0 builders (nobody can build) or 2 architects.
+  Fix: Only swap roles for connected players, and ensure exactly one
+       connected player per team is architect after the swap.
+
+[CRITICAL] party/gameState.ts:32-60 - addPlayer creates teams with wrong team count after disconnections
+  `addPlayer` calculates team index as `Object.keys(state.teams).length`
+  for TEAM_NAMES lookup. Since disconnected players are never removed from
+  teams, teams are never "full" once a player disconnects (connected flag
+  doesn't affect the `players.length < MAX_TEAM_SIZE` check). But if a
+  team somehow fills to MAX_TEAM_SIZE with 3 connected players, new players
+  create a new team. This is fine, but the team naming index uses total
+  team count, so with 8+ teams you'd wrap around TEAM_NAMES correctly.
+  However, a single disconnected player in a team of 2 means the team
+  shows 2 players but only 1 is connected. New players will fill a
+  different team first (or create a new one) rather than replacing
+  the disconnected slot.
+  Impact: Unbalanced teams — some teams have ghost players taking up slots.
+  Fix: Either skip disconnected players in the team size count, or fully
+       remove disconnected players from the team roster.
+
+
+==============================
+  MAJOR FINDINGS
+==============================
+
+[MAJOR] party/index.ts:162-169 - AI response applies blocks without checking game phase
+  The onRequest HTTP handler applies AI block placements via `placeBlock()`
+  but does NOT check that the game is in round2 phase. If the AI API
+  response arrives late (after the round ends), blocks could be placed
+  during reveal or summary phases. The `placeBlock` function in gameState
+  does check phase, but there's a TOCTOU window: if endRound fires between
+  the phase check in placeBlock and the actual grid mutation, blocks could
+  leak into the wrong phase. More practically, if the round ends and the
+  state transitions to "reveal1" just before the AI response arrives,
+  placeBlock correctly rejects — but the chat message and aiBuilding
+  broadcast on lines 174-190 still fire, showing an AI chat message
+  during reveal phase.
+  Impact: AI chat messages appear during reveal phase, confusing players.
+  Fix: Add a phase check at the top of the aiResponse handler:
+       if (state.phase !== "round2") return new Response("Round ended", ...);
+
+[MAJOR] app/api/ai/chat/route.ts:22-27 - AI chat has no conversation history (stateless)
+  Each AI request sends only the single latest user message with no
+  conversation history. The AI cannot remember previous messages in the
+  same round, so it gives repetitive or context-free responses.
+  Impact: AI feels robotic and unhelpful — asks players to repeat themselves,
+          gives the same descriptions multiple times. Poor UX.
+  Fix: Maintain conversation history per team per round, either in-memory
+       on the server or by passing the conversation array from the client.
+
+[MAJOR] app/api/ai/chat/route.ts:7-9 - Anthropic client created at module level may crash on missing key
+  `new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })` runs at import
+  time. If ANTHROPIC_API_KEY is not set, the Anthropic SDK may throw during
+  module initialization, crashing the entire API route (and potentially
+  blocking other routes in the same edge function bundle).
+  Impact: Missing API key = 500 error on ALL requests to this route,
+          with an unhelpful error message.
+  Fix: Lazy-initialize the client inside the POST handler, or check for
+       the key and return a clear error.
+
+[MAJOR] party/index.ts:246-255 - Server timer resolution is 1 second but checks Date.now() >= timerEnd
+  The timer interval fires every 1000ms and checks if `Date.now() >= timerEnd`.
+  If the check fires at timerEnd - 500ms, it misses. Next check at
+  timerEnd + 500ms, it catches. This means the round can run up to ~1s
+  longer than intended. For a 5-minute round this is negligible, but the
+  design means the server and client timers can disagree by up to 1 second,
+  causing the client to show "00:00" for up to a second before the server
+  ends the round.
+  Impact: Minor — round runs up to 1s long. Client shows 00:00 briefly
+          before server catches up.
+  Fix: Reduce interval to 200ms, or use setTimeout with calculated delay
+       to fire precisely at timerEnd.
+
+[MAJOR] components/PlayerView.tsx:92-98 - setTimeout cleanup leak on rapid block placement
+  `handleCellClick` creates a setTimeout to clear the "new" animation on
+  cells. If the component unmounts before the timeout fires (e.g., round
+  ends), the timeout still fires and calls setNewCells on an unmounted
+  component. React will log a warning in development.
+  Impact: React state-update-on-unmounted-component warnings. In rare
+          cases, could cause stale state if the same component remounts.
+  Fix: Store timeout IDs in a ref and clear them on unmount via useEffect
+       cleanup, or use a ref-based approach to skip the setState if
+       unmounted.
+
+[MAJOR] lib/usePartySocket.ts:34-41 - JSON.parse on WebSocket message with no error handling
+  Line 35: `const msg: ServerMessage = JSON.parse(e.data)` has no try/catch.
+  If the server sends malformed JSON (e.g., due to a bug or network
+  corruption), this will throw an uncaught exception that crashes the
+  message handler. No further messages will be processed.
+  Impact: Single malformed message breaks all subsequent message processing
+          for that client session. Game appears frozen.
+  Fix: Wrap in try/catch and ignore malformed messages.
+
+[MAJOR] components/HostView.tsx:222-226 - Host reveal1 "Next Phase" button sends startRound directly, skipping interstitial
+  HostControls for reveal1 phase shows two buttons: "Show Scores" (nextReveal)
+  and "Next Phase" (startRound). The "Next Phase" button sends startRound
+  directly, but startRound() checks that phase is in ["lobby", "reveal1",
+  "interstitial"]. From reveal1, startRound would set round=1 again (since
+  phase is not "interstitial"), resetting the game to round 1 instead of
+  advancing to round 2. This is a confusing button that essentially
+  restarts round 1.
+  Impact: Host clicking "Next Phase" during reveal1 restarts Round 1 instead
+          of advancing to Round 2. All round 1 results are lost.
+  Fix: Remove the "Next Phase" button from reveal1 controls, or change its
+       action to "nextReveal" which transitions reveal1 -> interstitial.
+       Alternatively, modify handleHostAction to handle this case properly.
+
+[MAJOR] party/gameState.ts:156-167 - calculateAllScores uses hardcoded ROUND_2_TARGET for round 2 instead of state.currentTarget
+  Line 164: `team.round2Score = calculateScore(team.grid, ROUND_2_TARGET)`
+  This ignores `state.currentTarget` and always uses the hardcoded
+  ROUND_2_TARGET. Currently this works because state.currentTarget IS
+  ROUND_2_TARGET during round 2, but if the target structure were ever
+  made dynamic or configurable, this would silently use the wrong target.
+  More immediately, this is inconsistent with the round 1 path (line 162)
+  which correctly uses `target` (from state.currentTarget).
+  Impact: Latent bug — scoring works correctly today but is fragile.
+  Fix: Use `target` (from state.currentTarget) for both rounds consistently.
+
+[MAJOR] party/index.ts:88-92 - Role swap logic doesn't handle teams with only 1 player
+  If a team has exactly 1 player (e.g., the second player disconnected or
+  never joined), that player is the architect. On round 2 role swap, they
+  become a builder. Now the team has 0 architects and 1 builder. The builder
+  can place blocks but nobody can see the target to guide them.
+  Impact: Solo-player team in round 2 has no architect — they're blind.
+  Fix: If a team has only 1 connected player, keep them as architect
+       (or assign them both roles / show them the target regardless).
+
+[MAJOR] components/RoundTransition.tsx:170 - window?.innerHeight used in animation causes SSR mismatch
+  Line 170: `y: [0, -(window?.innerHeight ?? 900) - 40]` reads
+  window.innerHeight during render. This value is baked into the animation
+  at the time the component mounts. If the window resizes, particles will
+  float to the wrong height. More importantly, during SSR/hydration,
+  window is undefined, so the fallback 900 is used, potentially causing
+  a hydration mismatch if the client window height differs.
+  Impact: Particle animation height may not match viewport. Minor visual
+          issue but could cause React hydration warning.
+  Fix: Use a ref to track window height and update on resize, or use
+       CSS viewport units (100vh) instead of a JS value.
+
+
+==============================
+  MINOR FINDINGS
+==============================
+
+[MINOR] app/page.tsx:11-13 - generateRoomCode() called on client generates code without checking server
+  handleHost() generates a room code client-side and navigates to /host/{code}.
+  There's no check that this code isn't already in use by another room.
+  With 4 letters from a 24-character alphabet, there are ~330K possible
+  codes. Collision is unlikely but possible at scale.
+  Impact: Two hosts could theoretically generate the same code and join
+          the same room. Very unlikely with small user base.
+  Fix: Acceptable for current scale. Could add server-side code validation
+       if the game scales up.
+
+[MINOR] components/HostView.tsx:32 - Activity feed teamName shows raw teamId, not team name
+  Line 32: `const teamName = msg.teamId ? "Team ${msg.teamId}" : msg.senderName`
+  This shows "Team team-0" instead of the actual team name like "Cabin Crew".
+  The chat message has teamId but not the team name. The host page doesn't
+  look up the team name from state.
+  Impact: Activity feed shows ugly team IDs instead of team names.
+  Fix: Look up `state.teams[msg.teamId]?.name` when building the activity
+       feed item. This requires access to state in the callback — either
+       pass state via ref or look it up at render time.
+
+[MINOR] components/ChatPanel.tsx:55 - Chat message ID uses Date.now() + Math.random(), not cryptographically unique
+  Message IDs are `${msg.senderId}-${Date.now()}-${Math.random()}`. Two
+  messages sent in the same millisecond could theoretically get the same
+  ID (Math.random collision is extremely unlikely but possible). AnimatePresence
+  uses these as keys.
+  Impact: Theoretically duplicate keys in AnimatePresence, but extremely
+          unlikely in practice.
+  Fix: Use crypto.randomUUID() for guaranteed uniqueness, or accept the
+       negligible risk.
+
+[MINOR] lib/usePartySocket.ts:16-23 - Hardcoded PartyKit host URLs
+  The production PartyKit host is hardcoded as
+  "blueprint-telephone.camsteinberg.partykit.dev". This should ideally
+  come from an environment variable.
+  Impact: Changing the PartyKit deployment requires a code change.
+  Fix: Use process.env.NEXT_PUBLIC_PARTYKIT_HOST with a fallback.
+
+[MINOR] components/IsometricGrid.tsx:83-105 - Click handler doesn't account for CSS transforms or scroll offset
+  The click-to-grid conversion uses `getBoundingClientRect()` and SVG
+  viewBox scaling, which is correct for most cases. However, if the SVG
+  is inside a scrollable container or has CSS transforms applied by
+  parent elements (e.g., framer-motion animations), the rect coordinates
+  could be offset, causing clicks to register on the wrong cell.
+  Impact: During slide animations (reveal carousel), clicking the grid
+          during the transition could place a block on the wrong cell.
+          Mitigated by readOnly being true during reveals.
+  Fix: No fix needed — the grid is readOnly during animations. But if
+       interactive grids are ever animated, this would need attention.
+
+[MINOR] party/gameState.ts:69-93 - startRound doesn't validate minimum player count
+  startRound() doesn't check if there are enough players (or any players
+  at all) before starting a round. A host could start a game with 0 players.
+  Impact: Game runs with no players — not harmful but pointless. Timer
+          runs, round ends, reveal shows empty grids with 0% scores.
+  Fix: Add a minimum player check and return early (or send an error
+       message to the host) if not enough players have joined.
+
+[MINOR] party/gameState.ts:79-84 - Round 1 grid not snapshot for teams that join late
+  If a new team is created after round 1 starts, they won't have a
+  round1Grid snapshot because that only happens in the isRound2 branch.
+  When the reveal carousel tries to show round1Grid for teams that
+  didn't exist during round 1, it falls back to `team.grid` (which
+  is the freshly reset empty grid).
+  Impact: Late-joining teams show empty grid in round 1 reveal. Minor
+          since late joining during a round is an edge case.
+  Fix: This is acceptable behavior for the current design.
+
+[MINOR] components/PlayerView.tsx:128-129 - teamGrid fallback to null when team is undefined
+  If player.teamId doesn't match any team in state.teams (e.g., stale
+  state during reconnection), teamGrid will be null and the component
+  renders "Waiting..." instead of the grid. This is safe but could be
+  confusing.
+  Impact: Briefly shows "Waiting..." if state is temporarily inconsistent.
+  Fix: Acceptable — the next state sync will fix it.
+
+[MINOR] components/Confetti.tsx:119-123 - Canvas resize handler doesn't use ResizeObserver
+  The confetti canvas resizes via window resize event. If the canvas
+  container is smaller than the window (unlikely given fixed positioning),
+  the canvas dimensions could be wrong.
+  Impact: Negligible — canvas is position:fixed inset:0 so window size
+          is correct.
+  Fix: No fix needed for current layout.
+
+[MINOR] components/ScoreGauge.tsx:30-41 - arcPath function handles fraction=0 edge case poorly
+  When fraction is 0 (score = 0), the arc has zero length and the SVG
+  path is a degenerate point. The animated arc starts from 0 so this
+  is the initial state — it's invisible, which is correct behavior.
+  But the function clamps to Math.max(fraction, 0) and doesn't handle
+  the exact-zero case specially. The path will be `M x1 y1 A r r 0 0 1 x1 y1`
+  which is valid but renders nothing.
+  Impact: Score of 0 shows empty arc — which is the desired behavior.
+  Fix: No fix needed.
+
+[MINOR] components/FinalSummary.tsx:75 - topTeam could be undefined if teams array is empty
+  Line 75: `const topTeam = ranked[0]` could be undefined if `teams` is
+  empty. Line 107 guards with `topTeam && topTeam.delta > 0`, so it's
+  safe. But the leaderboard on line 143 would still render an empty list.
+  Impact: Empty teams array shows empty summary — acceptable.
+  Fix: No fix needed — guard clause is present.
+
+[MINOR] lib/isometric.ts:12-16 - isoToGrid uses Math.round which can produce edge-case misclicks
+  The isoToGrid function uses Math.round to snap fractional grid coordinates
+  to the nearest cell. When clicking exactly on the border between two
+  cells, the rounding could go either way. This is inherent to any
+  discrete grid system.
+  Impact: Clicks on cell borders may occasionally target the adjacent cell.
+  Fix: Acceptable behavior. Could use Math.floor with a half-cell offset
+       for more predictable behavior, but Math.round is standard.
+
+[MINOR] party/index.ts:93-103 - Chat messages from host are forwarded to host again
+  If the host is also a member of a team (they're not in the current
+  design), chat messages would be sent to them twice: once via
+  broadcastToTeam and once via the explicit host forward. Currently
+  the host joins with isHost=true and is not added to any team, so
+  this is not an issue. But if the host were ever added to a team,
+  they'd see duplicate messages.
+  Impact: None currently — host is not in any team.
+  Fix: No fix needed for current design.
+
+[MINOR] components/HostControls.tsx:67-71 - reveal1 phase has confusing button labels
+  The reveal1 phase shows "Show Scores" (nextReveal) and "Next Phase"
+  (startRound). "Show Scores" transitions to interstitial, and
+  "Next Phase" restarts round 1 (see MAJOR finding above). These
+  labels don't accurately describe their actions.
+  Impact: Host UX confusion — buttons do unexpected things.
+  Fix: Rename or remove buttons (tied to the MAJOR finding above).
+
+[MINOR] app/host/[code]/page.tsx:11-14 - Room code casing inconsistency
+  Line 11: `code` is uppercased for display. Line 14: socket connects with
+  `code.toLowerCase()`. The room is created with whatever case the host
+  URL uses. If a player joins with a different case, they connect to
+  the same lowercased room name (good) but display different cases (cosmetic).
+  Impact: Purely cosmetic — functionality is correct.
+  Fix: Consistent casing is fine. The lowercasing ensures all clients
+       connect to the same room.
+
+
+==============================
+  POTENTIAL RACE CONDITIONS
+==============================
+
+[MAJOR] party/index.ts:248-254 - Timer expiry and host "skipToReveal" can race
+  If the host clicks "Skip to Reveal" at the exact moment the timer expires,
+  both `handleHostAction("skipToReveal")` and the timer callback will call
+  `calculateAllScores` and `endRound`. Since JavaScript is single-threaded
+  in Node.js, these won't actually interleave, but the timer callback
+  could fire after `endRound` already transitioned the phase. The second
+  call to endRound would be a no-op (phase is no longer round1/round2),
+  and calculateAllScores would run twice (harmless but wasteful).
+  Impact: Harmless double-calculation. Scores are idempotent.
+  Fix: Check phase in the timer callback before calling endRound.
+
+[MINOR] components/PlayerView.tsx:47-78 - onMessage listener captures stale teamId
+  The useEffect on line 47 captures `teamId` in its closure. If the player's
+  team assignment changes (not currently possible but theoretically via
+  server state update), the listener would still filter by the old teamId.
+  Impact: None in current design — team assignment is permanent.
+  Fix: No fix needed unless team reassignment is added later.
+
+
+==============================
+  SECURITY NOTES
+==============================
+
+[MINOR] party/index.ts:40 - Client messages parsed with unchecked `as ClientMessage` cast
+  Line 40: `JSON.parse(message) as ClientMessage` — no runtime validation
+  of the message shape. A malicious client could send arbitrary JSON that
+  doesn't match ClientMessage, and the switch statement would hit the
+  default case (no-op). Most fields are checked before use (e.g., player
+  lookup), so this is low risk.
+  Impact: Low — malformed messages are ignored or cause no-ops.
+  Fix: Acceptable for a game, but adding zod/valibot validation would
+       make it more robust.
+
+[MINOR] party/index.ts:163-170 - AI response HTTP endpoint has no authentication
+  The onRequest handler accepts POST requests from anywhere (CORS: *)
+  with no authentication. Anyone who knows the room code could send
+  fake AI responses to place blocks and inject chat messages.
+  Impact: Cheating / griefing vector — attacker could place arbitrary
+          blocks or send fake "Scout" messages.
+  Fix: Add a shared secret or signature between the Next.js API route
+       and the PartyKit server. For a game jam project this is low priority.
+
+[MINOR] app/api/ai/chat/route.ts:13 - No rate limiting on AI chat endpoint
+  The AI chat endpoint calls the Anthropic API with no rate limiting.
+  A malicious client could spam the endpoint, running up API costs.
+  Impact: Potential API cost abuse.
+  Fix: Add rate limiting per team/player, or throttle on the client side.
+
+
+================================================================================
+  SUMMARY
+================================================================================
+
+CRITICAL: 5
+  - Player ID detection by name match (wrong player bound)
+  - Host disconnect doesn't pause timer (game gets stuck)
+  - removePlayer doesn't clean up team roster (ghost players)
+  - Round 2 role swap includes disconnected players (broken roles)
+  - Team roster doesn't account for disconnections (unbalanced teams)
+
+MAJOR: 9
+  - AI response applies outside round2 (chat leaks into reveal)
+  - AI chat has no conversation history
+  - Anthropic client may crash on missing key
+  - Timer resolution mismatch (up to 1s drift)
+  - setTimeout leak on rapid block placement
+  - JSON.parse without try/catch in socket handler
+  - reveal1 "Next Phase" button restarts round 1
+  - calculateAllScores uses hardcoded target for round 2
+  - Role swap doesn't handle solo-player teams
+  - Timer/skipToReveal race condition
+  - RoundTransition window.innerHeight SSR mismatch
+
+MINOR: 14
+  - Various cosmetic, edge case, and hardcoded value issues
+
+RECOMMENDATION: Fix the 5 CRITICAL issues first, as they all relate to
+the core game flow breaking when players disconnect. The player ID
+detection bug is the highest priority since it can trigger with normal
+usage (two players choosing the same name).
+================================================================================

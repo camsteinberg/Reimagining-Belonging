@@ -1,0 +1,266 @@
+========================================================================
+UNIT TEST RESULTS & LOGIC VERIFICATION
+========================================================================
+Date: 2026-02-23
+Runner: npx jest --verbose
+
+========================================================================
+STEP 1: EXISTING TEST RESULTS
+========================================================================
+
+All 17 tests PASS across 2 test suites.
+
+Test Suite 1: __tests__/scoring.test.ts (11 tests)
+  PASS - returns 100% when build exactly matches target
+  PASS - returns 0% when blocks are placed in entirely wrong positions
+  PASS - penalizes extra blocks not present in target
+  PASS - reduces percentage when expected blocks are missing from build
+  PASS - returns the correct percentage for a partial match
+  PASS - returns 0% when build is empty but target has blocks
+  PASS - returns 0% (total=0) when both target and build are empty
+  PASS - returns cell results with correct row, col, expected, actual, and correct fields
+  PASS - marks cell as correct=true when build matches target at that position
+  PASS - includes extra-block cell results with correct=false
+  PASS - rounds percentage to nearest integer
+
+Test Suite 2: __tests__/parseAIActions.test.ts (6 tests)
+  PASS - extracts actions from <actions> tags
+  PASS - returns empty actions when no tags present
+  PASS - rejects invalid block types
+  PASS - rejects out-of-bounds coordinates
+  PASS - handles malformed JSON gracefully
+  PASS - handles multiple valid and invalid actions
+
+Test Suites: 2 passed, 2 total
+Tests:       17 passed, 17 total
+Time:        0.319s
+
+========================================================================
+STEP 2: SCORING LOGIC VERIFICATION (lib/scoring.ts)
+========================================================================
+
+Function: calculateDetailedScore(build: Grid, target: Grid): DetailedScore
+
+Algorithm:
+  For each cell (r,c) in the 8x8 grid:
+    - If target[r][c] != "empty": increment total; if build matches, increment correct
+    - If target[r][c] == "empty" && build[r][c] != "empty": increment total (penalty)
+  percentage = total == 0 ? 0 : Math.round(correct / total * 100)
+
+--- Scenario 1: Perfect match ---
+Target: walls at (0,0), (0,1), (1,0). Build: same.
+Trace: total=3, correct=3. Result: Math.round(3/3*100) = 100%
+CORRECT
+
+--- Scenario 2: Completely wrong (target has walls, build all empty) ---
+Target: walls at (0,0), (0,1), (1,0). Build: all "empty".
+Trace: For each target wall cell, actual is "empty", so total++ but correct stays 0.
+  total=3, correct=0. Result: Math.round(0/3*100) = 0%
+CORRECT
+
+--- Scenario 3: Partial match (4 walls target, 2 correct + 2 wrong) ---
+Target: walls at (0,0), (0,1), (0,2), (0,3). Build: walls at (0,0), (0,1) only.
+Trace: (0,0) correct, (0,1) correct, (0,2) miss, (0,3) miss.
+  total=4, correct=2. Result: 50%
+CORRECT
+
+--- Scenario 4: Extra blocks penalty ---
+Target: walls at (0,0), (0,1). Build: walls at (0,0), (0,1), (2,0), (3,0), (4,0).
+Trace: (0,0) correct, (0,1) correct => total=2, correct=2
+  Extra blocks at (2,0), (3,0), (4,0): 3 extra penalties => total=5, correct=2
+  Result: Math.round(2/5*100) = 40%
+  Penalty confirmed: without extra blocks would be 100%, now reduced to 40%.
+CORRECT -- extra blocks reduce score
+
+--- Scenario 5: Empty target ---
+Target: all "empty". Build: all "empty".
+Trace: No cell has expected != "empty", no extra blocks.
+  total=0, correct=0. Result: total==0 -> 0
+Note: returns 0% with total=0 (not 100%).
+DESIGN OBSERVATION: Both-empty returns 0% rather than 100%. This is a deliberate
+design choice documented in the test. Since an empty target should never occur in
+actual gameplay (targets are hardcoded), this is acceptable. The alternative
+(returning 100% for empty targets) could mislead if a target accidentally loaded
+as empty.
+
+--- Scenario 6: Empty build (target has blocks) ---
+Target: walls at (0,0), (0,1). Build: all "empty".
+Trace: (0,0) expected "wall", actual "empty" -> total++, correct stays.
+  (0,1) same. total=2, correct=0. Result: 0%
+CORRECT
+
+--- Additional note on gameState.ts calculateScore() ---
+There is a DUPLICATE scoring function at party/gameState.ts:131-154 (calculateScore).
+This function implements the same algorithm as lib/scoring.ts calculateDetailedScore
+but returns only a number (no cell results). Both implementations are consistent
+in their logic.
+OBSERVATION: Having two implementations of the same algorithm is a maintenance risk.
+If one is updated without the other, scores could diverge. Consider having
+calculateScore call calculateDetailedScore internally and extract .percentage.
+
+========================================================================
+STEP 3: PARSING LOGIC VERIFICATION (lib/parseAIActions.ts)
+========================================================================
+
+Function: parseAIResponse(text: string): AIResponse
+
+--- Check 1: Extracts actions from <actions>...</actions> XML tags ---
+Uses regex: /<actions>([\s\S]*?)<\/actions>/
+The [\s\S]*? pattern handles multiline content. First match only.
+CORRECT
+
+--- Check 2: Validates block types against allowed set ---
+VALID_BLOCKS = Set(["wall", "floor", "roof", "window", "door", "empty"])
+Each action checked: VALID_BLOCKS.has(item.block)
+CORRECT -- matches BlockType union from types.ts
+
+--- Check 3: Validates row/col within bounds ---
+item.row >= 0 && item.row < GRID_SIZE && item.col >= 0 && item.col < GRID_SIZE
+Uses GRID_SIZE constant (imported from lib/constants.ts, value: 8).
+So valid range is 0-7 for both row and col.
+CORRECT -- no hardcoded values
+
+--- Check 4: Graceful handling of edge cases ---
+  a) No <actions> tag: actionsMatch is null, skip block, return empty actions. CORRECT
+  b) Empty actions content: JSON.parse("") throws, caught by catch block. CORRECT
+  c) Malformed JSON: caught by try/catch, returns empty actions. CORRECT
+  d) Invalid block types: filtered out by VALID_BLOCKS.has() check. CORRECT
+  e) Parsed value not an array: Array.isArray(parsed) check prevents iteration. CORRECT
+  f) Missing row/col fields: typeof checks prevent undefined from passing. CORRECT
+
+--- Check 5: Uses GRID_SIZE constant ---
+import { GRID_SIZE } from "./constants";
+All bounds checks use GRID_SIZE, not hardcoded 8.
+CORRECT
+
+OBSERVATION: The parser allows "empty" as a valid block type for AI actions.
+Placing an "empty" block effectively erases a cell. This is intentional (the
+BLOCK_LABELS map includes "empty" -> "Erase"). No issue.
+
+========================================================================
+STEP 4: GAME STATE FUNCTIONS VERIFICATION (party/gameState.ts)
+========================================================================
+
+--- createRoomState() ---
+Returns: { code: 4-char, phase: "lobby", players: {}, teams: {},
+           currentTarget: null, round: 1, timerEnd: null, hostConnected: false }
+CORRECT - all fields initialized properly. Room code generated from
+chars "ABCDEFGHJKLMNPQRSTUVWXYZ" (excludes I, O to avoid confusion).
+
+--- addPlayer(state, id, name) ---
+1. Finds first team with fewer than MAX_TEAM_SIZE (3) players.
+2. If no team available, creates new team with incrementing index.
+3. Team names cycle from TEAM_NAMES (8 names) using modulo.
+4. First player in each team gets role "architect", others get "builder".
+5. Player added to state.players and team.players array.
+CORRECT
+
+OBSERVATION: If a player disconnects and reconnects with a different ID,
+they will be added as a new player (not rejoined). The removePlayer function
+only sets connected=false but doesn't free the slot. This means:
+  - The old player's slot is still counted toward MAX_TEAM_SIZE
+  - The reconnected player could end up on a different team
+This is a potential issue for production but may be acceptable for a
+demo/prototype.
+
+--- removePlayer(state, id) ---
+Sets player.connected = false. Does NOT remove from state.players or
+team.players array.
+OBSERVATION: This is a soft-disconnect approach. The player still counts
+toward team size. If the game needs to handle reconnections, this is fine.
+If the game needs to rebalance teams after disconnections, additional logic
+would be needed.
+
+--- startRound(state) ---
+1. Only starts from phases: "lobby", "reveal1", "interstitial"
+2. If phase is "interstitial" -> round 2, else round 1
+3. Sets currentTarget from hardcoded ROUND_1_TARGET or ROUND_2_TARGET
+4. Sets timerEnd = Date.now() + ROUND_DURATION_MS (5 min)
+5. For round 2: snapshots round1Grid before clearing, then resets all grids
+6. For round 2: swaps all player roles (architect <-> builder)
+CORRECT
+
+OBSERVATION: startRound from "reveal1" starts round 1 again (not round 2).
+This means re-starting round 1 is possible from reveal1 phase, which could
+be used for "retry" functionality. However, the advancePhase function
+transitions reveal1 -> interstitial, so in normal flow this path is not taken
+(host would call advancePhase, not startRound, from reveal1).
+
+--- endRound(state) ---
+round1 -> reveal1, round2 -> finalReveal. Clears timerEnd.
+CORRECT -- simple phase transition.
+NOTE: Does NOT call calculateAllScores(). Scores must be calculated
+separately. This is a design choice (caller controls when scores are computed).
+
+--- advancePhase(state) ---
+Transitions: reveal1 -> interstitial, interstitial -> round2,
+             finalReveal -> summary
+ISSUE FOUND: advancePhase has "interstitial" -> "round2" transition, but
+startRound also handles the interstitial -> round2 transition (with timer
+setup, grid reset, role swap, etc.). If advancePhase is called from
+interstitial instead of startRound, the game would jump to round2 phase
+WITHOUT setting up the timer, target, grid reset, or role swap.
+
+The server code should ensure that from the "interstitial" phase, only
+startRound() is called (not advancePhase). If the host "nextReveal" action
+calls advancePhase from interstitial, round 2 would be broken.
+
+SEVERITY: MEDIUM -- depends on server-side dispatch logic. If the server
+correctly calls startRound() from interstitial, this is not an issue.
+But the advancePhase mapping is misleading and could cause bugs if
+a developer calls it from interstitial phase.
+
+--- placeBlock(state, teamId, row, col, block) ---
+1. Validates team exists
+2. Validates bounds: 0 <= row < GRID_SIZE, 0 <= col < GRID_SIZE
+3. Validates phase is "round1" or "round2"
+4. Sets team.grid[row][col] = block
+CORRECT
+
+NOTE: Does not validate that block is a valid BlockType. The TypeScript type
+system handles this at compile time, but at runtime (from WebSocket messages),
+an invalid block type could be set. The server should validate the block type
+before calling placeBlock.
+
+--- calculateAllScores(state) ---
+1. Gets currentTarget; returns early if null.
+2. For each team:
+   - Round 1: team.round1Score = calculateScore(team.grid, target)
+   - Round 2: team.round2Score = calculateScore(team.grid, ROUND_2_TARGET)
+
+ISSUE FOUND: In round 2, the function uses the hardcoded ROUND_2_TARGET
+instead of state.currentTarget. While these should be the same value (since
+startRound sets currentTarget = ROUND_2_TARGET for round 2), this is
+inconsistent with the round 1 path which uses state.currentTarget.
+SEVERITY: LOW -- functionally equivalent but inconsistent code style.
+
+========================================================================
+SUMMARY OF FINDINGS
+========================================================================
+
+TESTS: All 17 existing tests PASS.
+
+SCORING LOGIC: CORRECT
+  - All 6 scenarios verified to produce expected results
+  - Rounding behavior confirmed (Math.round)
+  - Edge case: empty target/build returns 0% (design choice, acceptable)
+  - NOTE: Duplicate scoring function in gameState.ts -- maintenance risk
+
+PARSING LOGIC: CORRECT
+  - XML tag extraction works with regex
+  - All validation checks present and use GRID_SIZE constant
+  - Graceful degradation for all malformed input cases
+  - "empty" allowed as a valid action block type (intentional)
+
+GAME STATE LOGIC: MOSTLY CORRECT with observations
+  - MEDIUM: advancePhase() maps interstitial -> round2 which could bypass
+    startRound() initialization if called incorrectly
+  - LOW: calculateAllScores uses hardcoded ROUND_2_TARGET for round 2
+    instead of state.currentTarget (functionally equivalent but inconsistent)
+  - NOTE: removePlayer does soft-disconnect only (player slot still occupied)
+  - NOTE: placeBlock does not validate BlockType at runtime
+  - NOTE: endRound does not automatically calculate scores
+
+NO BLOCKING BUGS FOUND. The codebase logic is sound for its intended use case.
+The medium-severity issue with advancePhase is a footgun that depends on how
+the server dispatches host actions.
