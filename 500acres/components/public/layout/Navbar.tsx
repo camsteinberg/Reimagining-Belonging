@@ -334,22 +334,6 @@ export default function Navbar({ isHomepage }: NavbarProps) {
         </Link>
       </div>
 
-      {/* Fixed auth button -- visible next to menu, hidden when overlay open */}
-      <Link
-        href={isLoggedIn ? "/dashboard" : "/login"}
-        className={`fixed top-7 right-[4.5rem] md:top-9 md:right-[5.5rem] lg:right-[6rem] z-[260] rounded-full px-4 py-1.5 text-xs font-semibold tracking-wide border transition-all duration-300 ${
-          isOpen
-            ? "opacity-0 pointer-events-none"
-            : "opacity-100"
-        } ${
-          overDark
-            ? "border-cream/30 text-cream hover:bg-cream hover:text-charcoal"
-            : "border-charcoal/20 text-charcoal hover:bg-charcoal hover:text-cream"
-        }`}
-      >
-        {isLoggedIn ? "Dashboard" : "Sign in"}
-      </Link>
-
       {/* Fixed menu button -- ALWAYS visible */}
       <button
         ref={menuBtnRef}
@@ -516,7 +500,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                     <Link
                       key="auth-link"
                       href="/login"
-                      className="font-sans text-sm tracking-wide border border-charcoal/20 text-charcoal px-4 py-2 rounded-full hover:bg-charcoal hover:text-cream transition-colors"
+                      className="font-sans text-sm tracking-wide text-charcoal/70 hover:text-charcoal transition-colors"
                     >
                       Login
                     </Link>
