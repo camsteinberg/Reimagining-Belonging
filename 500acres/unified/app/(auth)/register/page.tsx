@@ -166,8 +166,8 @@ export default function RegisterPage() {
                 <div
                   className={`rounded-2xl border px-4 py-3 text-sm ${
                     status.tone === 'success'
-                      ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                      : 'border-red-200 bg-red-50 text-red-600'
+                      ? 'border-[#3d6b4f]/20 bg-[#3d6b4f]/5 text-[#3d6b4f]'
+                      : 'border-[#c45d3e]/20 bg-[#c45d3e]/5 text-[#c45d3e]'
                   }`}
                 >
                   {status.message}

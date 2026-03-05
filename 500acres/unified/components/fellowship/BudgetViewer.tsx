@@ -108,7 +108,7 @@ export default function BudgetViewer({ role = 'fellow', currentUser }: Props) {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+        <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
           Failed to load budget: {String((error as any)?.message ?? '')}
         </div>
       )}

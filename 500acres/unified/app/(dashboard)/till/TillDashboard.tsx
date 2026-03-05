@@ -68,7 +68,7 @@ const fmtMoney = (value?: number) => {
   return `${rounded < 0 ? '-$' : '$'}${Math.abs(rounded).toLocaleString()}`;
 };
 
-const deltaTone = (value?: number) => (typeof value === 'number' && value < 0 ? 'text-rose-500' : 'text-emerald-600');
+const deltaTone = (value?: number) => (typeof value === 'number' && value < 0 ? 'text-[#c45d3e]' : 'text-[#3d6b4f]');
 
 export default function TillDashboard({ username, role }: Props) {
   const [data, setData] = useState<TillData | null>(null);
@@ -169,7 +169,7 @@ export default function TillDashboard({ username, role }: Props) {
       </div>
 
       {error && (
-        <div className="rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className="rounded-3xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-4 py-3 text-sm text-[#c45d3e]">
           Failed to load financials: {error}
         </div>
       )}

@@ -118,7 +118,7 @@ export default function LoginForm() {
               </div>
 
               {error && (
-                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                <div className="rounded-2xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-4 py-3 text-sm text-[#c45d3e]">
                   {error}
                 </div>
               )}

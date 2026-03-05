@@ -158,7 +158,7 @@ export default function BarndobucksDashboard({ username, role, embedded, hidePro
     <div className={`${embedded ? 'space-y-4' : 'space-y-6'} text-[var(--color-text)]`}>
       {error ? (
         <SurfaceCard variant="muted">
-          <p className="text-sm text-red-600">Failed to load BarndoBucks data: {error}</p>
+          <p className="text-sm text-[#c45d3e]">Failed to load BarndoBucks data: {error}</p>
         </SurfaceCard>
       ) : null}
 

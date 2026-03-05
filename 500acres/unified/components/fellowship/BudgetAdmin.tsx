@@ -537,7 +537,7 @@ export default function BudgetAdmin() {
                 />
               </div>
 
-              {addError ? <p className="text-sm text-red-500">{addError}</p> : null}
+              {addError ? <p className="text-sm text-[#c45d3e]">{addError}</p> : null}
 
               <div className="flex justify-end gap-2">
                 <button
@@ -588,7 +588,7 @@ export default function BudgetAdmin() {
         <div className="text-sm text-center text-[var(--color-text-muted)]">Loading budget…</div>
       )}
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 text-center">
+        <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e] text-center">
           Failed to load budget: {String((error as any)?.message ?? '')}
         </div>
       )}
@@ -758,12 +758,12 @@ export default function BudgetAdmin() {
           <div className="text-sm text-center text-[var(--color-text-muted)]">Loading grants…</div>
         )}
         {grantsError && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600 text-center">
+          <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e] text-center">
             Failed to load grants: {String((grantsError as any)?.message ?? '')}
           </div>
         )}
         {actionError && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-600">
+          <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-xs text-[#c45d3e]">
             {actionError}
           </div>
         )}
@@ -949,11 +949,11 @@ export default function BudgetAdmin() {
                             statusLabel === 'pending'
                               ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-strong)]'
                               : statusLabel === 'approved'
-                              ? 'bg-green-100 text-green-800'
+                              ? 'bg-[#6b8f71]/15 text-[#3d6b4f]'
                               : statusLabel === 'closed'
                               ? 'bg-slate-200 text-slate-800'
                               : statusLabel === 'denied'
-                              ? 'bg-red-100 text-red-700'
+                              ? 'bg-[#c45d3e]/10 text-[#c45d3e]'
                               : 'bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)]'
                           }`}
                         >
@@ -1127,7 +1127,7 @@ export default function BudgetAdmin() {
                   }}
                 />
                 {uploadFileError && (
-                  <p className="text-xs text-red-600">{uploadFileError}</p>
+                  <p className="text-xs text-[#c45d3e]">{uploadFileError}</p>
                 )}
                 {uploadFileName && (
                   <p className="text-xs text-[var(--color-text-muted)]">Selected: {uploadFileName}</p>
@@ -1270,7 +1270,7 @@ export default function BudgetAdmin() {
                 Receipts
               </div>
               {detailsReceiptsError && (
-                <p className="mt-2 text-xs text-red-600">
+                <p className="mt-2 text-xs text-[#c45d3e]">
                   Failed to load receipts: {String((detailsReceiptsError as any)?.message ?? '')}
                 </p>
               )}

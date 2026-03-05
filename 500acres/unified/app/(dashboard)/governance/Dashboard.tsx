@@ -81,16 +81,16 @@ function isTopQHiddenColumnInTable(label?: string) {
 
 /** Status-like pill styling for the Module select */
 const MODULE_THEMES: Record<string, { bg: string; fg: string; border: string }> = {
-  'fellowship grants': { bg: '#DCFCE7', fg: '#166534', border: '#BBF7D0' },
-  'r&d': { bg: '#DBEAFE', fg: '#1D4ED8', border: '#BFDBFE' },
-  governance: { bg: '#FEF3C7', fg: '#B45309', border: '#FDE68A' },
-  outpost: { bg: '#FECACA', fg: '#B91C1C', border: '#FCA5A5' },
-  nesting: { bg: '#DBEAFE', fg: '#0F172A', border: '#93C5FD' },
-  'real estate': { bg: '#EDE9FE', fg: '#5B21B6', border: '#DDD6FE' },
-  till: { bg: '#DCFCE7', fg: '#166534', border: '#BBF7D0' },
+  'fellowship grants': { bg: '#e8f0e4', fg: '#3d6b4f', border: '#c8dece' },
+  'r&d': { bg: '#e0edf2', fg: '#3a5a6e', border: '#c0d8e4' },
+  governance: { bg: '#f5f0dc', fg: '#8b5e3c', border: '#e8dfc0' },
+  outpost: { bg: '#f5e8e4', fg: '#c45d3e', border: '#e8d0ca' },
+  nesting: { bg: '#e0edf2', fg: '#2a2520', border: '#c0d8e4' },
+  'real estate': { bg: '#eee4f0', fg: '#5c3d2e', border: '#ddd0e0' },
+  till: { bg: '#e8f0e4', fg: '#3d6b4f', border: '#c8dece' },
 };
 
-const LEAD_COLORS = ['#DCFCE7', '#FCE7F3', '#E0F2FE', '#FFF7CE', '#F5E8FF', '#FFE4E6'];
+const LEAD_COLORS = ['#e8f0e4', '#f5e8e4', '#e0edf2', '#f5f0dc', '#eee4f0', '#f5e4e4'];
 
 const STAT_TONE_CLASSES = {
   primary: 'bg-[color-mix(in_srgb,var(--color-primary)_16%,_transparent)] text-[var(--color-primary-strong)]',
@@ -138,8 +138,8 @@ function leadSelectStyle(value?: string): CSSProperties {
 }
 
 function statusSelectClass(status: string) {
-  if (status === 'Answered') return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
-  if (status === 'Needs Forum') return 'bg-amber-100 text-amber-700 border border-amber-200';
+  if (status === 'Answered') return 'bg-[#6b8f71]/15 text-[#3d6b4f] border border-[#6b8f71]/25';
+  if (status === 'Needs Forum') return 'bg-[#d4a84b]/15 text-[#8b5e3c] border border-[#d4a84b]/25';
   return 'bg-[var(--color-surface-subtle)] text-[var(--color-text)] border border-[var(--color-border-soft)]';
 }
 
@@ -710,7 +710,7 @@ export default function GovernanceDashboard({ username, role }: Props) {
           </div>
         </div>
 
-        {err && <p className="text-sm text-red-600">{err}</p>}
+        {err && <p className="text-sm text-[#c45d3e]">{err}</p>}
 
         <div className="overflow-x-auto">
           <table className="w-full table-fixed text-xs sm:text-sm">

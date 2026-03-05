@@ -293,8 +293,8 @@ export default function RealEstateDashboard({ username, role }: Props) {
     const leaseStatus = row.leaseStatus || '--';
     const ownershipBadge = (() => {
       const normalized = (row.leaseStatus || '').toLowerCase();
-      if (normalized.includes('own')) return 'bg-green-100 text-green-800';
-      if (normalized.includes('lease')) return 'bg-blue-100 text-blue-800';
+      if (normalized.includes('own')) return 'bg-[#6b8f71]/15 text-[#3d6b4f]';
+      if (normalized.includes('lease')) return 'bg-[#3a5a6e]/15 text-[#3a5a6e]';
       return 'bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)]';
     })();
 
@@ -445,7 +445,7 @@ export default function RealEstateDashboard({ username, role }: Props) {
 
       {/* Detail Table */}
       <SurfaceCard padding="sm" className="mt-6 space-y-4">
-        {err && <p className="text-sm text-red-600">{err}</p>}
+        {err && <p className="text-sm text-[#c45d3e]">{err}</p>}
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="sticky top-0 z-10 border-b border-[var(--color-border-soft)] bg-[var(--color-surface)] text-[var(--color-text-muted)]">
@@ -603,7 +603,7 @@ export default function RealEstateDashboard({ username, role }: Props) {
               <div className="h-[70vh] w-full overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-surface)]">
                 <div className="h-full w-full">
                   {loadError ? (
-                    <div className="flex h-full items-center justify-center text-sm text-red-600">
+                    <div className="flex h-full items-center justify-center text-sm text-[#c45d3e]">
                       Failed to load map. Check your API key / billing.
                     </div>
                   ) : !isLoaded ? (

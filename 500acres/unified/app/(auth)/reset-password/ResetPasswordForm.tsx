@@ -41,7 +41,7 @@ export default function ResetPasswordForm() {
     <div className="max-w-sm mx-auto mt-10">
       <h1 className="text-xl mb-4">Set a new password</h1>
       {ok ? (
-        <p className="text-sm text-green-700">Password updated. Redirecting…</p>
+        <p className="text-sm text-[#3d6b4f]">Password updated. Redirecting…</p>
       ) : (
         <form onSubmit={submit} className="space-y-4">
           <div>
@@ -68,7 +68,7 @@ export default function ResetPasswordForm() {
               required
             />
           </div>
-          {error && <p className="text-red-600 text-sm">{error}</p>}
+          {error && <p className="text-[#c45d3e] text-sm">{error}</p>}
           <button disabled={loading || !token} className="w-full border p-2 rounded">
             {loading ? 'Saving…' : 'Save new password'}
           </button>

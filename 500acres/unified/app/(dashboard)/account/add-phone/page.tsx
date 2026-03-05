@@ -72,8 +72,8 @@ export default function AddPhonePage() {
   return (
     <div className="max-w-sm mx-auto mt-10 space-y-4">
       <h1 className="text-xl font-semibold">Add your phone</h1>
-      {msg && <p className="text-green-700 text-sm">{msg}</p>}
-      {err && <p className="text-red-600 text-sm">{err}</p>}
+      {msg && <p className="text-[#3d6b4f] text-sm">{msg}</p>}
+      {err && <p className="text-[#c45d3e] text-sm">{err}</p>}
 
       {stage === 'enter' ? (
         <form onSubmit={start} className="space-y-4">

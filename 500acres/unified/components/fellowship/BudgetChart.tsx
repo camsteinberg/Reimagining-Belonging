@@ -30,7 +30,7 @@ const fmtMoney = (value: unknown) => `$${Number(value ?? 0).toLocaleString()}`;
 
 // Palette tuned to the app's green-focused theme
 const ALLOCATED = 'var(--color-danger)';
-const KPI_COMPLETED = '#48c58a';
+const KPI_COMPLETED = '#6b8f71';
 const KPI_PENDING = '#b7e4cc';
 const AXIS = 'rgba(20,63,42,0.58)';
 const LABEL = 'rgba(20,63,42,0.82)';

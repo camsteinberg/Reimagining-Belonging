@@ -162,7 +162,7 @@ function WeeklyPayCard() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+        <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
           Failed to load pay: {String((error as any)?.message ?? '')}
         </div>
       )}
@@ -285,14 +285,14 @@ function KPIsCard() {
         <button
           type="button"
           onClick={() => setOpenAdd(true)}
-          className="rounded-xl bg-emerald-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600"
+          className="rounded-xl bg-[#c45d3e] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#8b5e3c]"
         >
           Add KPI
         </button>
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+        <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
           Failed to load KPIs: {String((error as any)?.message ?? '')}
         </div>
       )}
@@ -357,8 +357,8 @@ function KPIsCard() {
                       <span
                         className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
                           row.is_done
-                            ? 'bg-emerald-100 text-emerald-700'
-                            : 'bg-red-100 text-red-600'
+                            ? 'bg-[#6b8f71]/15 text-[#3d6b4f]'
+                            : 'bg-[#c45d3e]/10 text-[#c45d3e]'
                         }`}
                       >
                         {row.is_done ? 'Completed' : 'Open'}
@@ -398,7 +398,7 @@ function KPIsCard() {
                         <button
                           type="button"
                           onClick={() => remove(row.id)}
-                          className="rounded-lg bg-red-500 px-3 py-2 text-xs font-semibold text-white hover:bg-red-600"
+                          className="rounded-lg bg-[#c45d3e] px-3 py-2 text-xs font-semibold text-white hover:bg-[#8b5e3c]"
                         >
                           Delete
                         </button>
@@ -449,7 +449,7 @@ function KPIsCard() {
             <button
               type="button"
               onClick={add}
-              className="rounded-xl bg-emerald-500 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-600"
+              className="rounded-xl bg-[#c45d3e] px-3 py-2 text-sm font-semibold text-white hover:bg-[#8b5e3c]"
             >
               Add
             </button>
@@ -566,7 +566,7 @@ function GrantsCard() {
               resetForm();
               setOpenAdd(true);
             }}
-            className="rounded-xl bg-emerald-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600"
+            className="rounded-xl bg-[#c45d3e] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#8b5e3c]"
           >
             Request grant
           </button>
@@ -574,7 +574,7 @@ function GrantsCard() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+        <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
           Failed to load grants: {String((error as any)?.message ?? '')}
         </div>
       )}
@@ -718,7 +718,7 @@ function GrantsCard() {
               />
               <div
                 className={`mt-1 text-[0.7rem] ${
-                  purpose.trim().length < 50 ? 'text-red-600' : 'text-[var(--color-text-muted)]'
+                  purpose.trim().length < 50 ? 'text-[#c45d3e]' : 'text-[var(--color-text-muted)]'
                 }`}
               >
                 {purpose.trim().length}/50 minimum characters required.
@@ -789,7 +789,7 @@ function GrantsCard() {
                 Number(amount || 0) <= 0 ||
                 purpose.trim().length < 50
               }
-              className="rounded-xl bg-emerald-500 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600 disabled:opacity-70"
+              className="rounded-xl bg-[#c45d3e] px-3 py-2 text-sm font-semibold text-white transition hover:bg-[#8b5e3c] disabled:opacity-70"
             >
               {submitting ? 'Submitting...' : 'Submit request'}
             </button>
@@ -885,7 +885,7 @@ function ReceiptsModal({ grantId, onClose }: ReceiptsModalProps) {
     <ModalShell title={`Receipts for Grant ${grantId}`} onClose={onClose}>
       <div className="space-y-4">
         {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+          <div className="rounded-xl border border-[#c45d3e]/20 bg-[#c45d3e]/5 px-3 py-2 text-sm text-[#c45d3e]">
             Failed to load receipts: {String((error as any)?.message ?? '')}
           </div>
         )}
@@ -1004,7 +1004,7 @@ function ReceiptsModal({ grantId, onClose }: ReceiptsModalProps) {
               type="button"
               onClick={addReceipt}
               disabled={saving}
-              className="rounded-xl bg-emerald-500 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-600 disabled:opacity-70"
+              className="rounded-xl bg-[#c45d3e] px-3 py-2 text-xs font-semibold text-white hover:bg-[#8b5e3c] disabled:opacity-70"
             >
               {saving ? 'Saving…' : 'Add receipt'}
             </button>
