@@ -3,9 +3,13 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import sql from '@/lib/db';
 import { normalizePhone } from '@/lib/phone';
+import { createRateLimiter, getClientIp } from '@/lib/rateLimiter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+// 3 attempts per minute per IP
+const isRateLimited = createRateLimiter(3, 60_000);
 
 type IdRow = { id: string };
 
@@ -15,6 +19,10 @@ function looksLikeEmail(s: string) {
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ success: false, message: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
     const { username, email, password, phone, role } = await req.json();
 
     const uname = (username || '').trim();

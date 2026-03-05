@@ -1337,7 +1337,8 @@ body:not(.phone-circle-visible) .slide6 .brownText {
 .initMapText3Quote {
   position: absolute;
   top: 270vh;
-  left: 50px;
+  left: clamp(20px, 5vw, 50px);
+  right: clamp(20px, 5vw, 50px);
   font-family: "Inter", sans-serif;
   font-size: 15px;
   color: #9f4f2e;
@@ -2463,8 +2464,19 @@ body.slide25-active .slide25 .imgContainer7 {
   .slide10TextContainer,
   .slide11TextContainer {
     font-size: 18px;
-    padding: 0 24px;
+    padding: 0 clamp(16px, 5vw, 40px);
     width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .slide26TextContainer,
+  .slide27TextContainer {
+    font-size: 16px;
+    padding: 0 clamp(16px, 5vw, 40px);
+    width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   .slide4BottomText {
@@ -2561,6 +2573,8 @@ body.slide25-active .slide25 .imgContainer7 {
     font-size: 16px;
     padding: 0 20px;
     width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   /* Slide 20-23 — Orbs */
@@ -2581,6 +2595,8 @@ body.slide25-active .slide25 .imgContainer7 {
     font-size: 16px;
     padding: 0 24px;
     width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   /* Slide 24 — SVG portraits (handled by inline styles, but help with sizing) */
@@ -2589,6 +2605,8 @@ body.slide25-active .slide25 .imgContainer7 {
     left: 5vw;
     font-size: 16px;
     padding-right: 20px;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 
   /* Slide 25 — Ideal home drawings */
@@ -2623,12 +2641,14 @@ body.slide25-active .slide25 .imgContainer7 {
     height: auto;
     max-height: 85vh;
     border-radius: 20px;
+    overflow-x: hidden;
   }
 
   .popupHeader {
     position: static;
     margin: 20px;
     font-size: 22px;
+    word-break: break-word;
   }
 
   .popupDesc {
@@ -2636,6 +2656,7 @@ body.slide25-active .slide25 .imgContainer7 {
     margin: 0 20px 15px;
     max-width: none;
     font-size: 14px;
+    word-break: break-word;
   }
 
   .popupTopText {
@@ -2663,6 +2684,7 @@ body.slide25-active .slide25 .imgContainer7 {
     height: auto;
     max-height: 85vh;
     border-radius: 20px;
+    overflow-x: hidden;
   }
 
   .popWinContainer1 img,
@@ -2683,6 +2705,7 @@ body.slide25-active .slide25 .imgContainer7 {
     position: static;
     margin: 20px;
     font-size: 24px;
+    word-break: break-word;
   }
 
   .popWinDesc {
@@ -2690,6 +2713,7 @@ body.slide25-active .slide25 .imgContainer7 {
     margin: 0 20px 30px;
     font-size: 15px;
     padding-right: 0;
+    word-break: break-word;
   }
 
   /* Maps — responsive sizing */
@@ -2877,6 +2901,14 @@ body.slide25-active .slide25 .imgContainer7 {
   bottom: 70%;
   min-width: 180px;
   max-width: 210px;
+}
+
+@media (max-width: 480px) {
+  .scout-speech-bubble {
+    min-width: 140px;
+    max-width: 170px;
+    font-size: 13px;
+  }
 }
 
 .scout-bubble-tail {

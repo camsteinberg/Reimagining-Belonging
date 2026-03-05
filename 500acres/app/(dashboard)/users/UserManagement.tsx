@@ -189,8 +189,8 @@ function UserRow({
     >
       {/* Left: identity */}
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-sans text-sm font-semibold text-[var(--color-text)] truncate">
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
+          <span className="font-sans text-sm font-semibold text-[var(--color-text)] truncate max-w-[200px]">
             {user.username ?? 'Unnamed'}
           </span>
           <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${roleClass}`}>
@@ -200,8 +200,8 @@ function UserRow({
             {user.status ?? 'unknown'}
           </span>
         </div>
-        <div className="mt-0.5 flex items-center gap-3 font-sans text-xs text-[var(--color-text-muted)]">
-          {user.email && <span className="truncate">{user.email}</span>}
+        <div className="mt-0.5 flex items-center gap-3 font-sans text-xs text-[var(--color-text-muted)] min-w-0">
+          {user.email && <span className="truncate max-w-[250px]">{user.email}</span>}
           <span className="hidden sm:inline">&middot;</span>
           <span className="hidden sm:inline">Joined {createdDate}</span>
         </div>

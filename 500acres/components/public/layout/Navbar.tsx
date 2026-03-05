@@ -410,7 +410,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                           id={`sticky-submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                           role="region"
                           aria-label={`${link.label} submenu`}
-                          className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full left-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[180px]`}
+                          className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full left-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[min(180px,80vw)]`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           {link.children.map((child) =>
@@ -470,7 +470,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                           id="sticky-user-menu"
                           role="region"
                           aria-label="User menu"
-                          className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full right-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[160px]`}
+                          className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full right-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[min(160px,80vw)]`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Link

@@ -169,6 +169,12 @@ function WeeklyPayCard() {
 
       <div className="overflow-x-auto">
         <table className="min-w-full table-fixed text-sm">
+          <colgroup>
+            <col style={{ width: '40%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+          </colgroup>
           <thead className="border-b border-[var(--color-border-soft)] text-[var(--color-text-muted)]">
             <tr>
               <th className="px-2 py-2 text-left">Week starting</th>
@@ -188,7 +194,7 @@ function WeeklyPayCard() {
                     {fmtDate(row.week_start)}
                   </div>
                   {row.note && (
-                    <div className="mt-1 text-xs text-[var(--color-text-muted)]">{row.note}</div>
+                    <div className="mt-1 break-words text-xs text-[var(--color-text-muted)]">{row.note}</div>
                   )}
                 </td>
                 <td className="px-2 py-3 text-right align-top tabular-nums">
@@ -218,7 +224,7 @@ function WeeklyPayCard() {
 
 /* ---------------- KPIs (Fellow) ---------------- */
 function KPIsCard() {
-  const { data, error, mutate } = useSWR<KpiRow[]>('/api/fellowship/kpis', fetcher);
+  const { data, error, mutate, isLoading } = useSWR<KpiRow[]>('/api/fellowship/kpis', fetcher);
   const rows = Array.isArray(data) ? data : [];
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -314,7 +320,15 @@ function KPIsCard() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => {
+            {isLoading && Array.from({ length: 3 }).map((_, i) => (
+              <tr key={`skel-${i}`} className="border-b border-[var(--color-border-soft)] last:border-none animate-pulse">
+                <td className="px-2 py-3"><div className="h-4 w-24 rounded bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3"><div className="h-4 w-40 rounded bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3 text-center"><div className="mx-auto h-5 w-16 rounded-full bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3 text-right"><div className="ml-auto h-6 w-20 rounded-lg bg-[var(--color-border-soft)]" /></td>
+              </tr>
+            ))}
+            {!isLoading && rows.map((row) => {
               const editing = editingId === row.id;
               return (
                 <tr
@@ -408,7 +422,7 @@ function KPIsCard() {
                 </tr>
               );
             })}
-            {rows.length === 0 && (
+            {!isLoading && rows.length === 0 && (
               <tr>
                 <td
                   colSpan={4}
@@ -462,7 +476,7 @@ function KPIsCard() {
 
 /* ---------------- Grants (Fellow) ---------------- */
 function GrantsCard() {
-  const { data, error, mutate } = useSWR<GrantRow[]>('/api/fellowship/grants', fetcher);
+  const { data, error, mutate, isLoading } = useSWR<GrantRow[]>('/api/fellowship/grants', fetcher);
   const grants = Array.isArray(data) ? data : [];
   const { data: kpis } = useSWR<KpiRow[]>('/api/fellowship/kpis', fetcher);
 
@@ -579,8 +593,19 @@ function GrantsCard() {
         </div>
       )}
 
-      <div className="overflow-x-auto">
+      <div className="relative">
+        <div className="overflow-x-auto scrollbar-thin">
         <table className="min-w-full table-fixed text-sm text-center">
+          <colgroup>
+            <col style={{ width: '11%' }} />
+            <col style={{ width: '11%' }} />
+            <col style={{ width: '11%' }} />
+            <col style={{ width: '13%' }} />
+            <col style={{ width: '12%' }} />
+            <col style={{ width: '22%' }} />
+            <col style={{ width: '10%' }} />
+            <col style={{ width: '10%' }} />
+          </colgroup>
             <thead className="border-b border-[var(--color-border-soft)] text-[var(--color-text-muted)]">
               <tr>
                 <th className="px-2 py-2">Created</th>
@@ -594,7 +619,19 @@ function GrantsCard() {
             </tr>
           </thead>
           <tbody>
-            {grants.map((row) => (
+            {isLoading && Array.from({ length: 3 }).map((_, i) => (
+              <tr key={`skel-${i}`} className="border-b border-[var(--color-border-soft)] last:border-none animate-pulse">
+                <td className="px-2 py-3"><div className="mx-auto h-4 w-16 rounded bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3"><div className="mx-auto h-4 w-16 rounded bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3"><div className="mx-auto h-4 w-14 rounded bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3"><div className="mx-auto h-4 w-20 rounded bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3"><div className="mx-auto h-4 w-20 rounded bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3"><div className="mx-auto h-4 w-32 rounded bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3"><div className="mx-auto h-5 w-16 rounded-full bg-[var(--color-border-soft)]" /></td>
+                <td className="px-2 py-3"><div className="mx-auto h-6 w-16 rounded-lg bg-[var(--color-border-soft)]" /></td>
+              </tr>
+            ))}
+            {!isLoading && grants.map((row) => (
               <tr
                   key={row.id}
                   className="border-b border-[var(--color-border-soft)] last:border-none"
@@ -609,7 +646,7 @@ function GrantsCard() {
                 </td>
                 <td className="px-2 py-3 align-middle">{row.project || dash}</td>
                 <td className="px-2 py-3 align-middle max-w-xs text-left">
-                  <span className="line-clamp-2 text-[var(--color-text)]">{row.purpose}</span>
+                  <span className="line-clamp-2 break-words text-[var(--color-text)]">{row.purpose}</span>
                 </td>
                 <td className="px-2 py-3 align-middle text-center">
                   <span className="inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold bg-[var(--color-surface-subtle)] text-[var(--color-text-muted)]">
@@ -629,7 +666,7 @@ function GrantsCard() {
                 </td>
               </tr>
             ))}
-              {!error && grants.length === 0 && (
+              {!isLoading && !error && grants.length === 0 && (
                 <tr>
                   <td
                     colSpan={9}
@@ -641,6 +678,8 @@ function GrantsCard() {
             )}
           </tbody>
         </table>
+        </div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-[var(--color-surface)] to-transparent md:hidden" />
       </div>
 
       {openAdd && (

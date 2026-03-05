@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 const INPUT_CLASS =
   'w-full rounded-lg border border-charcoal/10 bg-warm-white px-4 py-3 font-sans text-sm text-charcoal placeholder:text-smoke focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 transition';
@@ -10,17 +10,29 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const abortRef = useRef<AbortController | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setError('');
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     try {
       await fetch('/api/password/forgot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
+        signal: controller.signal,
       });
       setSent(true);
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') return;
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -58,6 +70,12 @@ export default function ForgotPasswordPage() {
                     autoComplete="email"
                   />
                 </label>
+
+                {error && (
+                  <div className="rounded-lg border border-red-700/20 bg-red-700/5 px-4 py-3 font-sans text-sm text-red-700">
+                    {error}
+                  </div>
+                )}
 
                 <button
                   type="submit"

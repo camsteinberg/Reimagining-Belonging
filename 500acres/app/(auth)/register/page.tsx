@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 type StatusState = { tone: 'error' | 'success'; message: string } | null;
 
@@ -28,6 +28,7 @@ export default function RegisterPage() {
   });
   const [status, setStatus] = useState<StatusState>(null);
   const [loading, setLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,6 +43,10 @@ export default function RegisterPage() {
       return;
     }
 
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     try {
       const res = await fetch('/api/register', {
@@ -54,6 +59,7 @@ export default function RegisterPage() {
           role: form.role,
         }),
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
       });
       let data: any = null;
       try {
@@ -68,7 +74,8 @@ export default function RegisterPage() {
       }
 
       setStatus({ tone: 'success', message: data?.message || 'Registered! Check your email to continue.' });
-    } catch {
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') return;
       setStatus({ tone: 'error', message: 'Server error. Try again.' });
     } finally {
       setLoading(false);

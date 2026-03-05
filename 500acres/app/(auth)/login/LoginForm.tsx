@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const INPUT_CLASS =
@@ -18,16 +18,23 @@ export default function LoginForm() {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, password, remember }),
+        signal: controller.signal,
       });
 
       let data: any = null;
@@ -45,6 +52,7 @@ export default function LoginForm() {
       router.push(redirect);
       router.refresh();
     } catch (err) {
+      if ((err as Error).name === 'AbortError') return;
       console.error(err);
       setError('Something went wrong. Please try again.');
     } finally {

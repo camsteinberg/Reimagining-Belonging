@@ -1,4 +1,4 @@
-import { jwtVerify, SignJWT } from 'jose';
+import { jwtVerify, SignJWT, errors } from 'jose';
 
 export const COOKIE_NAME = 'session';
 const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET!);
@@ -14,6 +14,18 @@ export type SessionPayload = {
   status?: string;
 };
 
+export type SessionErrorCode = 'expired' | 'malformed' | 'invalid_signature' | 'unknown';
+
+export class SessionVerifyError extends Error {
+  code: SessionErrorCode;
+  constructor(code: SessionErrorCode, message: string, cause?: unknown) {
+    super(message);
+    this.name = 'SessionVerifyError';
+    this.code = code;
+    this.cause = cause;
+  }
+}
+
 export async function signSession(payload: SessionPayload, remember: boolean) {
   const ttl = remember ? REMEMBER_TTL : DEFAULT_TTL;
   const token = await new SignJWT(payload)
@@ -25,6 +37,24 @@ export async function signSession(payload: SessionPayload, remember: boolean) {
 }
 
 export async function verifySession(token: string) {
-  const { payload } = await jwtVerify(token, SECRET);
-  return payload as SessionPayload & { exp: number; iat: number };
+  try {
+    const { payload } = await jwtVerify(token, SECRET, {
+      clockTolerance: 30, // 30-second clock skew tolerance
+    });
+    return payload as SessionPayload & { exp: number; iat: number };
+  } catch (err) {
+    if (err instanceof errors.JWTExpired) {
+      throw new SessionVerifyError('expired', 'Session token has expired', err);
+    }
+    if (
+      err instanceof errors.JWTInvalid ||
+      err instanceof errors.JWSInvalid
+    ) {
+      throw new SessionVerifyError('malformed', 'Session token is malformed', err);
+    }
+    if (err instanceof errors.JWSSignatureVerificationFailed) {
+      throw new SessionVerifyError('invalid_signature', 'Session token signature is invalid', err);
+    }
+    throw new SessionVerifyError('unknown', 'Session verification failed', err);
+  }
 }

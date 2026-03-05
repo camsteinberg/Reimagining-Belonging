@@ -4,9 +4,13 @@ import bcrypt from 'bcryptjs';
 import sql from '@/lib/db';
 import { signSession, COOKIE_NAME } from '@/lib/auth';
 import { looksLikeEmail, normalizePhone } from '@/lib/phone';
+import { createRateLimiter, getClientIp } from '@/lib/rateLimiter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+// 5 attempts per minute per IP
+const isRateLimited = createRateLimiter(5, 60_000);
 
 type UserRow = {
   id: string;
@@ -20,6 +24,10 @@ type UserRow = {
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ success: false, message: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
     const { identifier, password, remember } = await req.json();
     const login = (identifier || '').trim();
 

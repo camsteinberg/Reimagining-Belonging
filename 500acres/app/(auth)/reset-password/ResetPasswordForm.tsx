@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 const INPUT_CLASS =
   'w-full rounded-lg border border-charcoal/10 bg-warm-white px-4 py-3 font-sans text-sm text-charcoal placeholder:text-smoke focus:border-sage focus:outline-none focus:ring-2 focus:ring-sage/20 transition';
@@ -16,11 +16,17 @@ export default function ResetPasswordForm() {
   const [error, setError] = useState('');
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    if (!token) return setError('Missing reset token. Please use the link from your email.');
     if (password !== confirm) return setError('Passwords do not match.');
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     setLoading(true);
     try {
@@ -28,6 +34,7 @@ export default function ResetPasswordForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password }),
+        signal: controller.signal,
       });
       const data = await res.json();
       if (!res.ok || !data?.success) {
@@ -36,6 +43,9 @@ export default function ResetPasswordForm() {
       }
       setOk(true);
       setTimeout(() => router.push('/login'), 1200);
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') return;
+      setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -5,12 +5,20 @@ import { getSession } from '@/lib/getSession';
 import crypto from 'crypto';
 import { normalizePhone } from '@/lib/phone';
 import { sendPhoneVerificationCodeEmail } from '@/lib/mail';
+import { createRateLimiter, getClientIp } from '@/lib/rateLimiter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
+// 3 attempts per minute per IP
+const isRateLimited = createRateLimiter(3, 60_000);
+
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ ok: false, error: 'too-many-requests' }, { status: 429 });
+    }
     const session = await getSession();
     if (!session) return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
 

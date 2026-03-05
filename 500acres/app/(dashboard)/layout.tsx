@@ -3,6 +3,7 @@ import { getSession } from '@/lib/getSession';
 import { redirect } from 'next/navigation';
 import sql from '@/lib/db';
 import AppShell from '@/components/AppShell';
+import ErrorBoundary from '@/components/public/shared/ErrorBoundary';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
@@ -18,5 +19,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     hasPhone: !!rows?.[0]?.phone,
   };
 
-  return <AppShell sidebarProps={sidebarProps}>{children}</AppShell>;
+  return (
+    <AppShell sidebarProps={sidebarProps}>
+      <ErrorBoundary>{children}</ErrorBoundary>
+    </AppShell>
+  );
 }

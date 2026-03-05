@@ -3,14 +3,23 @@ import { NextResponse } from 'next/server';
 import sql from '@/lib/db';
 import { generateResetToken } from '@/lib/tokens';
 import { sendPasswordResetEmail } from '@/lib/mail';
+import { createRateLimiter, getClientIp } from '@/lib/rateLimiter';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+// 3 attempts per minute per IP
+const isRateLimited = createRateLimiter(3, 60_000);
 
 type UserRow = { id: string; email: string };
 
 export async function POST(req: Request) {
   try {
+    const ip = getClientIp(req);
+    if (isRateLimited(ip)) {
+      // Return ok:true even when rate limited to avoid enumeration
+      return NextResponse.json({ ok: true });
+    }
     const { email } = await req.json();
 
     // Always "ok" (no enumeration)
