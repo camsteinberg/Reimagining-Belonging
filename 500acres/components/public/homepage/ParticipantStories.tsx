@@ -78,44 +78,47 @@ export default function ParticipantStories() {
         ))}
       </div>
 
-      {participants.map((p) => (
-        <Modal
-          key={p.id}
-          isOpen={activePopup === p.id}
-          onClose={() => setActivePopup(null)}
-          className="w-[80vw] h-[80vh]"
-        >
-          <img
-            src={svgMap[p.svgIndex]?.src}
-            alt={p.name}
-            loading="lazy"
-            style={{
-              width: "35%",
-              position: "absolute",
-              top: "3vh",
-              left: "-3vw",
-            }}
-          />
-          <div className="popupHeader">{p.name}</div>
-          <div className="popupDesc">
-            {p.age} years old
-            <br />
-            {p.occupation}
-            <br />
-            {p.status}
-          </div>
-          <div className="popupTopText">{p.summary}</div>
-          <div className="popupBottomText">
-            {p.quotes.map((quote, i) => (
-              <span key={i}>
-                {quote}
-                <br />
-                <br />
-              </span>
-            ))}
-          </div>
-        </Modal>
-      ))}
+      {activePopup != null && (() => {
+        const p = participants.find(part => part.id === activePopup);
+        if (!p) return null;
+        return (
+          <Modal
+            isOpen
+            onClose={() => setActivePopup(null)}
+            className="w-[80vw] h-[80vh]"
+          >
+            <img
+              src={svgMap[p.svgIndex]?.src}
+              alt={p.name}
+              loading="lazy"
+              style={{
+                width: "35%",
+                position: "absolute",
+                top: "3vh",
+                left: "-3vw",
+              }}
+            />
+            <div className="popupHeader">{p.name}</div>
+            <div className="popupDesc">
+              {p.age} years old
+              <br />
+              {p.occupation}
+              <br />
+              {p.status}
+            </div>
+            <div className="popupTopText">{p.summary}</div>
+            <div className="popupBottomText">
+              {p.quotes.map((quote, i) => (
+                <span key={i}>
+                  {quote}
+                  <br />
+                  <br />
+                </span>
+              ))}
+            </div>
+          </Modal>
+        );
+      })()}
     </section>
   );
 }

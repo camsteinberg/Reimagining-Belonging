@@ -53,24 +53,23 @@ function useBucksData(apiPath: string) {
   });
 
   React.useEffect(() => {
-    let cancel = false;
+    const controller = new AbortController();
     (async () => {
       try {
-        const res = await fetch(apiPath, { cache: 'no-store' });
+        const res = await fetch(apiPath, { cache: 'no-store', signal: controller.signal });
         const body = (await res.json().catch(() => ({}))) as ApiData;
         if (!res.ok || body.ok === false) {
           throw new Error(body.error || `Fetch failed (${res.status})`);
         }
-        if (!cancel) setState({ data: body, loading: false, error: null });
+        setState({ data: body, loading: false, error: null });
       } catch (err) {
-        if (!cancel) {
-          const message = err instanceof Error ? err.message : 'Failed to load BarndoBucks data';
-          setState({ data: {}, loading: false, error: message });
-        }
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+        const message = err instanceof Error ? err.message : 'Failed to load BarndoBucks data';
+        setState({ data: {}, loading: false, error: message });
       }
     })();
     return () => {
-      cancel = true;
+      controller.abort();
     };
   }, [apiPath]);
 

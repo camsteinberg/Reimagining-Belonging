@@ -25,16 +25,19 @@ export default function CustomCursor() {
     const halfW = cursor.offsetWidth / 2;
     const halfH = cursor.offsetHeight / 2;
 
-    let raf: number;
+    let raf = 0;
     const render = () => {
       cursor.style.transform = `translate(${pos.current.x - halfW}px, ${pos.current.y - halfH}px)`;
-      raf = requestAnimationFrame(render);
+      raf = 0;
     };
-    raf = requestAnimationFrame(render);
+    const scheduleRender = () => {
+      if (!raf) raf = requestAnimationFrame(render);
+    };
 
     const onMove = (e: MouseEvent) => {
       pos.current.x = e.clientX;
       pos.current.y = e.clientY;
+      scheduleRender();
       if (!visible.current) {
         cursor.classList.add("is-active");
         visible.current = true;

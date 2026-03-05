@@ -77,10 +77,10 @@ export default function TillDashboard({ username, role }: Props) {
   const [selectedExpensePeriod, setSelectedExpensePeriod] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancel = false;
+    const controller = new AbortController();
     (async () => {
       try {
-        const res = await fetch('/api/till-data-xlsx', { cache: 'no-store' });
+        const res = await fetch('/api/till-data-xlsx', { cache: 'no-store', signal: controller.signal });
         const payload = (await res.json().catch(() => null)) as TillData | { error?: string } | null;
         if (!res.ok) {
           const message =
@@ -89,15 +89,16 @@ export default function TillDashboard({ username, role }: Props) {
               : `Fetch failed (${res.status})`;
           throw new Error(message);
         }
-        if (!cancel) setData(payload as TillData);
+        setData(payload as TillData);
       } catch (err) {
-        if (!cancel) setError(err instanceof Error ? err.message : 'Failed to load financials');
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+        setError(err instanceof Error ? err.message : 'Failed to load financials');
       } finally {
-        if (!cancel) setLoading(false);
+        if (!(controller.signal.aborted)) setLoading(false);
       }
     })();
     return () => {
-      cancel = true;
+      controller.abort();
     };
   }, []);
 

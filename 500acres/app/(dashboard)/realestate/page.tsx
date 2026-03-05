@@ -2,7 +2,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/getSession';
-import RealEstateDashboard from './Dashboard';
+import RealEstateDashboard from './DashboardLoader';
 
 export const metadata: Metadata = { title: 'Real Estate' };
 

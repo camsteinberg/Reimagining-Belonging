@@ -88,7 +88,17 @@ export default function MeaningToReality() {
       const lineLeft = leftEdge + leftLineWithin;
       const lineWidth = Math.max(130, containerWidth - leftLineWithin - rightLineWithin);
 
-      return { leftDeltaX, leftDeltaY, rightDeltaX, rightDeltaY, lineLeft, lineWidth };
+      // Compute deltas from CSS initial position for GPU-accelerated transforms
+      const edgeInsetRight =
+        parseFloat(getComputedStyle(orbs).getPropertyValue("--orb-edge-inset-right")) || 20;
+      const lineOverlapRight =
+        parseFloat(getComputedStyle(orbs).getPropertyValue("--line-overlap-right")) || 0;
+      const cssInitialLeft = 0.1 * vw + orbSize - edgeInset;
+      const cssInitialWidth = vw - (0.1 * vw + orbSize - edgeInset) - (0.1 * vw + orbSize - edgeInsetRight - lineOverlapRight);
+      const lineDeltaX = lineLeft - cssInitialLeft;
+      const lineScaleX = lineWidth / (cssInitialWidth || 1);
+
+      return { leftDeltaX, leftDeltaY, rightDeltaX, rightDeltaY, lineDeltaX, lineScaleX };
     };
 
     gsap
@@ -104,8 +114,8 @@ export default function MeaningToReality() {
       .to(leftOrb, { x: () => computeTargets().leftDeltaX, y: () => computeTargets().leftDeltaY, ease: "none" }, 0)
       .to(rightOrb, { x: () => computeTargets().rightDeltaX, y: () => computeTargets().rightDeltaY, ease: "none" }, 0)
       .to(lineGroup, {
-        left: () => computeTargets().lineLeft,
-        width: () => computeTargets().lineWidth,
+        x: () => computeTargets().lineDeltaX,
+        scaleX: () => computeTargets().lineScaleX,
         rotation: 35,
         transformOrigin: "left center",
         ease: "none",

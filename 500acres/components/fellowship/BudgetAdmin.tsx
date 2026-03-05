@@ -1,9 +1,15 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import SurfaceCard from '@/components/ui/SurfaceCard';
-import BudgetChart, { BudgetRow } from './BudgetChart';
+import type { BudgetRow } from './BudgetChart';
+
+const BudgetChart = dynamic(() => import('./BudgetChart'), {
+  ssr: false,
+  loading: () => <div className="h-64 animate-pulse rounded-xl bg-[var(--color-surface-subtle)]" />,
+});
 
 type ApiResponse = { headers: string[]; rows: BudgetRow[] };
 type Fellow = { id: string; username?: string | null; email?: string | null; name?: string | null };

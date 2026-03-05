@@ -1549,6 +1549,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   width: 20vw;
   max-width: 320px;
   min-width: 160px;
+  aspect-ratio: 5 / 4;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.6s ease, visibility 0s linear 0.6s;
@@ -2016,6 +2017,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   left: 50%;
   transform: translate(-50%);
   width: 25%;
+  aspect-ratio: 994 / 179;
 }
 
 .img22 {
@@ -2024,6 +2026,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   left: 50%;
   transform: translate(-50%);
   width: 25%;
+  aspect-ratio: 1042 / 222;
 }
 
 .slide23Left {
@@ -2031,6 +2034,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   top: 323vh;
   left: 10%;
   width: 25vw;
+  aspect-ratio: 1 / 1;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0s linear 0.2s;
@@ -2041,6 +2045,7 @@ body:not(.phone-circle-visible) .slide6 .brownText {
   top: 323vh;
   left: 65%;
   width: 25vw;
+  aspect-ratio: 404 / 330;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, visibility 0s linear 0.2s;
@@ -2085,6 +2090,7 @@ body.slide25-active .slide24SVGContainer .participant-svg {
   transition: opacity 0.5s ease, visibility 0s linear 0.5s;
   z-index: 50;
   cursor: pointer;
+  aspect-ratio: 12 / 7;
 }
 
 /* Popup containers */

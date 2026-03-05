@@ -6,12 +6,14 @@ const ebGaramond = EB_Garamond({
   variable: '--font-serif',
   subsets: ['latin'],
   display: 'swap',
+  weight: ['400', '700'],
 });
 
 const inter = Inter({
   variable: '--font-sans',
   subsets: ['latin'],
   display: 'swap',
+  weight: ['400', '600', '700'],
 });
 
 const playfair = Playfair_Display({

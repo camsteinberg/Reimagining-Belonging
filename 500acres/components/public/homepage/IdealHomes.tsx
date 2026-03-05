@@ -104,12 +104,13 @@ export default function IdealHomes() {
         );
       })}
 
-      {participants.map((p) => {
+      {activePopup != null && (() => {
+        const p = participants.find(part => part.id === activePopup);
+        if (!p) return null;
         const imgSrc = idealHomeImages[p.idealHomeImage]?.src;
         return (
           <Modal
-            key={p.id}
-            isOpen={activePopup === p.id}
+            isOpen
             onClose={() => setActivePopup(null)}
             className="w-[75vw] h-[75vh]"
           >
@@ -123,7 +124,7 @@ export default function IdealHomes() {
             <div className="popWinDesc">{p.idealHomeDescription}</div>
           </Modal>
         );
-      })}
+      })()}
     </section>
   );
 }
