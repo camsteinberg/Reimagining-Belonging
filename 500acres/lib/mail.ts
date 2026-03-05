@@ -9,7 +9,7 @@ async function getResend() {
   return client;
 }
 
-const FROM = process.env.EMAIL_FROM!; // e.g., '500AcresOS <auth@barndosdashboard.com>'
+const FROM = process.env.EMAIL_FROM || '500 Acres <noreply@habitable.us>';
 
 function htmlToText(html: string) {
   return html
@@ -23,14 +23,14 @@ function htmlToText(html: string) {
 export async function sendPasswordResetEmail(to: string, resetUrl: string) {
   const resend = await getResend();
   const html = `
-      <p>We got a request to reset your 500AcresOS password.</p>
-      <p><a href="${resetUrl}">Click here to reset</a> - link expires in 1 hour.</p>
-      <p>If you didn't request this, you can ignore this email.</p>
+      <p>We got a request to reset your 500 Acres password.</p>
+      <p><a href="${resetUrl}">Click here to reset</a> — link expires in 1 hour.</p>
+      <p>If you didn't request this, you can safely ignore this email.</p>
     `;
   await resend.emails.send({
     from: FROM,
     to,
-    subject: 'Reset your 500AcresOS password',
+    subject: 'Reset your 500 Acres password',
     html,
     text: htmlToText(html),
   });
@@ -46,7 +46,7 @@ export async function sendPhoneVerificationCodeEmail(to: string, code: string) {
   await resend.emails.send({
     from: FROM,
     to,
-    subject: 'Your 500AcresOS verification code',
+    subject: 'Your 500 Acres verification code',
     html,
     text: htmlToText(html),
   });
