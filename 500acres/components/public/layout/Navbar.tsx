@@ -535,10 +535,15 @@ export default function Navbar({ isHomepage }: NavbarProps) {
         inert={!isOpen || undefined}
       >
         <div
-          className="pointer-events-auto w-full h-full flex flex-col justify-center"
-          style={{ paddingLeft: "max(1.5rem, 5vw)", paddingRight: "max(1.5rem, 5vw)" }}
+          className="pointer-events-auto w-full h-full flex flex-col justify-center overflow-y-auto"
+          style={{
+            paddingLeft: "max(1.5rem, 5vw)",
+            paddingRight: "max(1.5rem, 5vw)",
+            paddingTop: "max(4rem, 8vh)",
+            paddingBottom: "max(1.5rem, 3vh)",
+          }}
         >
-          <nav aria-label="Main navigation" className="flex flex-col gap-2 md:gap-4">
+          <nav aria-label="Main navigation" className="flex flex-col" style={{ gap: "clamp(0.25rem, 1vh, 1rem)" }}>
             {NAV_LINKS.map((link, i) => {
               // Expandable item (has children)
               if (link.children) {
@@ -560,7 +565,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                       <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
                         {link.num}
                       </span>
-                      <span className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                      <span className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4" style={{ fontSize: "clamp(1.75rem, 5vw + 0.5vh, 6rem)" }}>
                         {link.label}
                       </span>
                       <svg
@@ -578,10 +583,10 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                       id={`submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                       role="region"
                       aria-label={`${link.label} submenu`}
-                      className={`overflow-hidden transition-all duration-400 ${isExpanded ? "max-h-96 mt-2" : "max-h-0"}`}
+                      className={`overflow-hidden transition-all duration-400 ${isExpanded ? "max-h-96 mt-1 sm:mt-2" : "max-h-0"}`}
                     >
                       {link.children.map((child, j) => {
-                        const childCls = `group flex items-baseline gap-4 md:gap-6 pl-10 md:pl-16 py-1 transition-all duration-300 ${
+                        const childCls = `group flex items-baseline gap-4 md:gap-6 pl-6 sm:pl-10 md:pl-16 py-1 transition-all duration-300 ${
                           isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                         } ${
                           !child.external && pathname === child.href ? "text-forest" : "text-cream/80 hover:text-forest"
@@ -589,7 +594,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                         const childStyle = { transitionDelay: isExpanded ? `${j * 60}ms` : "0ms" };
                         const childInner = (
                           <>
-                            <span className="font-serif text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                            <span className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4" style={{ fontSize: "clamp(1.25rem, 3.5vw + 0.3vh, 3.75rem)" }}>
                               {child.label}
                             </span>
                             {child.external && (
@@ -640,20 +645,21 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                 const authHref = isLoggedIn ? "/dashboard" : "/login";
                 const authLabel = isLoggedIn ? "Dashboard" : "Login";
                 return (
-                  <div key="auth-overlay-link">
+                  <div key="auth-overlay-link" style={{ marginTop: "clamp(0.5rem, 2vh, 1.5rem)" }}>
+                    <div className="h-[1px] bg-cream/10 mb-2 sm:mb-3 md:mb-4" style={{ maxWidth: "8rem" }} />
                     <Link
                       ref={(el) => setLinkRef(el, i)}
                       href={authHref}
                       onClick={(e) => handleNavClick(e, authHref)}
                       aria-current={pathname === authHref ? "page" : undefined}
                       className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
-                        pathname === authHref ? "text-forest" : "text-cream hover:text-forest"
+                        pathname === authHref ? "text-forest" : "text-cream/80 hover:text-forest"
                       }`}
                     >
                       <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
                         {link.num}
                       </span>
-                      <span className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                      <span className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4" style={{ fontSize: "clamp(1.25rem, 3vw + 0.3vh, 3.75rem)" }}>
                         {authLabel}
                       </span>
                       <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
@@ -667,7 +673,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                             router.push("/");
                           });
                         }}
-                        className="pl-10 md:pl-16 mt-1 font-sans text-sm md:text-base tracking-wide text-cream/60 hover:text-forest transition-colors cursor-pointer"
+                        className="pl-6 sm:pl-10 md:pl-16 mt-1 font-sans text-sm md:text-base tracking-wide text-cream/60 hover:text-forest transition-colors cursor-pointer"
                       >
                         Logout
                       </button>
@@ -691,7 +697,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
                   <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
                     {link.num}
                   </span>
-                  <span className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4">
+                  <span className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4" style={{ fontSize: "clamp(1.75rem, 5vw + 0.5vh, 6rem)" }}>
                     {link.label}
                   </span>
                   <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
@@ -700,7 +706,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
             })}
           </nav>
 
-          <div className="menu-footer mt-16 md:mt-20 flex flex-col md:flex-row md:items-end justify-between gap-8 opacity-0">
+          <div className="menu-footer mt-auto pt-6 md:pt-8 flex flex-col md:flex-row md:items-end justify-between gap-8 opacity-0">
             <div>
               <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/60 mb-2">
                 Build your home &middot; Build your skills &middot; Build your wealth
