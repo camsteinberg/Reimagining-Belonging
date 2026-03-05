@@ -1,5 +1,7 @@
 # Editorial Image Placement Implementation Plan
 
+> **Status:** IMPLEMENTED | Completed 2026-02-27
+
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** Add 13 fellowship photographs to 5 internal pages at high-impact locations, transforming the site from text-only to editorial photography.

@@ -2,79 +2,83 @@
 
 A website for **500 Acres**, a non-profit focused on making housing equitable through technology — helping Gen Z build houses with robots by 2026.
 
-The homepage preserves the original *Reimagining Belonging* scroll animation — a 28-section interactive experience exploring Gen Z's relationship with home, featuring housing statistics, interactive migration maps, participant interviews, ideal home drawings, and a belonging framework. The rest of the site provides pages for learning about the organization, reading participant stories, accessing housing resources, and getting involved.
+The homepage preserves the original *Reimagining Belonging* scroll animation — a 28-section interactive experience exploring Gen Z's relationship with home, featuring housing statistics, interactive migration maps, participant interviews, ideal home drawings, and a belonging framework. The rest of the site provides pages for reading participant stories, accessing housing resources, getting involved, and managing fellowship operations via a protected dashboard.
 
 ## Tech Stack
 
-- **React 19** + **Vite 7** — fast dev server and optimized builds
-- **Tailwind CSS 4** — utility-first styling with a custom woodsy color theme
-- **GSAP** — scroll-driven animations, page transitions, and interactive elements
-- **Mapbox GL** + **Deck.GL** — interactive migration maps with arc layers
-- **React Router** — client-side routing with smooth page transitions
+- **Next.js 15** (App Router) + **React 19** — server/client rendering with Turbopack dev
+- **Tailwind CSS 4** — custom Campfire theme (cream/charcoal/ember/sage/forest)
+- **GSAP + ScrollTrigger** — scroll-driven homepage animations
+- **Mapbox GL + Deck.GL** — interactive migration maps with arc layers
+- **Neon PostgreSQL** (serverless) — database
+- **jose** — JWT authentication
+- **SWR** — dashboard data fetching
+- **Recharts** — budget visualizations
+- **Resend** — transactional email
 
 ## Getting Started
 
 ```bash
-# Install dependencies
 npm install
-
-# Add your Mapbox token
 cp .env.local.example .env.local
-# Edit .env.local and set VITE_MAPBOX_TOKEN=your_token_here
-
-# Start dev server
+# Fill in required values — see .env.local.example for descriptions
 npm run dev
 ```
 
-The site will be available at `http://localhost:5173`.
+The site will be available at `http://localhost:3000`.
 
 ## Scripts
 
 | Command | Description |
 |---|---|
-| `npm run dev` | Start development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build locally |
-| `npm run lint` | Run ESLint |
+| `npm run dev` | Start dev server (Turbopack) |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | ESLint |
+| `npm run test` | Vitest |
+| `npm run test:watch` | Vitest watch mode |
 
 ## Project Structure
 
 ```
 500acres/
-├── public/
-│   └── data/              # GeoJSON files for maps
-├── src/
-│   ├── assets/
-│   │   ├── brand/         # Logo files
-│   │   ├── images/        # Section backgrounds, drawings, photos
-│   │   └── svg/           # Participant portrait SVGs
-│   ├── components/
-│   │   ├── homepage/      # 16 scroll animation section components
-│   │   ├── layout/        # Navbar, Footer, PageTransition, ScrollToTop
-│   │   └── shared/        # Modal, Logo
-│   ├── data/              # Participant profiles, slide config, map config
-│   ├── hooks/             # Custom React hooks
-│   ├── pages/             # Route-level page components
-│   └── styles/            # Global CSS + Tailwind theme
-├── .env.local             # Mapbox token (not committed)
-└── vercel.json            # Vercel deployment config
+├── app/
+│   ├── (public)/         # Public pages (homepage, stories, resources, get-involved)
+│   ├── (auth)/           # Login, register, forgot/reset password
+│   ├── (dashboard)/      # Protected dashboard (fellowship, analytics, users, etc.)
+│   ├── api/              # 27 API routes
+│   └── globals.css       # Design system + all styles (~3100 lines)
+├── components/
+│   ├── public/           # Homepage scroll components, navbar, footer, shared UI
+│   ├── fellowship/       # Dashboard components
+│   └── ui/               # Reusable UI primitives (SurfaceCard)
+├── lib/                  # Auth, DB, rate limiting, email, tokens
+├── hooks/                # useAnalytics, useReveal
+├── data/                 # Participant profiles, map config
+└── public/               # Static assets, GeoJSON
 ```
 
 ## Pages
 
-- **/** — The full scroll animation experience (28 sections)
-- **/about** — Mission, vision timeline, origin story
-- **/stories** — Participant grid with links to individual profiles
-- **/stories/:slug** — Individual participant story with quotes and drawings
-- **/resources** — Filterable housing resource cards and partner organizations
-- **/get-involved** — Volunteer form, engagement funnel, donation CTA
+**Public:**
+- `/` — 28-section scroll animation (Reimagining Belonging)
+- `/stories` — Participant grid
+- `/stories/:slug` — Individual participant story
+- `/resources` — Housing resources
+- `/get-involved` — Engagement + donation
+
+**Auth:**
+- `/login`, `/register`, `/forgot-password`, `/reset-password`
+
+**Dashboard (protected):**
+- `/fellowship`, `/fellowship-admin` — Fellow dashboard
+- `/analytics`, `/users`, `/governance` — Admin dashboard
+- `/barndobucks`, `/realestate`, `/till`, `/buzz` — Data dashboards
 
 ## Environment Variables
 
-| Variable | Description |
-|---|---|
-| `VITE_MAPBOX_TOKEN` | Mapbox GL access token (required for map sections) |
+See [`.env.local.example`](.env.local.example) for all required variables with descriptions.
 
 ## Deployment
 
-Configured for **Vercel** with SPA fallback routing via `vercel.json`.
+Deployed on **Vercel** with security headers (HSTS, CSP, permissions policy) and 1-year asset caching.

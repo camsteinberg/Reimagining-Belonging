@@ -1,5 +1,7 @@
 # Dashboard Integration Design: habitable.us + BarndosDashboard
 
+> **Status:** IMPLEMENTED | Completed 2026-03-05
+
 **Date:** 2026-03-04
 **Status:** Approved
 

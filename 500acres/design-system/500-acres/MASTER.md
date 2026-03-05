@@ -1,203 +1,199 @@
-# Design System Master File
+# Campfire Design System -- 500 Acres
 
-> **LOGIC:** When building a specific page, first check `design-system/pages/[page-name].md`.
-> If that file exists, its rules **override** this Master file.
-> If not, strictly follow the rules below.
+> **Source of truth:** `app/globals.css`
+> Page-specific overrides live in `design-system/pages/[page-name].md` and take precedence.
 
----
-
-**Project:** 500 Acres
-**Generated:** 2026-02-27 20:43:43
-**Category:** Church/Religious Organization
+**Stack:** Next.js 15 + Tailwind CSS v4 (`@theme` block) + CSS custom properties
 
 ---
 
-## Global Rules
+## Color Palette
 
-### Color Palette
+Warm earth tones, deep night sky, forest canopy, firelit warmth.
 
-| Role | Hex | CSS Variable |
-|------|-----|--------------|
-| Primary | `#7C3AED` | `--color-primary` |
-| Secondary | `#A78BFA` | `--color-secondary` |
-| CTA/Accent | `#22C55E` | `--color-cta` |
-| Background | `#FAF5FF` | `--color-background` |
-| Text | `#4C1D95` | `--color-text` |
+### Core Palette (`@theme` tokens -- usable as Tailwind classes)
 
-**Color Notes:** Community purple + join green
+| Token              | Hex / Value | Tailwind class   | Role                  |
+|--------------------|-------------|------------------|-----------------------|
+| `--color-cream`    | `#e8e0d0`  | `bg-cream`       | Canvas / base surface |
+| `--color-rust`     | `#8b5e3c`  | `bg-rust`        | Hover accent          |
+| `--color-gold`     | `#b89f65`  | `bg-gold`        | Decorative accent     |
+| `--color-charcoal` | `#2a2520`  | `bg-charcoal`    | Text / dark surfaces  |
+| `--color-forest`   | `#3d6b4f`  | `bg-forest`      | Nature accent         |
+| `--color-navy`     | `#3a5a6e`  | `bg-navy`        | Info                  |
+| `--color-warm-white`| `#f5f1ea` | `bg-warm-white`  | Raised surface / cards|
+| `--color-sage`     | `#6b8f71`  | `bg-sage`        | Success               |
+| `--color-moss`     | `#365f45`  | `bg-moss`        | Deep green accent     |
+| `--color-bark`     | `#5c3d2e`  | `bg-bark`        | Strong primary        |
+| `--color-clay`     | `#b8755d`  | `bg-clay`        | Warm mid-tone         |
+| `--color-amber`    | `#d4a84b`  | `bg-amber`       | Warning / selection   |
+| `--color-ember`    | `#c45d3e`  | `bg-ember`       | CTA / primary action  |
+| `--color-night`    | `#1a1714`  | `bg-night`       | Darkest surface       |
+| `--color-starlight`| `#f0ead6`  | `bg-starlight`   | Elevated surface      |
+| `--color-smoke`    | `#8a837a`  | `bg-smoke`       | Muted text            |
+| `--color-pine`     | `#2d4a37`  | `bg-pine`        | Deep forest           |
+| `--color-hearth`   | `#a0522d`  | `bg-hearth`      | Warm brown accent     |
 
-### Typography
+### Semantic Tokens (`:root` CSS custom properties)
 
-- **Heading Font:** Playfair Display
-- **Body Font:** Inter
-- **Mood:** elegant, luxury, sophisticated, timeless, premium, editorial
-- **Google Fonts:** [Playfair Display + Inter](https://fonts.google.com/share?selection.family=Inter:wght@300;400;500;600;700|Playfair+Display:wght@400;500;600;700)
+| Token                       | Value                          | Usage                    |
+|-----------------------------|--------------------------------|--------------------------|
+| `--color-text-primary`      | `#2a2520`                      | Body text                |
+| `--color-text-secondary`    | `rgba(42,37,32,0.75)`         | Secondary copy           |
+| `--color-text-tertiary`     | `rgba(42,37,32,0.55)`         | Tertiary / captions      |
+| `--color-text-muted`        | `rgba(42,37,32,0.3)`          | Disabled / placeholder   |
+| `--color-success`           | `#6b8f71` (sage)               | Success states           |
+| `--color-danger`            | `#b91c1c`                      | Error / destructive      |
+| `--color-warning`           | `#d4a84b` (amber)              | Warnings                 |
+| `--color-info`              | `#3a5a6e` (navy)               | Informational            |
+| `--color-primary`           | `#c45d3e` (ember)              | CTA / brand accent       |
+| `--color-primary-strong`    | `#5c3d2e` (bark)               | Strong emphasis          |
+| `--color-primary-soft`      | `rgba(196,93,62,0.12)`        | Tinted backgrounds       |
 
-**CSS Import:**
+### Surface & Border Tokens
+
+| Token                       | Value                          | Usage                    |
+|-----------------------------|--------------------------------|--------------------------|
+| `--color-canvas`            | `#e8e0d0` (cream)              | Dashboard background     |
+| `--color-surface`           | `#f5f1ea` (warm-white)         | Default surface          |
+| `--color-surface-subtle`    | `#f0ebe0`                      | Subtle surface           |
+| `--color-surface-elevated`  | `#f0ead6` (starlight)          | Elevated surface         |
+| `--color-surface-muted`     | `rgba(42,37,32,0.05)`         | Muted fill               |
+| `--color-border-soft`       | `rgba(42,37,32,0.10)`         | Subtle dividers          |
+| `--color-border-strong`     | `rgba(42,37,32,0.22)`         | Strong borders           |
+
+---
+
+## Typography
+
+| Variable          | Font Family        | Usage                                |
+|-------------------|--------------------|--------------------------------------|
+| `--font-serif`    | EB Garamond        | Body text (default on `body`)        |
+| `--font-sans`     | Inter              | UI elements, secondary text          |
+| `--font-display`  | Playfair Display   | Display headings, editorial accents  |
+
+Fonts loaded via `next/font/google` in `app/layout.tsx` (no external `@import`).
+
+Fluid typography uses `clamp()` throughout -- no fixed breakpoint font-size jumps.
+
+---
+
+## Spacing Scale
+
+| Token          | Value     |
+|----------------|-----------|
+| `--space-xs`   | `0.5rem`  |
+| `--space-sm`   | `1rem`    |
+| `--space-md`   | `1.5rem`  |
+| `--space-lg`   | `2rem`    |
+| `--space-xl`   | `3rem`    |
+| `--space-2xl`  | `4rem`    |
+| `--space-3xl`  | `6rem`    |
+| `--space-4xl`  | `9rem`    |
+
+---
+
+## Easing Curves
+
+| Token            | Value                              | Usage              |
+|------------------|------------------------------------|--------------------|
+| `--ease-bounce`  | `cubic-bezier(0.34,1.56,0.64,1)`  | Playful entrances  |
+| `--ease-smooth`  | `cubic-bezier(0.16,1,0.3,1)`      | General motion     |
+| `--ease-crisp`   | `cubic-bezier(0.77,0,0.18,1)`     | Snappy transitions |
+| `--ease-out`     | `cubic-bezier(0.22,1,0.36,1)`     | Exit animations    |
+
+---
+
+## Motion
+
+### Reveal Animations (scroll-triggered, `globals.css`)
+
+All use `--ease-smooth` (`cubic-bezier(0.16,1,0.3,1)`). Add class + toggle `.is-revealed` via JS.
+
+| Class            | Initial State             | Duration |
+|------------------|---------------------------|----------|
+| `.reveal-up`     | `translateY(60px)`, 0 opacity | 0.8s |
+| `.reveal-left`   | `translateX(-80px)`, 0 opacity | 0.8s |
+| `.reveal-right`  | `translateX(80px)`, 0 opacity | 0.8s |
+| `.reveal-scale`  | `scale(0.85)`, 0 opacity  | 0.8s     |
+| `.reveal-fade`   | 0 opacity                 | 1.2s     |
+
+Standard interaction durations: `duration-300` (buttons/links), `duration-500` (cards).
+
+### Focus States
+
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+*:focus-visible        { outline: 3px solid var(--color-sage); outline-offset: 4px; border-radius: 6px; }
+button:focus-visible,
+a:focus-visible        { box-shadow: 0 0 0 4px rgba(107,143,113,0.2); }
 ```
 
-### Spacing Variables
-
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--space-xs` | `4px` / `0.25rem` | Tight gaps |
-| `--space-sm` | `8px` / `0.5rem` | Icon gaps, inline spacing |
-| `--space-md` | `16px` / `1rem` | Standard padding |
-| `--space-lg` | `24px` / `1.5rem` | Section padding |
-| `--space-xl` | `32px` / `2rem` | Large gaps |
-| `--space-2xl` | `48px` / `3rem` | Section margins |
-| `--space-3xl` | `64px` / `4rem` | Hero padding |
-
-### Shadow Depths
-
-| Level | Value | Usage |
-|-------|-------|-------|
-| `--shadow-sm` | `0 1px 2px rgba(0,0,0,0.05)` | Subtle lift |
-| `--shadow-md` | `0 4px 6px rgba(0,0,0,0.1)` | Cards, buttons |
-| `--shadow-lg` | `0 10px 15px rgba(0,0,0,0.1)` | Modals, dropdowns |
-| `--shadow-xl` | `0 20px 25px rgba(0,0,0,0.15)` | Hero images, featured cards |
-
 ---
 
-## Component Specs
+## Component Classes
+
+Defined in `@layer components` in `globals.css`.
 
 ### Buttons
 
-```css
-/* Primary Button */
-.btn-primary {
-  background: #22C55E;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 200ms ease;
-  cursor: pointer;
-}
+| Class            | Appearance                                         |
+|------------------|----------------------------------------------------|
+| `.btn-primary`   | Ember bg, cream text, rounded-full, bold serif, px-8 py-4. Hover: rust bg + scale. |
+| `.btn-secondary` | Transparent, charcoal border + text, rounded-full, px-8 py-4. Hover: charcoal bg, cream text.  |
+| `.btn-tertiary`  | Transparent, charcoal/60 text, no border, px-6 py-2. Hover: light charcoal bg.   |
 
-.btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
+### Cards (CSS classes)
 
-/* Secondary Button */
-.btn-secondary {
-  background: transparent;
-  color: #7C3AED;
-  border: 2px solid #7C3AED;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 200ms ease;
-  cursor: pointer;
-}
-```
+| Class             | Appearance                                         |
+|-------------------|----------------------------------------------------|
+| `.card-primary`   | Warm-white bg, rounded-3xl, p-10/md:p-14, subtle border. Hover: translateY(-12px) + shadow. |
+| `.card-secondary` | Rounded-2xl, p-8/md:p-10, 2px border. Hover: translateY(-8px). |
+| `.card-accent`    | Rounded-2xl, 6px left border, charcoal/10 border.  |
 
-### Cards
+### SurfaceCard (React component: `components/ui/SurfaceCard.tsx`)
 
-```css
-.card {
-  background: #FAF5FF;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: var(--shadow-md);
-  transition: all 200ms ease;
-  cursor: pointer;
-}
+Dashboard card component with rounded-3xl, soft border, card shadow, 300ms transition.
 
-.card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-}
-```
+| Prop      | Options                    | Default     |
+|-----------|----------------------------|-------------|
+| `variant` | `default` / `muted` / `inset` | `default` |
+| `padding` | `sm` / `md` / `lg`        | `md`        |
 
-### Inputs
-
-```css
-.input {
-  padding: 12px 16px;
-  border: 1px solid #E2E8F0;
-  border-radius: 8px;
-  font-size: 16px;
-  transition: border-color 200ms ease;
-}
-
-.input:focus {
-  border-color: #7C3AED;
-  outline: none;
-  box-shadow: 0 0 0 3px #7C3AED20;
-}
-```
-
-### Modals
-
-```css
-.modal-overlay {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-}
-
-.modal {
-  background: white;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: var(--shadow-xl);
-  max-width: 500px;
-  width: 90%;
-}
-```
+| Variant   | Background                           |
+|-----------|--------------------------------------|
+| `default` | `--color-surface` (warm-white)       |
+| `muted`   | `--color-surface-subtle` (#f0ebe0)   |
+| `inset`   | `--color-surface-elevated` (starlight) |
 
 ---
 
-## Style Guidelines
+## Dashboard Scoping
 
-**Style:** Accessible & Ethical
+Dashboard styles are scoped via `[data-dashboard]` attribute on the layout wrapper:
+- Background switches to `--color-canvas` (cream)
+- Links use `--color-primary` (ember) with tinted underlines
+- Sidebar uses charcoal dark theme (`--surface-sidebar: #2a2520`)
 
-**Keywords:** High contrast, large text (16px+), keyboard navigation, screen reader friendly, WCAG compliant, focus state, semantic
-
-**Best For:** Government, healthcare, education, inclusive products, large audience, legal compliance, public
-
-**Key Effects:** Clear focus rings (3-4px), ARIA labels, skip links, responsive design, reduced motion, 44x44px touch targets
-
-### Page Pattern
-
-**Pattern Name:** Community/Forum Landing
-
-- **Conversion Strategy:** Show active community (member count, posts today). Highlight benefits. Preview content. Easy onboarding.
-- **CTA Placement:** Join button prominent + After member showcase
-- **Section Order:** 1. Hero (community value prop), 2. Popular topics/categories, 3. Active members showcase, 4. Join CTA
+Public site uses separate base variables: `--bg: #f2efe7`, `--ink: #111`, `--panel: #ffffffcc`.
 
 ---
 
-## Anti-Patterns (Do NOT Use)
+## Accessibility
 
-- ❌ Outdated design
-- ❌ Hidden info
-
-### Additional Forbidden Patterns
-
-- ❌ **Emojis as icons** — Use SVG icons (Heroicons, Lucide, Simple Icons)
-- ❌ **Missing cursor:pointer** — All clickable elements must have cursor:pointer
-- ❌ **Layout-shifting hovers** — Avoid scale transforms that shift layout
-- ❌ **Low contrast text** — Maintain 4.5:1 minimum contrast ratio
-- ❌ **Instant state changes** — Always use transitions (150-300ms)
-- ❌ **Invisible focus states** — Focus states must be visible for a11y
+- `prefers-reduced-motion: reduce` kills all animation/transition durations
+- Skip-to-content link in `layout.tsx` (sr-only, visible on focus)
+- `cursor: pointer` on all interactive elements via base layer reset
+- `cursor: not-allowed` on disabled elements and `[aria-disabled="true"]`
+- Selection highlight uses amber bg with charcoal text
 
 ---
 
-## Pre-Delivery Checklist
+## Anti-Patterns
 
-Before delivering any UI code, verify:
-
-- [ ] No emojis used as icons (use SVG instead)
-- [ ] All icons from consistent icon set (Heroicons/Lucide)
-- [ ] `cursor-pointer` on all clickable elements
-- [ ] Hover states with smooth transitions (150-300ms)
-- [ ] Light mode: text contrast 4.5:1 minimum
-- [ ] Focus states visible for keyboard navigation
-- [ ] `prefers-reduced-motion` respected
-- [ ] Responsive: 375px, 768px, 1024px, 1440px
-- [ ] No content hidden behind fixed navbars
-- [ ] No horizontal scroll on mobile
+- No emojis as icons -- use SVG icons (Lucide preferred)
+- No hardcoded hex in components -- use Tailwind palette classes or CSS variables
+- No layout-shifting hovers -- prefer `translateY` over `scale` for cards
+- No instant state changes -- all interactive elements need `transition-all duration-300`
+- No `@import url()` for fonts -- use `next/font/google`
+- Keep focus states visible for keyboard navigation
+- Minimum 4.5:1 contrast ratio for text
