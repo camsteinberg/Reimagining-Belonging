@@ -1,7 +1,10 @@
 // server component (no "use client")
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/getSession';
 import TillDashboard from './TillDashboard';
+
+export const metadata: Metadata = { title: 'Till' };
 
 export default async function TillPage() {
   const session = await getSession();

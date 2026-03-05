@@ -1,7 +1,10 @@
 // app/(dashboard)/dashboard/page.tsx  (server component)
+import type { Metadata } from 'next';
 import { getSession } from '@/lib/getSession';
 import { redirect } from 'next/navigation';
 import { Sparkles } from 'lucide-react';
+
+export const metadata: Metadata = { title: 'Dashboard' };
 
 export default async function DashboardHome() {
   const session = await getSession();

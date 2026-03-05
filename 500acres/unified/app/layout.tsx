@@ -21,8 +21,25 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: '500 Acres — Reimagining Belonging',
-  description: 'Building community in nature. Helping Gen Z solve the housing crisis.',
+  title: {
+    default: '500 Acres — Reimagining Belonging',
+    template: '%s | 500 Acres',
+  },
+  description:
+    'Building community in nature. Helping Gen Z solve the housing crisis through intentional community and sustainable living.',
+  openGraph: {
+    title: '500 Acres — Reimagining Belonging',
+    description: 'Building community in nature.',
+    url: 'https://habitable.us',
+    siteName: '500 Acres',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '500 Acres — Reimagining Belonging',
+    description: 'Building community in nature.',
+  },
+  metadataBase: new URL('https://habitable.us'),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,9 +1,10 @@
-
-
 // app/buzz/page.tsx (pattern for all modules)
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/getSession';
 import AcreBuzzDashboard from './Dashboard';
+
+export const metadata: Metadata = { title: 'AcreBuzz' };
 
 export default async function BuzzPage() {
   const session = await getSession();

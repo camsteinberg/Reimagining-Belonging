@@ -1,6 +1,9 @@
 // app/fellowship/page.tsx
+import type { Metadata } from 'next';
 import { getSession } from '@/lib/getSession';
 import FellowDashboard from '@/components/fellowship/FellowDashboard';
+
+export const metadata: Metadata = { title: 'Fellowship' };
 
 export default async function Page() {
   const session = await getSession();
