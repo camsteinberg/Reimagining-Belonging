@@ -64,7 +64,7 @@ function FeaturedStoryCard({ participant, index }: { participant: Participant; i
     <Link
       href={`/stories/${participant.slug}`}
       aria-label={`Read ${participant.name}'s story`}
-      className={`reveal-up stagger-${(index % 4) + 1} story-card group relative rounded-2xl overflow-hidden border border-charcoal/8 bg-warm-white md:col-span-2 lg:col-span-2`}
+      className={`reveal-clip-up stagger-${(index % 4) + 1} story-card group relative rounded-2xl overflow-hidden border border-charcoal/8 bg-warm-white md:col-span-2 lg:col-span-2`}
     >
       {/* Top accent line */}
       <div
@@ -130,7 +130,7 @@ function StoryCard({ participant, index }: { participant: Participant; index: nu
     <Link
       href={`/stories/${participant.slug}`}
       aria-label={`Read ${participant.name}'s story`}
-      className={`reveal-up stagger-${(index % 4) + 1} story-card group relative rounded-2xl overflow-hidden border border-charcoal/8 bg-warm-white`}
+      className={`reveal-clip-up stagger-${(index % 4) + 1} story-card group relative rounded-2xl overflow-hidden border border-charcoal/8 bg-warm-white`}
     >
       {/* Top accent line */}
       <div
@@ -193,11 +193,11 @@ export default function StoriesPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero -- shorter to get to content faster */}
+      {/* Hero with ghost "7" */}
       <section className="relative min-h-[70vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
         <Image src={storiesHero} alt="Historic barn in pastoral landscape" fill sizes="100vw" className="object-cover opacity-15" priority />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
-        <div className="absolute top-[20%] right-[5%] w-[35vw] h-[35vw] bg-clay/5 blob pointer-events-none" aria-hidden="true" />
+        <span className="num-accent font-display text-[10rem] md:text-[20rem] absolute top-[5%] right-[5%] md:right-[10%] select-none pointer-events-none" aria-hidden="true">7</span>
 
         <div className="page-container relative z-10">
           <p className="reveal-clip-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
@@ -236,11 +236,38 @@ export default function StoriesPage() {
         </div>
       </section>
 
+      {/* Horizontal scroll quote strip */}
+      <section className="py-14 md:py-20 overflow-hidden">
+        <div className="flex overflow-x-auto scrollbar-hide px-[max(1.5rem,4vw)]">
+          {participants.map((p: Participant, i: number) => (
+            <div key={p.slug} className="min-w-[80vw] md:min-w-[50vw] flex-shrink-0 flex items-center">
+              <blockquote className="pr-8 md:pr-12">
+                <p className="font-serif text-[clamp(1.25rem,3vw,2rem)] italic text-charcoal/60 leading-[1.5]">
+                  &ldquo;{p.belongingQuote}&rdquo;
+                </p>
+                <footer className="mt-4 font-sans text-xs uppercase tracking-[0.3em] text-charcoal/40 not-italic">
+                  — {p.name}
+                </footer>
+              </blockquote>
+              {i < participants.length - 1 && (
+                <span className="text-charcoal/15 text-5xl flex-shrink-0" aria-hidden="true">|</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
       <SectionDivider variant="space" />
 
-      {/* Participant grid -- masonry/staggered layout with featured cards */}
+      {/* Counter header + Participant grid */}
       <section className="pb-24 md:pb-32">
         <div className="page-container">
+          {/* Counter header */}
+          <div className="reveal-clip-up flex items-baseline gap-4 mb-12 md:mb-16">
+            <span className="num-accent font-display text-6xl md:text-8xl">7</span>
+            <span className="font-sans text-xs uppercase tracking-[0.4em] text-charcoal/50">Voices</span>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {participants.map((p: Participant, i: number) => {
               if (FEATURED_INDICES.includes(i)) {

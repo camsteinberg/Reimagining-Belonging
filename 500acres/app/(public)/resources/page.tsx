@@ -202,14 +202,19 @@ export default function ResourcesPage() {
 
   const totalCount = RESOURCES.length + 1; // +1 for featured
 
+  // Category counts for editorial listing
+  const categoryCounts: Record<string, number> = {};
+  CATEGORIES.forEach(cat => {
+    categoryCounts[cat] = cat === "All" ? RESOURCES.length : RESOURCES.filter(r => r.category === cat).length;
+  });
+
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero -- shorter for utility page */}
+      {/* Hero with ghost count */}
       <section className="relative min-h-[60vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
         <img src={resourcesHero.src} alt="" className="absolute inset-0 w-full h-full object-cover opacity-12" loading="lazy" decoding="async" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
-        <div className="absolute top-[15%] left-[-8%] w-[40vw] h-[40vw] bg-sage/5 blob pointer-events-none" aria-hidden="true" />
-        <div className="absolute bottom-[10%] right-[-5%] w-[25vw] h-[25vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" />
+        <span className="num-accent font-display text-[10rem] md:text-[20rem] absolute top-[5%] right-[5%] md:right-[10%] select-none pointer-events-none" aria-hidden="true">{totalCount}</span>
 
         <div className="page-container relative z-10">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
@@ -227,39 +232,44 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      {/* Resource count intro */}
-      <section className="py-12 md:py-16 border-y border-charcoal/10">
+      {/* Typographic category listing */}
+      <section className="py-10 md:py-14 border-y border-charcoal/10">
         <div className="page-container">
-          <div className="reveal-up flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-            <div className="flex items-center gap-6">
-              <span className="font-serif text-5xl md:text-6xl font-bold text-charcoal">{totalCount}</span>
-              <div>
-                <p className="font-sans text-xs uppercase tracking-[0.3em] text-charcoal/60 mb-1">Curated Resources</p>
-                <p className="font-serif text-base text-charcoal/50">Guides, toolkits, articles, and research for every level.</p>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              {["Beginner", "Intermediate", "Advanced", "Deep-Dive"].map((level) => (
-                <span key={level} className={`font-sans text-xs uppercase tracking-wider px-3 py-1.5 rounded-full ${LEVEL_COLORS[level]}`}>
-                  {level}
-                </span>
-              ))}
-            </div>
+          <div className="reveal-up flex flex-wrap gap-x-8 gap-y-4" role="tablist" aria-label="Filter resources by category">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                role="tab"
+                id={`tab-${cat.toLowerCase().replace(/\s+/g, "-")}`}
+                aria-selected={activeCategory === cat}
+                aria-controls="resources-tabpanel"
+                onClick={() => setActiveCategory(cat)}
+                className={`font-serif text-lg tracking-wide pb-2 border-b-2 transition-all duration-300 cursor-pointer ${
+                  activeCategory === cat
+                    ? "border-charcoal text-charcoal"
+                    : "border-transparent text-charcoal/40 hover:text-charcoal/70"
+                }`}
+              >
+                {cat} <span className="text-sm">({categoryCounts[cat]})</span>
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Curator's Note */}
+      {/* Curator's Note — dark inset */}
       <section className="py-16 md:py-20">
-        <div className="page-container max-w-3xl">
-          <div className="reveal-fade flex gap-6">
-            <div className="w-1 rounded-full bg-forest/40 flex-shrink-0" />
-            <p className="font-serif text-lg md:text-xl text-charcoal/70 italic leading-[1.7]">
-              These resources are curated by the 500 Acres team — selected for
-              clarity, credibility, and relevance to the housing challenges
-              facing Gen Z. We prioritize actionable knowledge over volume,
-              and update this collection as new tools and research emerge.
-            </p>
+        <div className="section-inset bg-charcoal py-12 md:py-16">
+          <div className="max-w-3xl mx-auto px-8 md:px-12">
+            <div className="reveal-fade flex gap-6">
+              <div className="w-1 rounded-full bg-cream/20 flex-shrink-0" />
+              <p className="font-serif text-lg md:text-xl text-cream/70 italic leading-[1.7]">
+                These resources are curated by the 500 Acres team — selected for
+                clarity, credibility, and relevance to the housing challenges
+                facing Gen Z. We prioritize actionable knowledge over volume,
+                and update this collection as new tools and research emerge.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -276,7 +286,7 @@ export default function ResourcesPage() {
               transition-all duration-500 hover:-translate-y-2 hover:shadow-xl`}
           >
             <div className="flex flex-wrap items-center gap-3 mb-10">
-              <div className={`w-2.5 h-2.5 rounded-full ${FEATURED_RESOURCE.accentDot}`} />
+              <div className={`image-reveal w-2.5 h-2.5 rounded-full ${FEATURED_RESOURCE.accentDot}`} />
               <span className="font-sans text-xs uppercase tracking-[0.2em] text-charcoal/60">
                 {FEATURED_RESOURCE.category}
               </span>
@@ -308,31 +318,9 @@ export default function ResourcesPage() {
         </div>
       </section>
 
-      {/* Filter + Bento Grid */}
+      {/* Resource Grid */}
       <section className="py-14 md:py-20 lg:py-28">
         <div className="page-container">
-          {/* Category pills */}
-          <div className="reveal-up flex flex-wrap gap-3 mb-14 md:mb-20" role="tablist" aria-label="Filter resources by category">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                role="tab"
-                id={`tab-${cat.toLowerCase().replace(/\s+/g, "-")}`}
-                aria-selected={activeCategory === cat}
-                aria-controls="resources-tabpanel"
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-sans text-xs sm:text-sm tracking-wide transition-all duration-300 ${
-                  activeCategory === cat
-                    ? "bg-charcoal text-cream scale-105"
-                    : "bg-transparent border border-charcoal/20 text-charcoal/60 hover:border-charcoal/50 hover:text-charcoal"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Resource cards -- bento grid with varied spans */}
           <div ref={gridRef} id="resources-tabpanel" role="tabpanel" aria-labelledby={`tab-${activeCategory.toLowerCase().replace(/\s+/g, "-")}`} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {filtered.map((resource, i) => {
               const isWide = i === 0 && filtered.length > 2;
@@ -342,8 +330,7 @@ export default function ResourcesPage() {
                   href={resource.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ animationDelay: `${i * 60}ms` }}
-                  className={`filter-enter group relative p-10 md:p-14 rounded-2xl border ${resource.accent}
+                  className={`reveal-fade stagger-${(i % 4) + 1} group relative p-10 md:p-14 rounded-2xl border ${resource.accent}
                     transition-all duration-500 hover:-translate-y-2 hover:shadow-xl
                     ${isWide ? "md:col-span-2 md:row-span-1" : ""}`}
                 >

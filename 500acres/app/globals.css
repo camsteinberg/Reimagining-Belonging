@@ -683,6 +683,10 @@
   background-size: 256px 256px;
 }
 
+/* Hidden scrollbar utility */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* Split text effect */
 .split-char {
   display: inline-block;

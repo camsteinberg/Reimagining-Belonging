@@ -122,13 +122,9 @@ export default function GetInvolvedPage() {
 
   return (
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
-      {/* Hero -- immersive full-bleed with CTA */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28 bg-charcoal overflow-hidden">
+      {/* Hero with diagonal bottom edge */}
+      <section className="diagonal-bottom relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28 lg:pb-36 bg-charcoal overflow-hidden">
         <img src={heroConstruction.src} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-        {/* Decorative blobs */}
-        <div className="absolute top-[20%] left-[10%] w-[30vw] h-[30vw] bg-bark/20 blob pointer-events-none blur-3xl" aria-hidden="true" />
-        <div className="absolute bottom-[10%] right-[15%] w-[25vw] h-[25vw] bg-amber/15 blob pointer-events-none blur-3xl" aria-hidden="true" />
-        <div className="absolute top-[60%] left-[50%] w-[20vw] h-[20vw] bg-sage/10 blob pointer-events-none blur-3xl" aria-hidden="true" />
 
         <div className="page-container relative z-10 w-full">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/70 mb-10">
@@ -145,7 +141,7 @@ export default function GetInvolvedPage() {
             train in digital fabrication, volunteer for a build weekend, or
             support the mission — there&apos;s a way in.
           </p>
-          {/* CTA button in hero -- unique to Get Involved */}
+          {/* CTA button in hero */}
           <a
             href="#volunteer-form"
             onClick={scrollToSection}
@@ -156,7 +152,7 @@ export default function GetInvolvedPage() {
         </div>
       </section>
 
-      {/* Engagement funnel -- featured Apply card + 2-column grid */}
+      {/* Engagement funnel — alternating numbered timeline */}
       <section className="py-16 md:py-24 lg:py-36">
         <div className="page-container">
           <SectionHeader
@@ -165,59 +161,63 @@ export default function GetInvolvedPage() {
             className="mb-20 md:mb-24"
           />
 
-          {/* Featured Apply card -- full width, horizontal layout */}
-          {(() => {
-            const applyStep = ENGAGEMENT_STEPS[0];
-            return (
-              <a
-                href={applyStep.linkTo}
-                onClick={scrollToSection}
-                className="reveal-scale group relative block border-2 border-amber/30 bg-amber/10 rounded-2xl p-10 md:p-16 mb-10 md:mb-14 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
-                  <div className="w-full aspect-video rounded-xl overflow-hidden">
-                    <img src={applyStep.image.src} alt={applyStep.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-3xl md:text-4xl font-bold text-charcoal mb-8">
-                      {applyStep.title}
-                    </h3>
-                    <p className="font-serif text-base text-charcoal/60 leading-[1.85] mb-10 max-w-sm">
-                      {applyStep.desc}
-                    </p>
-                    <div className="flex items-center gap-2 text-charcoal/50 group-hover:text-charcoal transition-colors">
-                      <span className="font-sans text-sm">{applyStep.linkLabel}</span>
-                      <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
-                    </div>
-                  </div>
+          <div className="space-y-16 md:space-y-24">
+            {ENGAGEMENT_STEPS.map((step, i) => {
+              const stepNum = parseInt(step.num);
+              const isOdd = stepNum % 2 !== 0;
+
+              const timelineContent = (
+                <div className="reveal-scale grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-center relative">
+                  {/* Ghost number */}
+                  <span className="num-accent font-display text-[8rem] md:text-[12rem] absolute -top-10 md:-top-16 left-0 select-none pointer-events-none z-0" aria-hidden="true">{step.num}</span>
+
+                  {isOdd ? (
+                    <>
+                      {/* Image left */}
+                      <div className="relative z-10 md:col-span-5">
+                        <div className="w-full aspect-video rounded-xl overflow-hidden">
+                          <img src={step.image.src} alt={step.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                        </div>
+                      </div>
+                      {/* Text right */}
+                      <div className="relative z-10 md:col-span-6 md:col-start-7">
+                        <h3 className="font-serif text-3xl md:text-4xl font-bold text-charcoal mb-8">
+                          {step.title}
+                        </h3>
+                        <p className="font-serif text-base text-charcoal/60 leading-[1.85] mb-10 max-w-sm">
+                          {step.desc}
+                        </p>
+                        <div className="flex items-center gap-2 text-charcoal/50 group-hover:text-charcoal transition-colors">
+                          <span className="font-sans text-sm">{step.linkLabel}</span>
+                          <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Image first in DOM for mobile, positioned right on desktop */}
+                      <div className="relative z-10 md:col-span-5 md:col-start-8 md:row-start-1">
+                        <div className="w-full aspect-video rounded-xl overflow-hidden">
+                          <img src={step.image.src} alt={step.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                        </div>
+                      </div>
+                      {/* Text positioned left on desktop */}
+                      <div className="relative z-10 md:col-span-6 md:col-start-1 md:row-start-1">
+                        <h3 className="font-serif text-3xl md:text-4xl font-bold text-charcoal mb-8">
+                          {step.title}
+                        </h3>
+                        <p className="font-serif text-base text-charcoal/60 leading-[1.85] mb-10 max-w-sm">
+                          {step.desc}
+                        </p>
+                        <div className="flex items-center gap-2 text-charcoal/50 group-hover:text-charcoal transition-colors">
+                          <span className="font-sans text-sm">{step.linkLabel}</span>
+                          <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
-              </a>
-            );
-          })()}
-
-          {/* Attend + Build -- standard 2-column grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-14">
-            {ENGAGEMENT_STEPS.slice(1).map((step, i) => {
-              const revealClass = i === 0 ? "reveal-left" : "reveal-right";
-              const cardContent = (
-                <>
-                  <div className="w-full aspect-video rounded-xl overflow-hidden mb-6">
-                    <img src={step.image.src} alt={step.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                  </div>
-                  <h3 className="font-serif text-3xl md:text-4xl font-bold text-charcoal mb-8">
-                    {step.title}
-                  </h3>
-                  <p className="font-serif text-base text-charcoal/60 leading-[1.85] mb-10 max-w-sm">
-                    {step.desc}
-                  </p>
-                  <div className="flex items-center gap-2 text-charcoal/50 group-hover:text-charcoal transition-colors">
-                    <span className="font-sans text-sm">{step.linkLabel}</span>
-                    <span className="transition-transform duration-300 group-hover:translate-x-2">&rarr;</span>
-                  </div>
-                </>
               );
-
-              const cardClasses = `${revealClass} stagger-${i + 1} group relative block ${step.bg} rounded-2xl p-10 md:p-16 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl`;
 
               if (step.isAnchor) {
                 return (
@@ -225,9 +225,9 @@ export default function GetInvolvedPage() {
                     key={step.num}
                     href={step.linkTo}
                     onClick={scrollToSection}
-                    className={cardClasses}
+                    className="group relative block"
                   >
-                    {cardContent}
+                    {timelineContent}
                   </a>
                 );
               }
@@ -236,9 +236,9 @@ export default function GetInvolvedPage() {
                 <Link
                   key={step.num}
                   href={step.linkTo}
-                  className={cardClasses}
+                  className="group relative block"
                 >
-                  {cardContent}
+                  {timelineContent}
                 </Link>
               );
             })}
@@ -500,8 +500,8 @@ export default function GetInvolvedPage() {
         </div>
       </section>
 
-      {/* Donate -- dramatic CTA */}
-      <section className="relative py-16 md:py-28 lg:py-40 bg-charcoal overflow-hidden">
+      {/* Donate — floating dark CTA with section-inset */}
+      <section className="section-inset relative py-16 md:py-28 lg:py-40 bg-charcoal overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] bg-sage/5 rounded-full blur-3xl" aria-hidden="true" />
         </div>
