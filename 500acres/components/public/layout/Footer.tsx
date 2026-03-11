@@ -3,41 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import Logo from "../shared/Logo";
+import { PUBLIC_NAV_ITEMS, PUBLIC_SOCIAL_LINKS } from "@/lib/publicNav";
 
-interface FooterLink {
-  href: string;
-  label: string;
-  children?: FooterLink[];
-}
-
-interface SocialLink {
-  label: string;
-  href: string;
-  ariaLabel: string;
-}
-
-const FOOTER_LINKS: FooterLink[] = [
-  { href: "/", label: "Home" },
-  {
-    href: "/about",
-    label: "About",
-    children: [
-      { href: "/about/mission", label: "Mission" },
-      { href: "/about/team", label: "Team" },
-      { href: "/about/sponsors", label: "Sponsors" },
-      { href: "/about/white-paper", label: "White Paper" },
-    ],
-  },
-  { href: "/stories", label: "Stories" },
-  { href: "/resources", label: "Resources" },
-  { href: "/get-involved", label: "Get Involved" },
-];
-
-const SOCIAL_LINKS: SocialLink[] = [
-  { label: "Instagram", href: "https://instagram.com/500acres", ariaLabel: "Follow us on Instagram" },
-  { label: "Twitter", href: "https://twitter.com/500acres", ariaLabel: "Follow us on Twitter" },
-  { label: "Email", href: "mailto:hello@500acres.org", ariaLabel: "Send us an email" },
-];
+const FOOTER_LINKS = PUBLIC_NAV_ITEMS;
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -123,23 +91,39 @@ export default function Footer() {
             <nav aria-label="Footer navigation">
               <div className="flex flex-col gap-4">
                 {FOOTER_LINKS.map((link) => (
-                  <div key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit py-1"
-                    >
-                      {link.label}
-                    </Link>
+                  <div key={link.label}>
+                    {link.href && !link.children ? (
+                      <Link
+                        href={link.href}
+                        className="creative-link font-serif text-base text-cream/70 hover:text-cream transition-colors w-fit py-1"
+                      >
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <p className="font-serif text-base text-cream/70 py-1">{link.label}</p>
+                    )}
                     {link.children && (
                       <div className="flex flex-col gap-3 mt-3 pl-4">
                         {link.children.map((child) => (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className="creative-link font-serif text-sm text-cream/50 hover:text-cream/80 transition-colors w-fit"
-                          >
-                            {child.label}
-                          </Link>
+                          child.external ? (
+                            <a
+                              key={child.href}
+                              href={child.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="creative-link font-serif text-sm text-cream/50 hover:text-cream/80 transition-colors w-fit"
+                            >
+                              {child.label}
+                            </a>
+                          ) : (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className="creative-link font-serif text-sm text-cream/50 hover:text-cream/80 transition-colors w-fit"
+                            >
+                              {child.label}
+                            </Link>
+                          )
                         ))}
                       </div>
                     )}
@@ -155,7 +139,7 @@ export default function Footer() {
               Connect
             </p>
             <div className="flex flex-col gap-5">
-              {SOCIAL_LINKS.map((social) => (
+              {PUBLIC_SOCIAL_LINKS.map((social) => (
                 <a
                   key={social.label}
                   href={social.href}

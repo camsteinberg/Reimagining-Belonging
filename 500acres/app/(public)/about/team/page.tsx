@@ -1,6 +1,7 @@
 'use client';
 
 import useReveal from '@/hooks/useReveal';
+import Breadcrumbs from '@/components/public/shared/Breadcrumbs';
 import SectionDivider from '@/components/public/shared/SectionDivider';
 import SectionHeader from '@/components/public/shared/SectionHeader';
 import CTABand from '@/components/public/shared/CTABand';
@@ -267,6 +268,9 @@ export default function OurTeamPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-cream via-cream/90 to-cream/40" />
 
         <div className="page-container relative z-10">
+          <div className="mb-10">
+            <Breadcrumbs items={[{ label: "About", href: "/about" }, { label: "Our Team" }]} />
+          </div>
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             Our Team
           </p>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import useReveal from '@/hooks/useReveal';
+import Breadcrumbs from '@/components/public/shared/Breadcrumbs';
 import SectionDivider from '@/components/public/shared/SectionDivider';
 
 /* Photos */
@@ -240,6 +241,9 @@ export default function WhitePaperPage() {
         <div className="absolute bottom-[15%] left-[-8%] w-[35vw] h-[35vw] bg-amber/5 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10">
+          <div className="mb-10">
+            <Breadcrumbs items={[{ label: "About", href: "/about" }, { label: "White Paper" }]} />
+          </div>
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             White Paper &middot; January 2026
           </p>

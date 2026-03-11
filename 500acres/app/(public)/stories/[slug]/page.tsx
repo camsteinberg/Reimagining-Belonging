@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image, { StaticImageData } from 'next/image';
 import { participants } from '@/data/participants';
 import useReveal from '@/hooks/useReveal';
+import Breadcrumbs from '@/components/public/shared/Breadcrumbs';
 
 import ih01 from '@/assets/images/idealHome/01.webp';
 import ih02 from '@/assets/images/idealHome/02.webp';
@@ -127,14 +128,8 @@ export default function StoryDetailPage() {
           aria-hidden="true"
         />
 
-        {/* Back link */}
         <div className="page-container relative z-10 mb-10">
-          <Link
-            href="/stories"
-            className="reveal-up font-sans text-xs uppercase tracking-[0.3em] text-charcoal/60 hover:text-charcoal transition-colors creative-link"
-          >
-            &larr; All Stories
-          </Link>
+          <Breadcrumbs items={[{ label: "Stories", href: "/stories" }, { label: participant.name }]} />
         </div>
 
         {/* Content */}

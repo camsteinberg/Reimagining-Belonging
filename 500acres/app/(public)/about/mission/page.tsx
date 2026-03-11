@@ -1,6 +1,7 @@
 'use client';
 
 import useReveal from '@/hooks/useReveal';
+import Breadcrumbs from '@/components/public/shared/Breadcrumbs';
 import SectionDivider from '@/components/public/shared/SectionDivider';
 import SectionHeader from '@/components/public/shared/SectionHeader';
 import CTABand from '@/components/public/shared/CTABand';
@@ -18,6 +19,9 @@ export default function OurMissionPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
 
         <div className="page-container relative z-10 flex flex-col items-center">
+          <div className="w-full mb-10">
+            <Breadcrumbs items={[{ label: "About", href: "/about" }, { label: "Our Mission" }]} />
+          </div>
           <p className="reveal-scale font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             About 500 Acres
           </p>

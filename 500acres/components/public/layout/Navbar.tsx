@@ -1,62 +1,24 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import Logo from "../shared/Logo";
-
-const STICKY_NAV_LINKS = [
-  { href: "/", label: "Home" },
-  {
-    label: "About",
-    children: [
-      { href: "/about", label: "About" },
-      { href: "/about/mission", label: "Our Mission" },
-      { href: "/about/team", label: "Our Team" },
-      { href: "/about/sponsors", label: "Our Sponsors" },
-      { href: "/about/white-paper", label: "White Paper" },
-    ],
-  },
-  {
-    label: "Stories & Games",
-    children: [
-      { href: "/stories", label: "Stories" },
-      { href: "https://blueprint-telephone.vercel.app", label: "Blueprint Telephone", external: true },
-    ],
-  },
-  { href: "/resources", label: "Resources" },
-  { href: "/get-involved", label: "Get Involved" },
-  { href: "/login", label: "Login" },
-];
-
-const NAV_LINKS = [
-  { href: "/", label: "Home", num: "01" },
-  {
-    label: "About",
-    num: "02",
-    children: [
-      { href: "/about/mission", label: "Our Mission" },
-      { href: "/about/team", label: "Our Team" },
-      { href: "/about/sponsors", label: "Our Sponsors" },
-      { href: "/about/white-paper", label: "White Paper" },
-    ],
-  },
-  {
-    label: "Stories & Games",
-    num: "03",
-    children: [
-      { href: "/stories", label: "Stories" },
-      { href: "https://blueprint-telephone.vercel.app", label: "Blueprint Telephone", external: true },
-    ],
-  },
-  { href: "/resources", label: "Resources", num: "04" },
-  { href: "/get-involved", label: "Get Involved", num: "05" },
-  { href: "/login", label: "Login", num: "06" },
-];
+import {
+  AUTH_NAV_ITEM,
+  PUBLIC_NAV_ITEMS,
+  PUBLIC_SOCIAL_LINKS,
+  isNavHrefActive,
+  isNavItemActive,
+} from "@/lib/publicNav";
 
 interface NavbarProps {
   isHomepage: boolean;
+}
+
+function navId(label: string) {
+  return label.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "and");
 }
 
 export default function Navbar({ isHomepage }: NavbarProps) {
@@ -66,24 +28,24 @@ export default function Navbar({ isHomepage }: NavbarProps) {
   const [showSticky, setShowSticky] = useState(false);
   const [stickyDropdown, setStickyDropdown] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const subLinksRef = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [menuCanScrollUp, setMenuCanScrollUp] = useState(false);
+  const [menuCanScrollDown, setMenuCanScrollDown] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const overlayRef = useRef<HTMLDivElement>(null);
+  const menuScrollRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<(HTMLElement | null)[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const navigatingRef = useRef(false);
 
-  // Detect auth state via API (cookie is httpOnly, not visible to JS)
   useEffect(() => {
-    fetch('/api/me')
+    fetch("/api/me")
       .then((r) => r.json())
       .then((data) => setIsLoggedIn(!!data?.authenticated))
       .catch(() => setIsLoggedIn(false));
   }, []);
 
-  // Close menu on route change (only for non-nav navigations like logo click, back button)
   useEffect(() => {
     if (!navigatingRef.current) {
       setIsOpen(false);
@@ -91,7 +53,6 @@ export default function Navbar({ isHomepage }: NavbarProps) {
     }
   }, [pathname]);
 
-  // Detect if menu button is over a dark background
   useEffect(() => {
     if (isHomepage) {
       setOverDark(true);
@@ -107,7 +68,6 @@ export default function Navbar({ isHomepage }: NavbarProps) {
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
 
-      // Temporarily hide button so elementsFromPoint can see behind it
       btn.style.pointerEvents = "none";
       btn.style.visibility = "hidden";
       const els = document.elementsFromPoint(cx, cy);
@@ -118,12 +78,12 @@ export default function Navbar({ isHomepage }: NavbarProps) {
         const cl = (el as HTMLElement).classList;
         return (
           cl.contains("bg-charcoal") ||
+          cl.contains("bg-forest") ||
           cl.contains("bg-moss") ||
           cl.contains("bg-bark") ||
           cl.contains("bg-night") ||
           cl.contains("bg-pine") ||
           cl.contains("diagonal-top") ||
-          (el as HTMLElement).style.backgroundColor === "#333333" ||
           (el as HTMLElement).style.backgroundColor === "#2a2520"
         );
       });
@@ -139,6 +99,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
         rafId = null;
       });
     };
+
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
@@ -146,19 +107,22 @@ export default function Navbar({ isHomepage }: NavbarProps) {
     };
   }, [isHomepage, isOpen, pathname]);
 
-  // Lock body scroll when menu open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      setStickyDropdown(null);
     } else {
       document.body.style.overflow = "";
+      setExpandedItem(null);
+      setMenuCanScrollUp(false);
+      setMenuCanScrollDown(false);
     }
+
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
 
-  // Focus trap + Escape key when menu is open
   useEffect(() => {
     if (!isOpen) return;
 
@@ -177,9 +141,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
 
       const focusable = [
         menuBtn,
-        ...overlay.querySelectorAll(
-          'a[href], button, [tabindex]:not([tabindex="-1"])'
-        ),
+        ...overlay.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])'),
       ].filter((el) => (el as HTMLElement).offsetParent !== null || el === menuBtn) as HTMLElement[];
 
       if (focusable.length === 0) return;
@@ -200,22 +162,22 @@ export default function Navbar({ isHomepage }: NavbarProps) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
-  // Sticky desktop header -- show after scrolling past hero on inner pages
   useEffect(() => {
     if (isHomepage) {
       setShowSticky(false);
       return;
     }
+
     const threshold = window.innerHeight * 0.85;
     const onScroll = () => {
       setShowSticky(window.scrollY > threshold);
     };
+
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage, pathname]);
 
-  // Close sticky dropdown when clicking outside
   useEffect(() => {
     if (!stickyDropdown) return;
     const close = () => setStickyDropdown(null);
@@ -223,12 +185,50 @@ export default function Navbar({ isHomepage }: NavbarProps) {
     return () => window.removeEventListener("click", close);
   }, [stickyDropdown]);
 
-  // GSAP animation for menu open/close
+  const updateMenuScrollState = useCallback(() => {
+    const scrollEl = menuScrollRef.current;
+    if (!scrollEl) {
+      setMenuCanScrollUp(false);
+      setMenuCanScrollDown(false);
+      return;
+    }
+
+    const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+    setMenuCanScrollUp(scrollEl.scrollTop > 8);
+    setMenuCanScrollDown(maxScroll - scrollEl.scrollTop > 8);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const scrollEl = menuScrollRef.current;
+    if (!scrollEl) return;
+
+    scrollEl.scrollTop = 0;
+    const rafId = requestAnimationFrame(() => {
+      scrollEl.scrollTop = 0;
+      updateMenuScrollState();
+    });
+
+    const handleScroll = () => updateMenuScrollState();
+    scrollEl.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      scrollEl.removeEventListener("scroll", handleScroll);
+    };
+  }, [isOpen, updateMenuScrollState]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const rafId = requestAnimationFrame(() => updateMenuScrollState());
+    return () => cancelAnimationFrame(rafId);
+  }, [expandedItem, isOpen, updateMenuScrollState]);
+
   useEffect(() => {
     if (!overlayRef.current) return;
 
     if (isOpen) {
-      // Hide all content while clip-path expands to prevent text clipping
       const links = linksRef.current.filter(Boolean);
       gsap.set(links, { opacity: 0, y: 80, rotateX: -15 });
       gsap.set(".menu-footer", { opacity: 0, y: 30 });
@@ -246,7 +246,6 @@ export default function Navbar({ isHomepage }: NavbarProps) {
         }
       );
 
-      // Links start only AFTER clip-path is fully expanded
       tl.to(
         links,
         {
@@ -265,9 +264,7 @@ export default function Navbar({ isHomepage }: NavbarProps) {
         "-=0.25"
       );
     } else {
-      if (tlRef.current) {
-        tlRef.current.kill();
-      }
+      tlRef.current?.kill();
       gsap.to(overlayRef.current, {
         clipPath: "circle(0% at calc(100% - 3rem) 2.5rem)",
         duration: 0.5,
@@ -276,17 +273,17 @@ export default function Navbar({ isHomepage }: NavbarProps) {
     }
   }, [isOpen]);
 
-  // Navigate with smooth menu close
-  const handleNavClick = useCallback((e: React.MouseEvent, href: string) => {
+  const handleNavClick = useCallback((e: MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
+
     if (navigatingRef.current) return;
     if (pathname === href) {
       setIsOpen(false);
       return;
     }
+
     navigatingRef.current = true;
 
-    // Fade out menu links
     gsap.to(linksRef.current.filter(Boolean), {
       opacity: 0,
       y: -30,
@@ -301,11 +298,8 @@ export default function Navbar({ isHomepage }: NavbarProps) {
       ease: "power2.in",
     });
 
-    // Navigate behind the overlay while it's still covering the screen,
-    // then close the overlay to reveal the new page
     setTimeout(() => {
       router.push(href);
-      // Let React render the new page behind the overlay
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsOpen(false);
@@ -315,31 +309,47 @@ export default function Navbar({ isHomepage }: NavbarProps) {
     }, 280);
   }, [pathname, router]);
 
+  const handleLogout = useCallback((closeOverlay = false) => {
+    fetch("/api/logout", { method: "POST" }).then(() => {
+      setIsLoggedIn(false);
+      setStickyDropdown(null);
+      if (closeOverlay) {
+        setIsOpen(false);
+      }
+      router.push("/");
+    });
+  }, [router]);
+
   const setLinkRef = useCallback((el: HTMLElement | null, i: number) => {
     linksRef.current[i] = el;
   }, []);
 
   const barColor = overDark ? "bg-cream" : "bg-charcoal";
+  const authHref = isLoggedIn ? "/dashboard" : AUTH_NAV_ITEM.href;
+  const authLabel = isLoggedIn ? "Dashboard" : AUTH_NAV_ITEM.label;
 
   return (
     <>
-      {/* Fixed logo -- hidden when menu is open */}
-      <div className={`fixed top-4 left-4 md:top-6 md:left-8 lg:left-12 z-[250] transition-opacity duration-300 ${isOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`} inert={isOpen || undefined}>
+      <div
+        className={`fixed top-4 left-4 md:top-6 md:left-8 lg:left-12 z-[250] transition-opacity duration-300 ${isOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+        inert={isOpen || undefined}
+      >
         <Link href="/" className="block group" aria-label="500 Acres Home">
           <Logo
             className="w-20 h-20 md:w-28 md:h-28 transition-transform duration-300 group-hover:scale-110"
-            style={{ filter: "drop-shadow(0 0 0.3px rgba(255,255,255,0.5))" }}
+            style={{ filter: "drop-shadow(0 0 0.3px rgba(245,241,234,0.5))" }}
             showText={false}
           />
         </Link>
       </div>
 
-      {/* Fixed menu button -- ALWAYS visible */}
       <button
         ref={menuBtnRef}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((prev) => !prev)}
         className="fixed top-6 right-6 md:top-8 md:right-10 lg:right-14 z-[260] group cursor-pointer"
         aria-label={isOpen ? "Close menu" : "Open menu"}
+        aria-expanded={isOpen}
+        aria-controls="site-menu-overlay"
       >
         <div className="relative w-12 h-12 md:w-14 md:h-14 flex items-center justify-center">
           <span
@@ -366,7 +376,6 @@ export default function Navbar({ isHomepage }: NavbarProps) {
         </div>
       </button>
 
-      {/* Sticky desktop header -- inner pages only */}
       {!isHomepage && (
         <header
           className={`fixed top-0 left-0 right-0 z-[230] hidden md:block transition-all duration-300 h-[60px] bg-cream/85 backdrop-blur-md ${
@@ -380,353 +389,408 @@ export default function Navbar({ isHomepage }: NavbarProps) {
             <Link href="/" className="font-serif text-lg font-bold text-charcoal hover:text-forest transition-colors">
               500 Acres
             </Link>
+
             <nav aria-label="Sticky navigation" className="flex items-center gap-8">
-              {STICKY_NAV_LINKS.map((link) => {
-                // Dropdown items
-                if (link.children) {
-                  const isActive = link.children.some(
-                    (child) => !child.external && (pathname === child.href || pathname.startsWith(child.href + "/"))
-                  );
-                  const isDropOpen = stickyDropdown === link.label;
+              {PUBLIC_NAV_ITEMS.map((item) => {
+                if (item.children) {
+                  const isActive = isNavItemActive(pathname, item);
+                  const isDropOpen = stickyDropdown === item.label;
+                  const submenuId = `sticky-submenu-${navId(item.label)}`;
+
                   return (
-                    <div key={link.label} className="relative">
+                    <div key={item.label} className="relative">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          setStickyDropdown(isDropOpen ? null : link.label);
+                          setStickyDropdown(isDropOpen ? null : item.label);
                         }}
                         aria-expanded={isDropOpen}
-                        aria-controls={`sticky-submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
+                        aria-controls={submenuId}
                         className={`font-sans text-sm tracking-wide transition-colors cursor-pointer ${
                           isActive ? "text-forest" : "text-charcoal/70 hover:text-charcoal"
                         }`}
                       >
-                        {link.label}
-                        <svg className={`inline-block w-3 h-3 ml-1 transition-transform duration-200 ${isDropOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        {item.label}
+                        <svg
+                          className={`inline-block w-3 h-3 ml-1 transition-transform duration-200 ${isDropOpen ? "rotate-180" : ""}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
-                        <div
-                          id={`sticky-submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-                          role="region"
-                          aria-label={`${link.label} submenu`}
-                          className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full left-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[min(180px,80vw)]`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {link.children.map((child) =>
-                            child.external ? (
-                              <a
-                                key={child.href}
-                                href={child.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors"
-                              >
-                                {child.label}
-                                <svg className="inline-block w-3 h-3 ml-1 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                                </svg>
-                              </a>
-                            ) : (
-                              <Link
-                                key={child.href}
-                                href={child.href}
-                                onClick={() => setStickyDropdown(null)}
-                                aria-current={pathname === child.href ? "page" : undefined}
-                                className={`block px-4 py-2 font-sans text-sm transition-colors ${
-                                  pathname === child.href ? "text-forest" : "text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5"
-                                }`}
-                              >
-                                {child.label}
-                              </Link>
-                            )
-                          )}
-                        </div>
-                    </div>
-                  );
-                }
 
-                // Login/Dashboard conditional link (last item)
-                if (link.href === "/login") {
-                  if (isLoggedIn) {
-                    const isDropOpen = stickyDropdown === "user";
-                    return (
-                      <div key="auth-link" className="relative">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setStickyDropdown(isDropOpen ? null : "user");
-                          }}
-                          aria-expanded={isDropOpen}
-                          aria-controls="sticky-user-menu"
-                          className="font-sans text-sm tracking-wide text-charcoal/70 hover:text-charcoal transition-colors cursor-pointer"
-                        >
-                          Dashboard
-                          <svg className={`inline-block w-3 h-3 ml-1 transition-transform duration-200 ${isDropOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        <div
-                          id="sticky-user-menu"
-                          role="region"
-                          aria-label="User menu"
-                          className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full right-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[min(160px,80vw)]`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Link
-                            href="/dashboard"
-                            onClick={() => setStickyDropdown(null)}
-                            className="block px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors"
-                          >
-                            Dashboard
-                          </Link>
-                          <button
-                            onClick={() => {
-                              setStickyDropdown(null);
-                              fetch("/api/logout", { method: "POST" }).then(() => {
-                                setIsLoggedIn(false);
-                                router.push("/");
-                              });
-                            }}
-                            className="block w-full text-left px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors cursor-pointer"
-                          >
-                            Logout
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  }
-                  return (
-                    <Link
-                      key="auth-link"
-                      href="/login"
-                      className="font-sans text-sm tracking-wide text-charcoal/70 hover:text-charcoal transition-colors"
-                    >
-                      Login
-                    </Link>
-                  );
-                }
-
-                // Regular links
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    aria-current={pathname === link.href ? "page" : undefined}
-                    className={`font-sans text-sm tracking-wide transition-colors ${
-                      pathname === link.href ? "text-forest" : "text-charcoal/70 hover:text-charcoal"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        </header>
-      )}
-
-      {/* Full-screen menu overlay */}
-      <div
-        ref={overlayRef}
-        className="fixed inset-0 z-[240] bg-charcoal pointer-events-none"
-        style={{ clipPath: "circle(0% at calc(100% - 3rem) 2.5rem)" }}
-        aria-hidden={!isOpen}
-        inert={!isOpen || undefined}
-      >
-        <div
-          className="pointer-events-auto w-full h-full flex flex-col justify-center overflow-y-auto"
-          style={{
-            paddingLeft: "max(1.5rem, 5vw)",
-            paddingRight: "max(1.5rem, 5vw)",
-            paddingTop: "max(4rem, 8vh)",
-            paddingBottom: "max(1.5rem, 3vh)",
-          }}
-        >
-          <nav aria-label="Main navigation" className="flex flex-col" style={{ gap: "clamp(0.25rem, 1vh, 1rem)" }}>
-            {NAV_LINKS.map((link, i) => {
-              // Expandable item (has children)
-              if (link.children) {
-                const isExpanded = expandedItem === i;
-                const isGroupActive = link.children.some(
-                  (child) => !child.external && (pathname === child.href || pathname.startsWith(child.href + "/"))
-                );
-                return (
-                  <div key={link.label}>
-                    <button
-                      ref={(el) => setLinkRef(el, i)}
-                      onClick={() => setExpandedItem(isExpanded ? null : i)}
-                      aria-expanded={isExpanded}
-                      aria-controls={`submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-                      className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 cursor-pointer ${
-                        isGroupActive ? "text-forest" : "text-cream hover:text-forest"
-                      }`}
-                    >
-                      <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
-                        {link.num}
-                      </span>
-                      <span className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4" style={{ fontSize: "clamp(1.75rem, 5vw + 0.5vh, 6rem)" }}>
-                        {link.label}
-                      </span>
-                      <svg
-                        className={`w-5 h-5 md:w-7 md:h-7 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2"
+                      <div
+                        id={submenuId}
+                        role="region"
+                        aria-label={`${item.label} submenu`}
+                        className={`dropdown-menu${isDropOpen ? " is-open" : ""} absolute top-full left-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[min(200px,80vw)]`}
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                      </svg>
-                      <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
-                    </button>
-                    <div
-                      id={`submenu-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
-                      role="region"
-                      aria-label={`${link.label} submenu`}
-                      className={`overflow-hidden transition-all duration-400 ${isExpanded ? "max-h-96 mt-1 sm:mt-2" : "max-h-0"}`}
-                    >
-                      {link.children.map((child, j) => {
-                        const childCls = `group flex items-baseline gap-4 md:gap-6 pl-6 sm:pl-10 md:pl-16 py-1 transition-all duration-300 ${
-                          isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                        } ${
-                          !child.external && pathname === child.href ? "text-forest" : "text-cream/80 hover:text-forest"
-                        }`;
-                        const childStyle = { transitionDelay: isExpanded ? `${j * 60}ms` : "0ms" };
-                        const childInner = (
-                          <>
-                            <span className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4" style={{ fontSize: "clamp(1.25rem, 3.5vw + 0.3vh, 3.75rem)" }}>
-                              {child.label}
-                            </span>
-                            {child.external && (
-                              <svg className="w-4 h-4 md:w-5 md:h-5 opacity-40 group-hover:opacity-100 transition-opacity self-center" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
-                              </svg>
-                            )}
-                            <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
-                          </>
-                        );
-
-                        if (child.external) {
-                          return (
+                        {item.children.map((child) => (
+                          child.external ? (
                             <a
                               key={child.href}
                               href={child.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className={childCls}
+                              className="block px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors"
+                            >
+                              {child.label}
+                              <svg className="inline-block w-3 h-3 ml-1 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                              </svg>
+                            </a>
+                          ) : (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              onClick={() => setStickyDropdown(null)}
+                              aria-current={isNavHrefActive(pathname, child.href) ? "page" : undefined}
+                              className={`block px-4 py-2 font-sans text-sm transition-colors ${
+                                isNavHrefActive(pathname, child.href)
+                                  ? "text-forest"
+                                  : "text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5"
+                              }`}
+                            >
+                              {child.label}
+                            </Link>
+                          )
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href!}
+                    aria-current={isNavHrefActive(pathname, item.href) ? "page" : undefined}
+                    className={`font-sans text-sm tracking-wide transition-colors ${
+                      isNavHrefActive(pathname, item.href)
+                        ? "text-forest"
+                        : "text-charcoal/70 hover:text-charcoal"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+              {isLoggedIn ? (
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setStickyDropdown(stickyDropdown === "user" ? null : "user");
+                    }}
+                    aria-expanded={stickyDropdown === "user"}
+                    aria-controls="sticky-user-menu"
+                    className="font-sans text-sm tracking-wide text-charcoal/70 hover:text-charcoal transition-colors cursor-pointer"
+                  >
+                    Dashboard
+                    <svg
+                      className={`inline-block w-3 h-3 ml-1 transition-transform duration-200 ${stickyDropdown === "user" ? "rotate-180" : ""}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  <div
+                    id="sticky-user-menu"
+                    role="region"
+                    aria-label="User menu"
+                    className={`dropdown-menu${stickyDropdown === "user" ? " is-open" : ""} absolute top-full right-0 mt-2 bg-warm-white rounded-xl shadow-lg border border-charcoal/5 py-2 min-w-[min(160px,80vw)]`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setStickyDropdown(null)}
+                      className="block px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={() => handleLogout()}
+                      className="block w-full text-left px-4 py-2 font-sans text-sm text-charcoal/70 hover:text-charcoal hover:bg-charcoal/5 transition-colors cursor-pointer"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href={AUTH_NAV_ITEM.href!}
+                  className="font-sans text-sm tracking-wide text-charcoal/70 hover:text-charcoal transition-colors"
+                >
+                  {AUTH_NAV_ITEM.label}
+                </Link>
+              )}
+            </nav>
+          </div>
+        </header>
+      )}
+
+      <div
+        ref={overlayRef}
+        id="site-menu-overlay"
+        className="fixed inset-0 z-[240] bg-charcoal pointer-events-none"
+        style={{ clipPath: "circle(0% at calc(100% - 3rem) 2.5rem)", height: "100dvh" }}
+        aria-hidden={!isOpen}
+        inert={!isOpen || undefined}
+      >
+        <div
+          className={`pointer-events-none absolute inset-x-0 top-0 z-[1] h-20 bg-gradient-to-b from-charcoal via-charcoal/85 to-transparent transition-opacity duration-200 ${
+            menuCanScrollUp ? "opacity-100" : "opacity-0"
+          }`}
+        />
+        <div
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-gradient-to-t from-charcoal via-charcoal/90 to-transparent transition-opacity duration-200 ${
+            menuCanScrollDown ? "opacity-100" : "opacity-0"
+          }`}
+        />
+
+        <div
+          ref={menuScrollRef}
+          className="pointer-events-auto relative h-full overflow-y-auto overscroll-contain scrollbar-hide"
+          style={{
+            paddingLeft: "max(1.5rem, 5vw)",
+            paddingRight: "max(1.5rem, 5vw)",
+            paddingTop: "calc(max(4.5rem, 10vh) + env(safe-area-inset-top))",
+            paddingBottom: "calc(max(1.5rem, 4vh) + env(safe-area-inset-bottom))",
+          }}
+        >
+          <div className="mx-auto flex min-h-full w-full max-w-[1400px] flex-col">
+            <nav
+              aria-label="Main navigation"
+              className="flex flex-col"
+              style={{ gap: "clamp(0.35rem, 1vh, 1rem)" }}
+            >
+              {PUBLIC_NAV_ITEMS.map((item, i) => {
+                if (item.children) {
+                  const isExpanded = expandedItem === i;
+                  const isActive = isNavItemActive(pathname, item);
+                  const submenuId = `submenu-${navId(item.label)}`;
+
+                  return (
+                    <div key={item.label}>
+                      <button
+                        ref={(el) => setLinkRef(el, i)}
+                        onClick={() => setExpandedItem(isExpanded ? null : i)}
+                        aria-expanded={isExpanded}
+                        aria-controls={submenuId}
+                        className={`group flex w-full items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 cursor-pointer text-left ${
+                          isActive ? "text-forest" : "text-cream hover:text-forest"
+                        }`}
+                      >
+                        <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6 shrink-0">
+                          {item.num}
+                        </span>
+                        <span
+                          className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4"
+                          style={{ fontSize: "clamp(1.75rem, 5vw + 0.5vh, 6rem)" }}
+                        >
+                          {item.label}
+                        </span>
+                        <svg
+                          className={`w-5 h-5 md:w-7 md:h-7 transition-transform duration-300 shrink-0 ${isExpanded ? "rotate-180" : ""}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                        <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                      </button>
+
+                      <div
+                        id={submenuId}
+                        role="region"
+                        aria-label={`${item.label} submenu`}
+                        className={`overflow-hidden transition-all duration-400 ${isExpanded ? "max-h-[32rem] mt-2" : "max-h-0"}`}
+                      >
+                        {item.children.map((child, j) => {
+                          const childClassName = `group flex items-baseline gap-4 md:gap-6 pl-6 sm:pl-10 md:pl-16 py-1 transition-all duration-300 ${
+                            isExpanded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                          } ${
+                            !child.external && isNavHrefActive(pathname, child.href)
+                              ? "text-forest"
+                              : "text-cream/80 hover:text-forest"
+                          }`;
+                          const childStyle = { transitionDelay: isExpanded ? `${j * 60}ms` : "0ms" };
+                          const childInner = (
+                            <>
+                              <span
+                                className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4"
+                                style={{ fontSize: "clamp(1.25rem, 3.5vw + 0.3vh, 3.75rem)" }}
+                              >
+                                {child.label}
+                              </span>
+                              {child.external && (
+                                <svg className="w-4 h-4 md:w-5 md:h-5 opacity-40 group-hover:opacity-100 transition-opacity self-center shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                                </svg>
+                              )}
+                              <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                            </>
+                          );
+
+                          if (child.external) {
+                            return (
+                              <a
+                                key={child.href}
+                                href={child.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={childClassName}
+                                style={childStyle}
+                              >
+                                {childInner}
+                              </a>
+                            );
+                          }
+
+                          return (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              onClick={(e) => handleNavClick(e, child.href)}
+                              aria-current={isNavHrefActive(pathname, child.href) ? "page" : undefined}
+                              className={childClassName}
                               style={childStyle}
                             >
                               {childInner}
-                            </a>
+                            </Link>
                           );
-                        }
-
-                        return (
-                          <Link
-                            key={child.href}
-                            ref={(el) => { subLinksRef.current[j] = el; }}
-                            href={child.href}
-                            onClick={(e) => handleNavClick(e, child.href)}
-                            aria-current={pathname === child.href ? "page" : undefined}
-                            className={childCls}
-                            style={childStyle}
-                          >
-                            {childInner}
-                          </Link>
-                        );
-                      })}
+                        })}
+                      </div>
                     </div>
-                  </div>
-                );
-              }
+                  );
+                }
 
-              // Login/Dashboard conditional link (last overlay item)
-              if (link.href === "/login") {
-                const authHref = isLoggedIn ? "/dashboard" : "/login";
-                const authLabel = isLoggedIn ? "Dashboard" : "Login";
                 return (
-                  <div key="auth-overlay-link" style={{ marginTop: "clamp(0.5rem, 2vh, 1.5rem)" }}>
-                    <div className="h-[1px] bg-cream/10 mb-2 sm:mb-3 md:mb-4" style={{ maxWidth: "8rem" }} />
-                    <Link
-                      ref={(el) => setLinkRef(el, i)}
-                      href={authHref}
-                      onClick={(e) => handleNavClick(e, authHref)}
-                      aria-current={pathname === authHref ? "page" : undefined}
-                      className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
-                        pathname === authHref ? "text-forest" : "text-cream/80 hover:text-forest"
-                      }`}
+                  <Link
+                    key={item.href}
+                    ref={(el) => setLinkRef(el, i)}
+                    href={item.href!}
+                    onClick={(e) => handleNavClick(e, item.href!)}
+                    aria-current={isNavHrefActive(pathname, item.href) ? "page" : undefined}
+                    className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
+                      isNavHrefActive(pathname, item.href)
+                        ? "text-forest"
+                        : "text-cream hover:text-forest"
+                    }`}
+                  >
+                    <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6 shrink-0">
+                      {item.num}
+                    </span>
+                    <span
+                      className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4"
+                      style={{ fontSize: "clamp(1.75rem, 5vw + 0.5vh, 6rem)" }}
                     >
-                      <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
-                        {link.num}
-                      </span>
-                      <span className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4" style={{ fontSize: "clamp(1.25rem, 3vw + 0.3vh, 3.75rem)" }}>
-                        {authLabel}
-                      </span>
-                      <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
-                    </Link>
-                    {isLoggedIn && (
-                      <button
-                        onClick={() => {
-                          fetch("/api/logout", { method: "POST" }).then(() => {
-                            setIsLoggedIn(false);
-                            setIsOpen(false);
-                            router.push("/");
-                          });
-                        }}
-                        className="pl-6 sm:pl-10 md:pl-16 mt-1 font-sans text-sm md:text-base tracking-wide text-cream/60 hover:text-forest transition-colors cursor-pointer"
-                      >
-                        Logout
-                      </button>
-                    )}
-                  </div>
+                      {item.label}
+                    </span>
+                    <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                  </Link>
                 );
-              }
+              })}
 
-              // Regular link (no children)
-              return (
+              {isLoggedIn ? (
+                <div key="auth-overlay-link" className="mt-4 md:mt-6">
+                  <div className="h-[1px] bg-cream/10 mb-3 md:mb-4" style={{ maxWidth: "8rem" }} />
+                  <Link
+                    ref={(el) => setLinkRef(el, PUBLIC_NAV_ITEMS.length)}
+                    href={authHref!}
+                    onClick={(e) => handleNavClick(e, authHref!)}
+                    aria-current={isNavHrefActive(pathname, authHref) ? "page" : undefined}
+                    className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
+                      isNavHrefActive(pathname, authHref)
+                        ? "text-forest"
+                        : "text-cream/80 hover:text-forest"
+                    }`}
+                  >
+                    <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6 shrink-0">
+                      {AUTH_NAV_ITEM.num}
+                    </span>
+                    <span
+                      className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4"
+                      style={{ fontSize: "clamp(1.25rem, 3vw + 0.3vh, 3.75rem)" }}
+                    >
+                      {authLabel}
+                    </span>
+                    <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
+                  </Link>
+
+                  <button
+                    onClick={() => handleLogout(true)}
+                    className="pl-6 sm:pl-10 md:pl-16 mt-2 font-sans text-sm md:text-base tracking-wide text-cream/60 hover:text-forest transition-colors cursor-pointer"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
                 <Link
-                  key={link.href}
-                  ref={(el) => setLinkRef(el, i)}
-                  href={link.href}
-                  onClick={(e) => handleNavClick(e, link.href)}
-                  aria-current={pathname === link.href ? "page" : undefined}
+                  key="auth-overlay-link"
+                  ref={(el) => setLinkRef(el, PUBLIC_NAV_ITEMS.length)}
+                  href={authHref!}
+                  onClick={(e) => handleNavClick(e, authHref!)}
+                  aria-current={isNavHrefActive(pathname, authHref) ? "page" : undefined}
                   className={`group flex items-baseline gap-4 md:gap-6 opacity-0 transition-colors duration-300 ${
-                    pathname === link.href ? "text-forest" : "text-cream hover:text-forest"
+                    isNavHrefActive(pathname, authHref)
+                      ? "text-forest"
+                      : "text-cream hover:text-forest"
                   }`}
                 >
-                  <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6">
-                    {link.num}
+                  <span className="font-sans text-xs md:text-sm tracking-widest opacity-40 group-hover:opacity-100 transition-opacity w-6 shrink-0">
+                    {AUTH_NAV_ITEM.num}
                   </span>
-                  <span className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4" style={{ fontSize: "clamp(1.75rem, 5vw + 0.5vh, 6rem)" }}>
-                    {link.label}
+                  <span
+                    className="font-serif font-bold tracking-tight menu-link-text transition-transform duration-300 group-hover:translate-x-4"
+                    style={{ fontSize: "clamp(1.75rem, 5vw + 0.5vh, 6rem)" }}
+                  >
+                    {authLabel}
                   </span>
                   <span className="hidden md:block h-[1px] flex-1 bg-cream/10 group-hover:bg-forest/30 transition-colors self-center ml-4" />
                 </Link>
-              );
-            })}
-          </nav>
+              )}
+            </nav>
 
-          <div className="menu-footer mt-auto pt-6 md:pt-8 flex flex-col md:flex-row md:items-end justify-between gap-8 opacity-0">
-            <div>
-              <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/60 mb-2">
-                Build your home &middot; Build your skills &middot; Build your wealth
-              </p>
-              <p className="font-serif text-cream/60 text-sm">
-                Land, training, and pathways to ownership near America&apos;s national parks.
-              </p>
-            </div>
-            <div className="flex gap-6">
-              <a href="https://instagram.com/500acres" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="font-sans text-xs uppercase tracking-widest text-cream/60 hover:text-cream transition-colors">
-                Instagram
-              </a>
-              <a href="https://twitter.com/500acres" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter" className="font-sans text-xs uppercase tracking-widest text-cream/60 hover:text-cream transition-colors">
-                Twitter
-              </a>
+            <div className="menu-footer mt-auto pt-10 md:pt-12 flex flex-col md:flex-row md:items-end justify-between gap-8 opacity-0">
+              <div>
+                <p className="font-sans text-xs uppercase tracking-[0.3em] text-cream/60 mb-2">
+                  Build your home &middot; Build your skills &middot; Build your wealth
+                </p>
+                <p className="font-serif text-cream/60 text-sm">
+                  Land, training, and pathways to ownership near America&apos;s national parks.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-6">
+                {PUBLIC_SOCIAL_LINKS.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target={social.label !== "Email" ? "_blank" : undefined}
+                    rel={social.label !== "Email" ? "noopener noreferrer" : undefined}
+                    aria-label={social.ariaLabel}
+                    className="font-sans text-xs uppercase tracking-widest text-cream/60 hover:text-cream transition-colors"
+                  >
+                    {social.label}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
-
     </>
   );
 }

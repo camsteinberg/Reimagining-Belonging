@@ -1,6 +1,7 @@
 'use client';
 
 import useReveal from '@/hooks/useReveal';
+import Breadcrumbs from '@/components/public/shared/Breadcrumbs';
 import SectionDivider from '@/components/public/shared/SectionDivider';
 import SectionHeader from '@/components/public/shared/SectionHeader';
 import CTABand from '@/components/public/shared/CTABand';
@@ -384,6 +385,9 @@ export default function OurSponsorsPage() {
         <div className="absolute bottom-[15%] right-[-6%] w-[30vw] h-[30vw] bg-forest/5 blob pointer-events-none" aria-hidden="true" />
 
         <div className="page-container relative z-10 flex flex-col items-center">
+          <div className="w-full mb-10">
+            <Breadcrumbs items={[{ label: "About", href: "/about" }, { label: "Our Sponsors" }]} />
+          </div>
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-charcoal/60 mb-10">
             Our Sponsors
           </p>
