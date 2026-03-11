@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import useReveal from '@/hooks/useReveal';
 import resourcesHero from '@/assets/photos/resources-hero-ranch.webp';
 
@@ -212,7 +213,7 @@ export default function ResourcesPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero with ghost count */}
       <section className="relative min-h-[60vh] flex flex-col justify-end pb-14 md:pb-20 lg:pb-28">
-        <img src={resourcesHero.src} alt="" className="absolute inset-0 w-full h-full object-cover opacity-12" loading="lazy" decoding="async" />
+        <Image src={resourcesHero} alt="" fill className="object-cover opacity-12" />
         <div className="absolute inset-0 bg-gradient-to-b from-cream via-cream/80 to-cream/40" />
         <span className="num-accent font-display text-[10rem] md:text-[20rem] absolute top-[5%] right-[5%] md:right-[10%] select-none pointer-events-none" aria-hidden="true">{totalCount}</span>
 
@@ -330,9 +331,10 @@ export default function ResourcesPage() {
                   href={resource.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`reveal-fade stagger-${(i % 4) + 1} group relative p-10 md:p-14 rounded-2xl border ${resource.accent}
+                  className={`filter-enter group relative p-10 md:p-14 rounded-2xl border ${resource.accent}
                     transition-all duration-500 hover:-translate-y-2 hover:shadow-xl
                     ${isWide ? "md:col-span-2 md:row-span-1" : ""}`}
+                  style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <div className="flex flex-wrap items-center gap-3 mb-10">
                     <div className={`w-2 h-2 rounded-full ${resource.accentDot}`} />

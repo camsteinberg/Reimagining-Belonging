@@ -38,7 +38,15 @@ const TAG_COLORS: Record<string, string> = {
   "Online Community": "bg-ember/10 text-ember",
 };
 
-const CARD_ACCENTS = ["#6b8f71", "#5c3d2e", "#3d6b4f", "#365f45", "#d4a84b", "#b8755d", "#c45d3e"];
+const CARD_ACCENTS = [
+  "var(--color-sage)",
+  "var(--color-bark)",
+  "var(--color-forest)",
+  "var(--color-moss)",
+  "var(--color-amber)",
+  "var(--color-clay)",
+  "var(--color-ember)",
+];
 
 /* Indices 0 and 3 (Sherry and Michaella) are featured -- larger cards */
 const FEATURED_INDICES = [0, 3];
@@ -238,7 +246,7 @@ export default function StoriesPage() {
 
       {/* Horizontal scroll quote strip */}
       <section className="py-14 md:py-20 overflow-hidden">
-        <div className="flex overflow-x-auto scrollbar-hide px-[max(1.5rem,4vw)]">
+        <div className="flex overflow-x-auto scrollbar-hide scroll-fade px-[max(1.5rem,4vw)]">
           {participants.map((p: Participant, i: number) => (
             <div key={p.slug} className="min-w-[80vw] md:min-w-[50vw] flex-shrink-0 flex items-center">
               <blockquote className="pr-8 md:pr-12">

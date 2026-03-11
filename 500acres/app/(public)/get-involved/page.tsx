@@ -9,7 +9,7 @@ import heroConstruction from '@/assets/photos/getinvolved-hero-crane.webp';
 import cardApply from '@/assets/photos/card-apply.webp';
 import cardAttend from '@/assets/photos/card-attend.webp';
 import cardBuild from '@/assets/photos/card-build.webp';
-import { StaticImageData } from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 import React from 'react';
 
 /* ---- Constants ---- */
@@ -124,7 +124,7 @@ export default function GetInvolvedPage() {
     <div ref={ref} className="inner-page grain bg-cream min-h-screen overflow-hidden">
       {/* Hero with diagonal bottom edge */}
       <section className="diagonal-bottom relative min-h-[85vh] flex flex-col justify-end pb-20 md:pb-28 lg:pb-36 bg-charcoal overflow-hidden">
-        <img src={heroConstruction.src} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+        <Image src={heroConstruction} alt="" fill className="object-cover opacity-20" />
 
         <div className="page-container relative z-10 w-full">
           <p className="reveal-up font-sans text-xs uppercase tracking-[0.4em] text-cream/70 mb-10">
@@ -175,8 +175,8 @@ export default function GetInvolvedPage() {
                     <>
                       {/* Image left */}
                       <div className="relative z-10 md:col-span-5">
-                        <div className="w-full aspect-video rounded-xl overflow-hidden">
-                          <img src={step.image.src} alt={step.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                        <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                          <Image src={step.image} alt={step.title} fill className="object-cover" />
                         </div>
                       </div>
                       {/* Text right */}
@@ -197,8 +197,8 @@ export default function GetInvolvedPage() {
                     <>
                       {/* Image first in DOM for mobile, positioned right on desktop */}
                       <div className="relative z-10 md:col-span-5 md:col-start-8 md:row-start-1">
-                        <div className="w-full aspect-video rounded-xl overflow-hidden">
-                          <img src={step.image.src} alt={step.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                        <div className="relative w-full aspect-video rounded-xl overflow-hidden">
+                          <Image src={step.image} alt={step.title} fill className="object-cover" />
                         </div>
                       </div>
                       {/* Text positioned left on desktop */}
@@ -371,7 +371,7 @@ export default function GetInvolvedPage() {
                       required
                       value={formState.firstName}
                       onChange={(e) => setFormState({ ...formState, firstName: e.target.value })}
-                      className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors placeholder-transparent"
+                      className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors duration-300 placeholder-transparent"
                       placeholder="First Name"
                     />
                     <label
@@ -389,7 +389,7 @@ export default function GetInvolvedPage() {
                       required
                       value={formState.lastName}
                       onChange={(e) => setFormState({ ...formState, lastName: e.target.value })}
-                      className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors placeholder-transparent"
+                      className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors duration-300 placeholder-transparent"
                       placeholder="Last Name"
                     />
                     <label
@@ -409,7 +409,7 @@ export default function GetInvolvedPage() {
                     required
                     value={formState.email}
                     onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                    className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors placeholder-transparent"
+                    className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors duration-300 placeholder-transparent"
                     placeholder="Email"
                   />
                   <label
@@ -429,7 +429,7 @@ export default function GetInvolvedPage() {
                     name="interest"
                     value={formState.interest}
                     onChange={(e) => setFormState({ ...formState, interest: e.target.value })}
-                    className="w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors appearance-none cursor-pointer"
+                    className="w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors duration-300 appearance-none cursor-pointer"
                   >
                     <option value="" disabled>What are you interested in?</option>
                     <option value="fellowship">Fellowship Application</option>
@@ -448,7 +448,7 @@ export default function GetInvolvedPage() {
                     rows={3}
                     value={formState.message}
                     onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                    className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors resize-none placeholder-transparent"
+                    className="peer w-full bg-transparent border-b-2 border-charcoal/15 px-3 py-4 font-serif text-lg text-charcoal focus:outline-none focus:border-charcoal transition-colors duration-300 resize-none placeholder-transparent"
                     placeholder="Message"
                   />
                   <label

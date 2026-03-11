@@ -20,14 +20,14 @@ export default function SectionDivider({ variant = "line", className = "" }: Sec
   if (variant === "dot") {
     return (
       <div className={`page-container flex justify-center py-8 md:py-12 ${className}`}>
-        <div className="w-1.5 h-1.5 rounded-full bg-charcoal/20" />
+        <div className="reveal-scale w-1.5 h-1.5 rounded-full bg-charcoal/20" />
       </div>
     );
   }
 
   if (variant === "editorial") {
     return (
-      <div className={`page-container flex items-center gap-4 py-8 md:py-12 ${className}`}>
+      <div className={`reveal-fade page-container flex items-center gap-4 py-8 md:py-12 ${className}`}>
         <div className="flex-1 h-px bg-charcoal/10" />
         <div className="w-1.5 h-1.5 rounded-full bg-charcoal/20" />
         <div className="flex-1 h-px bg-charcoal/10" />
@@ -37,7 +37,7 @@ export default function SectionDivider({ variant = "line", className = "" }: Sec
 
   // Default: "line"
   return (
-    <div className={`page-container ${className}`}>
+    <div className={`reveal-fade page-container ${className}`}>
       <div className="h-px bg-charcoal/10" />
     </div>
   );

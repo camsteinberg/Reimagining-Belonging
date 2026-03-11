@@ -733,6 +733,12 @@
   animation: filterSlideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Horizontal scroll edge-fade mask */
+.scroll-fade {
+  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+}
+
 /* FAQ accordion (CSS grid height animation) */
 .accordion-panel {
   display: grid;

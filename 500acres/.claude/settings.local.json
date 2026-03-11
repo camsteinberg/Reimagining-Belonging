@@ -41,7 +41,16 @@
       "Bash(echo:*)",
       "Bash(git check-ignore:*)",
       "Bash(git merge:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(npx vercel:*)",
+      "Bash(openssl rand:*)",
+      "WebFetch(domain:500acres.vercel.app)",
+      "WebFetch(domain:habitable.us)",
+      "Bash(for project in eco 500acres web blueprint-telephone bos-website)",
+      "Bash(do echo \"=== $project ===\" npx vercel inspect --scope cams-projects-d030fe9b \"$project\")",
+      "WebFetch(domain:www.habitable.us)",
+      "Bash(git ls-tree:*)",
+      "Bash(npx next lint:*)"
     ]
   }
 }
